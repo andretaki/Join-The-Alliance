@@ -22,6 +22,8 @@ export default function EmployeeApplicationForm() {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
   const [aiParsing, setAiParsing] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState('');
   const [signatureMethod, setSignatureMethod] = useState<'draw' | 'type'>('draw');
   const [typedSignature, setTypedSignature] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -40,6 +42,7 @@ export default function EmployeeApplicationForm() {
     resolver: zodResolver(employeeApplicationSchema),
     mode: 'onChange',
     defaultValues: {
+      jobPostingId: undefined,
       personalInfo: {
         firstName: '',
         lastName: '',
@@ -121,8 +124,24 @@ export default function EmployeeApplicationForm() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError('Please upload a PDF, DOC, or DOCX file');
+      return;
+    }
+
+    // Validate file size (10MB max)
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    if (file.size > maxSize) {
+      setUploadError('File size must be less than 10MB');
+      return;
+    }
+
+    setUploadError('');
     setResumeFile(file);
     setAiParsing(true);
+    setUploadProgress(0);
 
     try {
       const formData = new FormData();
@@ -154,9 +173,14 @@ export default function EmployeeApplicationForm() {
             }
           });
         }
+        
+        setUploadProgress(100);
+      } else {
+        throw new Error('Failed to parse resume');
       }
     } catch (error) {
       console.error('Resume parsing failed:', error);
+      setUploadError('Failed to parse resume. Please try again.');
     } finally {
       setAiParsing(false);
     }
@@ -260,7 +284,7 @@ export default function EmployeeApplicationForm() {
   };
 
   const renderJobSelection = () => (
-    <div className="space-y-6" ref={el => stepRefs.current[0] = el} tabIndex={-1}>
+    <div className="space-y-6" ref={(el) => { stepRefs.current[0] = el; }} tabIndex={-1}>
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Position</h2>
         <p className="text-gray-600">Choose the position you're applying for</p>
@@ -273,7 +297,7 @@ export default function EmployeeApplicationForm() {
           <div className="flex items-center space-x-3">
             <input
               type="radio"
-              value="1"
+              value={1}
               id="job-1"
               {...register('jobPostingId', { valueAsNumber: true })}
               className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
@@ -292,7 +316,7 @@ export default function EmployeeApplicationForm() {
           <div className="flex items-center space-x-3">
             <input
               type="radio"
-              value="2"
+              value={2}
               id="job-2"
               {...register('jobPostingId', { valueAsNumber: true })}
               className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
@@ -300,7 +324,7 @@ export default function EmployeeApplicationForm() {
             />
             <div>
               <label htmlFor="job-2" className="font-semibold text-gray-900 cursor-pointer">
-                Chemical Logistics Specialist
+                Warehouse Associate
               </label>
               <p id="job-2-description" className="text-sm text-gray-600">Operations & Distribution</p>
             </div>

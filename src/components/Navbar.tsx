@@ -40,15 +40,7 @@ export default function Navbar() {
               </svg>
               (512) 365-6838
             </a>
-            <a 
-              href="mailto:sales@alliancechemical.com" 
-              className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
-            >
-              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              sales@alliancechemical.com
-            </a>
+
             <a 
               href="https://alliancechemical.com" 
               target="_blank" 

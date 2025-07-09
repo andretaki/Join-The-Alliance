@@ -25,6 +25,11 @@ export async function POST(request: NextRequest) {
 
     const applicationData = JSON.parse(applicationDataString);
     
+    // Convert jobPostingId to number if it's a string
+    if (applicationData.jobPostingId && typeof applicationData.jobPostingId === 'string') {
+      applicationData.jobPostingId = parseInt(applicationData.jobPostingId, 10);
+    }
+    
     // Validate the application data
     const validatedData = employeeApplicationSchema.parse(applicationData);
 
