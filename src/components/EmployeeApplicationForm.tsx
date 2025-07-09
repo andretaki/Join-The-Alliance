@@ -898,11 +898,29 @@ export default function EmployeeApplicationForm() {
           >
             Choose File
           </label>
-          {resumeFile && (
+          {uploadError && (
+            <p className="mt-2 text-sm text-red-600" role="alert">
+              ⚠️ {uploadError}
+            </p>
+          )}
+          {resumeFile && !uploadError && (
             <p className="mt-2 text-sm text-green-600">✓ {resumeFile.name}</p>
           )}
           {aiParsing && (
-            <p className="mt-2 text-sm text-blue-600">🤖 AI is parsing your resume...</p>
+            <div className="mt-2">
+              <p className="text-sm text-blue-600">🤖 AI is parsing your resume...</p>
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+              )}
+              {uploadProgress === 100 && (
+                <p className="text-sm text-green-600 mt-1">✓ Resume parsed successfully!</p>
+              )}
+            </div>
           )}
         </div>
 
