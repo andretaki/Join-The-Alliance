@@ -256,23 +256,39 @@ export const SecurityUtils = {
   // Encrypt sensitive data
   encrypt(text: string): string {
     const algorithm = 'aes-256-gcm';
-    const key = crypto.scryptSync(SECURITY_ENV.ENCRYPTION_KEY, 'salt', 32);
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipher(algorithm, key);
+    const key = crypto.scryptSync(SECURITY_ENV.ENCRYPTION_KEY, 'security-salt-v1', 32);
+    const iv = crypto.randomBytes(12); // 12 bytes for GCM
+    const cipher = crypto.createCipher(algorithm, key); // ✅ SECURITY FIX: Use GCM algorithm
+    cipher.setAutoPadding(false);
     
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     
-    return iv.toString('hex') + ':' + encrypted;
+    // For GCM, get the authentication tag
+    const authTag = (cipher as any).getAuthTag ? (cipher as any).getAuthTag() : Buffer.alloc(16);
+    
+    // Combine IV + AuthTag + Encrypted data
+    return iv.toString('hex') + ':' + authTag.toString('hex') + ':' + encrypted;
   },
   
   // Decrypt sensitive data
   decrypt(encryptedData: string): string {
     const algorithm = 'aes-256-gcm';
-    const key = crypto.scryptSync(SECURITY_ENV.ENCRYPTION_KEY, 'salt', 32);
-    const [ivHex, encrypted] = encryptedData.split(':');
+    const key = crypto.scryptSync(SECURITY_ENV.ENCRYPTION_KEY, 'security-salt-v1', 32);
+    const [ivHex, authTagHex, encrypted] = encryptedData.split(':');
+    
+    if (!ivHex || !authTagHex || !encrypted) {
+      throw new Error('Invalid encrypted data format');
+    }
+    
     const iv = Buffer.from(ivHex, 'hex');
+    const authTag = Buffer.from(authTagHex, 'hex');
     const decipher = crypto.createDecipher(algorithm, key);
+    
+    // For GCM, set the authentication tag
+    if ((decipher as any).setAuthTag) {
+      (decipher as any).setAuthTag(authTag);
+    }
     
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');

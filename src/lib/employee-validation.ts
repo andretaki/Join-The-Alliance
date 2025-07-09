@@ -1,21 +1,67 @@
 import { z } from 'zod';
 
-// Personal Information Schema
+// Personal Information Schema - EXPANDED for full employee application
 export const personalInfoSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(50, 'First name too long'),
   lastName: z.string().min(1, 'Last name is required').max(50, 'Last name too long'),
+  middleName: z.string().max(50, 'Middle name too long').optional(),
   email: z.string().email('Invalid email address'),
   phone: z.string().min(10, 'Phone number must be at least 10 digits').max(15, 'Phone number too long'),
+  alternatePhone: z.string().max(15, 'Alternate phone too long').optional(),
   address: z.string().min(5, 'Address is required').max(200, 'Address too long'),
   city: z.string().min(1, 'City is required').max(50, 'City too long'),
   state: z.string().min(2, 'State is required').max(50, 'State too long'),
   zipCode: z.string().min(5, 'ZIP code must be at least 5 digits').max(10, 'ZIP code too long'),
+  
+  // ✅ CRITICAL EMPLOYEE INFO
+  socialSecurityNumber: z.string().regex(/^\d{3}-\d{2}-\d{4}$/, 'SSN must be in XXX-XX-XXXX format'),
+  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must be in YYYY-MM-DD format'),
+  driversLicenseNumber: z.string().min(1, 'Driver\'s license number is required').max(20, 'License number too long'),
+  driversLicenseState: z.string().min(2, 'License state is required').max(2, 'Use 2-letter state code'),
+  
+  // Emergency Contact
+  emergencyContactName: z.string().min(1, 'Emergency contact name is required').max(100, 'Name too long'),
+  emergencyContactRelationship: z.string().min(1, 'Relationship is required').max(50, 'Relationship too long'),
+  emergencyContactPhone: z.string().min(10, 'Emergency contact phone is required').max(15, 'Phone too long'),
+  emergencyContactAddress: z.string().max(200, 'Address too long').optional(),
+  
+  // Employment Information
+  desiredSalary: z.string().max(20, 'Salary expectation too long').optional(),
+  availableStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Start date must be in YYYY-MM-DD format'),
+  hoursAvailable: z.enum(['full-time', 'part-time', 'either'], { 
+    errorMap: () => ({ message: 'Please select hours available' }) 
+  }),
+  shiftPreference: z.enum(['day', 'evening', 'night', 'rotating', 'any'], { 
+    errorMap: () => ({ message: 'Please select shift preference' }) 
+  }),
+  
+  // Additional Information
+  hasTransportation: z.boolean(),
+  hasBeenConvicted: z.boolean(),
+  convictionDetails: z.string().max(500, 'Details too long').optional(),
+  hasPreviouslyWorkedHere: z.boolean(),
+  previousWorkDetails: z.string().max(500, 'Details too long').optional(),
 });
 
-// Employment Eligibility Schema
+// Employment Eligibility Schema - EXPANDED
 export const eligibilitySchema = z.object({
-  eligibleToWork: z.boolean(),
+  eligibleToWork: z.boolean().refine(val => val === true, 'You must be eligible to work in the United States'),
   requiresSponsorship: z.boolean(),
+  
+  // ✅ ADDITIONAL EMPLOYMENT CONSENTS
+  consentToBackgroundCheck: z.boolean().refine(val => val === true, 'You must consent to background check'),
+  consentToDrugTest: z.boolean().refine(val => val === true, 'You must consent to drug testing'),
+  consentToReferenceCheck: z.boolean().refine(val => val === true, 'You must consent to reference verification'),
+  consentToEmploymentVerification: z.boolean().refine(val => val === true, 'You must consent to employment verification'),
+  
+  // I-9 Documentation
+  hasValidI9Documents: z.boolean().refine(val => val === true, 'You must have valid I-9 documentation'),
+  
+  // Chemical Industry Specific
+  hasHazmatExperience: z.boolean(),
+  hasForkliftCertification: z.boolean(),
+  hasChemicalHandlingExperience: z.boolean(),
+  willingToObtainCertifications: z.boolean(),
 });
 
 // Work Experience Schema

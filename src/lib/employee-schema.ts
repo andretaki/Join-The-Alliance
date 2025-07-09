@@ -24,19 +24,61 @@ export const employeeApplications = employeeSchema.table('employee_applications'
   id: serial('id').primaryKey(),
   jobPostingId: integer('job_posting_id').references(() => jobPostings.id).notNull(),
   
-  // Personal Information
+  // Personal Information - EXPANDED
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
+  middleName: text('middle_name'),
   email: text('email').notNull(),
   phone: text('phone').notNull(),
+  alternatePhone: text('alternate_phone'),
   address: text('address').notNull(),
   city: text('city').notNull(),
   state: text('state').notNull(),
   zipCode: text('zip_code').notNull(),
   
-  // Employment Eligibility
+  // ✅ CRITICAL EMPLOYEE INFO - ENCRYPTED FIELDS
+  socialSecurityNumber: text('social_security_number').notNull(), // Will be encrypted
+  dateOfBirth: text('date_of_birth').notNull(), // YYYY-MM-DD format
+  driversLicenseNumber: text('drivers_license_number').notNull(),
+  driversLicenseState: text('drivers_license_state').notNull(),
+  
+  // Emergency Contact
+  emergencyContactName: text('emergency_contact_name').notNull(),
+  emergencyContactRelationship: text('emergency_contact_relationship').notNull(),
+  emergencyContactPhone: text('emergency_contact_phone').notNull(),
+  emergencyContactAddress: text('emergency_contact_address'),
+  
+  // Employment Information
+  desiredSalary: text('desired_salary'),
+  availableStartDate: text('available_start_date').notNull(), // YYYY-MM-DD format
+  hoursAvailable: text('hours_available').notNull(), // 'full-time', 'part-time', 'either'
+  shiftPreference: text('shift_preference').notNull(), // 'day', 'evening', 'night', 'rotating', 'any'
+  
+  // Additional Information
+  hasTransportation: boolean('has_transportation').notNull(),
+  hasBeenConvicted: boolean('has_been_convicted').notNull(),
+  convictionDetails: text('conviction_details'),
+  hasPreviouslyWorkedHere: boolean('has_previously_worked_here').notNull(),
+  previousWorkDetails: text('previous_work_details'),
+  
+  // Employment Eligibility - EXPANDED
   eligibleToWork: boolean('eligible_to_work').notNull(),
   requiresSponsorship: boolean('requires_sponsorship').default(false),
+  
+  // ✅ EMPLOYMENT CONSENTS
+  consentToBackgroundCheck: boolean('consent_to_background_check').notNull(),
+  consentToDrugTest: boolean('consent_to_drug_test').notNull(),
+  consentToReferenceCheck: boolean('consent_to_reference_check').notNull(),
+  consentToEmploymentVerification: boolean('consent_to_employment_verification').notNull(),
+  
+  // I-9 Documentation
+  hasValidI9Documents: boolean('has_valid_i9_documents').notNull(),
+  
+  // Chemical Industry Specific
+  hasHazmatExperience: boolean('has_hazmat_experience').notNull(),
+  hasForkliftCertification: boolean('has_forklift_certification').notNull(),
+  hasChemicalHandlingExperience: boolean('has_chemical_handling_experience').notNull(),
+  willingToObtainCertifications: boolean('willing_to_obtain_certifications').notNull(),
   
   // Files
   resumeUrl: text('resume_url'),

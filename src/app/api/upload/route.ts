@@ -122,28 +122,76 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Basic content scanning for malicious files
+    // ✅ SECURITY FIX: Enhanced content scanning for malicious files
     const fileBuffer = Buffer.from(await file.arrayBuffer());
-    const suspiciousPatterns = [
-      /<script/i,
-      /javascript:/i,
-      /vbscript:/i,
-      /onclick/i,
-      /onerror/i,
-      /onload/i,
-      /eval\(/i,
-      /document\.write/i
-    ];
-
-    const fileContent = fileBuffer.toString('utf-8', 0, Math.min(fileBuffer.length, 1024));
-    for (const pattern of suspiciousPatterns) {
-      if (pattern.test(fileContent)) {
-        console.warn(`🔒 Suspicious file content detected in upload from ${request.ip}: ${file.name}`);
+    
+    // Check file signature (magic bytes) to prevent MIME type spoofing
+    const fileSignature = fileBuffer.subarray(0, 8).toString('hex');
+    const validSignatures = {
+      'pdf': ['255044462d'], // %PDF-
+      'docx': ['504b0304'], // ZIP header (DOCX is ZIP-based)
+      'doc': ['d0cf11e0a1b11ae1'], // MS Office compound document
+      'jpg': ['ffd8ff'], // JPEG
+      'png': ['89504e47'], // PNG
+      'gif': ['474946'] // GIF
+    };
+    
+    const expectedExtension = file.name.split('.').pop()?.toLowerCase();
+    if (expectedExtension && validSignatures[expectedExtension as keyof typeof validSignatures]) {
+      const validSigs = validSignatures[expectedExtension as keyof typeof validSignatures];
+      const isValidSignature = validSigs.some(sig => fileSignature.toLowerCase().startsWith(sig));
+      
+      if (!isValidSignature) {
+        console.warn(`🔒 File signature mismatch for ${file.name}: expected ${expectedExtension}, got ${fileSignature}`);
         return NextResponse.json(
-          { error: 'File content not allowed' },
+          { error: 'File signature does not match extension' },
           { status: 400 }
         );
       }
+    }
+    
+    // ✅ SECURITY FIX: Scan entire file content, not just first 1KB
+    const suspiciousPatterns = [
+      /<script[^>]*>/i,
+      /javascript:/i,
+      /vbscript:/i,
+      /on(click|load|error|mouse)/i,
+      /eval\s*\(/i,
+      /document\.(write|cookie)/i,
+      /%3cscript/i, // URL encoded script
+      /&#x3c;script/i, // HTML entity encoded
+      /\.exe\s*$/i,
+      /\.bat\s*$/i,
+      /\.cmd\s*$/i,
+      /\.scr\s*$/i,
+      /\.vbs\s*$/i,
+      /powershell/i,
+      /cmd\.exe/i,
+      /system32/i
+    ];
+    
+    // Scan larger portion of file content (up to 10KB)
+    const scanSize = Math.min(fileBuffer.length, 10 * 1024);
+    const fileContent = fileBuffer.toString('utf-8', 0, scanSize);
+    const threats: string[] = [];
+    
+    suspiciousPatterns.forEach((pattern, index) => {
+      if (pattern.test(fileContent)) {
+        threats.push(`Suspicious pattern ${index + 1} detected`);
+      }
+    });
+    
+    // ✅ SECURITY FIX: Check for embedded files and polyglots
+    if (fileContent.includes('PK\x03\x04') && !file.type.includes('zip') && !file.type.includes('office')) {
+      threats.push('Potential embedded ZIP/Office file detected');
+    }
+    
+    if (threats.length > 0) {
+      console.warn(`🔒 Malicious content detected in upload from ${request.ip}: ${file.name}`, threats);
+      return NextResponse.json(
+        { error: 'File contains suspicious content and was rejected', threats },
+        { status: 400 }
+      );
     }
 
     // Validate application ID using Zod schema

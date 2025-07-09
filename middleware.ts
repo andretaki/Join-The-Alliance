@@ -35,7 +35,10 @@ function requireAuth(request: NextRequest): boolean {
   const protectedPaths = [
     '/api/credit-approval',
     '/api/admin',
-    '/admin'
+    '/admin',
+    '/api/employee-applications',  // ✅ SECURITY FIX: Protect employee data
+    '/api/upload',                 // ✅ SECURITY FIX: Protect file uploads
+    '/api/parse-resume'            // ✅ SECURITY FIX: Protect AI processing
   ]
   
   if (!protectedPaths.some(path => pathname.startsWith(path))) {
