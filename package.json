@@ -1,0 +1,52 @@
+{
+  "name": "alliance-form",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "security-test": "node scripts/security-test.js",
+    "security-audit": "npm audit && npm run security-test",
+    "type-check": "tsc --noEmit",
+    "build-secure": "npm run type-check && npm run lint && npm run build"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.817.0",
+    "@aws-sdk/s3-request-presigner": "^3.817.0",
+    "@azure/identity": "^4.10.1",
+    "@azure/msal-node": "^3.6.1",
+    "@google/generative-ai": "^0.24.1",
+    "@hookform/resolvers": "^5.0.1",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
+    "@neondatabase/serverless": "^1.0.0",
+    "@types/react-signature-canvas": "^1.0.7",
+    "@vercel/functions": "^2.2.2",
+    "@vercel/kv": "^3.0.0",
+    "drizzle-orm": "^0.43.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
+    "next": "^14.2.0",
+    "openai": "^4.103.0",
+    "pg": "^8.16.0",
+    "postgres": "^3.4.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.56.4",
+    "react-signature-canvas": "^1.1.0-alpha.2",
+    "zod": "^3.25.23"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "drizzle-kit": "^0.31.1",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.0",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
