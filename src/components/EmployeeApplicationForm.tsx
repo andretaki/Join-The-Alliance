@@ -12,7 +12,7 @@ import { generateTestData, generateTestDataVariations } from '@/lib/test-data';
 const STEPS = [
   { id: 'job', title: 'Position', icon: '💼', description: 'Select your role' },
   { id: 'assessment', title: 'Assessment', icon: '📝', description: 'Role evaluation' },
-  { id: 'personal', title: 'Personal Info', icon: '👤', description: 'Basic details' },
+  { id: 'personal', title: 'Personal', icon: '👤', description: 'Basic details' },
   { id: 'files', title: 'Documents', icon: '📄', description: 'Upload files' },
   { id: 'experience', title: 'Experience', icon: '🏢', description: 'Work history' },
   { id: 'education', title: 'Education', icon: '🎓', description: 'Academic background' },
