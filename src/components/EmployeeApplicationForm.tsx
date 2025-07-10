@@ -432,7 +432,7 @@ export default function EmployeeApplicationForm() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Rate your experience with TMS MyCarrier (Transportation Management System)
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select experience level</option>
                     <option value="none">Never used</option>
                     <option value="basic">Basic - Can navigate and perform simple tasks</option>
@@ -457,7 +457,7 @@ export default function EmployeeApplicationForm() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Amazon Seller Central experience level
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select experience level</option>
                     <option value="none">No experience</option>
                     <option value="basic">Basic - Can view orders and basic account management</option>
@@ -470,7 +470,7 @@ export default function EmployeeApplicationForm() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Rate your proficiency with Microsoft Excel for data analysis and reporting
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select proficiency level</option>
                     <option value="basic">Basic - Can create simple spreadsheets and basic formulas</option>
                     <option value="intermediate">Intermediate - Can use VLOOKUP, pivot tables, and charts</option>
@@ -620,7 +620,7 @@ export default function EmployeeApplicationForm() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     In your experience, what's the most important factor in maintaining customer loyalty in B2B sales?
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select your answer</option>
                     <option value="pricing">Competitive pricing</option>
                     <option value="reliability">Consistent delivery and quality</option>
@@ -673,7 +673,7 @@ export default function EmployeeApplicationForm() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Can you lift 50+ pounds regularly throughout your shift?
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select answer</option>
                     <option value="yes">Yes, comfortably</option>
                     <option value="sometimes">Yes, with some difficulty</option>
@@ -685,7 +685,7 @@ export default function EmployeeApplicationForm() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Are you comfortable working in a chemical warehouse environment with proper PPE?
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select answer</option>
                     <option value="yes">Yes, I have experience</option>
                     <option value="willing">Yes, willing to learn</option>
