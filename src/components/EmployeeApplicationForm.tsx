@@ -42,7 +42,7 @@ export default function EmployeeApplicationForm() {
     resolver: zodResolver(employeeApplicationSchema),
     mode: 'onChange',
     defaultValues: {
-      jobPostingId: undefined,
+      jobPostingId: 0,
       personalInfo: {
         firstName: '',
         lastName: '',
