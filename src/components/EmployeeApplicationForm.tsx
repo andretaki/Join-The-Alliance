@@ -2313,8 +2313,8 @@ export default function EmployeeApplicationForm() {
                           )}
                         </button>
                         
-                        <div className="mt-3 text-center max-w-24">
-                          <div className={`text-sm font-medium transition-colors ${
+                        <div className="mt-3 text-center max-w-20 sm:max-w-24">
+                          <div className={`text-xs sm:text-sm font-medium transition-colors leading-tight ${
                             isCompleted || isCurrent ? 'text-blue-600' : 'text-gray-500'
                           }`}>
                             {step.title}
