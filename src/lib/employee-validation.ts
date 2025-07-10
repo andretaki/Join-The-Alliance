@@ -16,8 +16,9 @@ export const personalInfoSchema = z.object({
   // ✅ CRITICAL EMPLOYEE INFO
   socialSecurityNumber: z.string().regex(/^\d{3}-\d{2}-\d{4}$/, 'SSN must be in XXX-XX-XXXX format'),
   dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date of birth must be in YYYY-MM-DD format'),
-  driversLicenseNumber: z.string().min(1, 'Driver\'s license number is required').max(20, 'License number too long'),
-  driversLicenseState: z.string().min(2, 'License state is required').max(2, 'Use 2-letter state code'),
+  hasDriversLicense: z.boolean().default(true),
+  driversLicenseNumber: z.string().max(20, 'License number too long').optional(),
+  driversLicenseState: z.string().max(2, 'Use 2-letter state code').optional(),
   
   // Emergency Contact
   emergencyContactName: z.string().min(1, 'Emergency contact name is required').max(100, 'Name too long'),
@@ -26,7 +27,9 @@ export const personalInfoSchema = z.object({
   emergencyContactAddress: z.string().max(200, 'Address too long').optional(),
   
   // Employment Information
+  compensationType: z.enum(['salary', 'hourly']).default('salary'),
   desiredSalary: z.string().max(20, 'Salary expectation too long').optional(),
+  desiredHourlyRate: z.string().max(20, 'Hourly rate too long').optional(),
   availableStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Start date must be in YYYY-MM-DD format'),
   hoursAvailable: z.enum(['full-time', 'part-time', 'either'], { 
     errorMap: () => ({ message: 'Please select hours available' }) 
@@ -41,6 +44,16 @@ export const personalInfoSchema = z.object({
   convictionDetails: z.string().max(500, 'Details too long').optional(),
   hasPreviouslyWorkedHere: z.boolean(),
   previousWorkDetails: z.string().max(500, 'Details too long').optional(),
+}).refine((data) => {
+  // If user has a driver's license, then license number and state are required
+  if (data.hasDriversLicense) {
+    return data.driversLicenseNumber && data.driversLicenseNumber.length > 0 && 
+           data.driversLicenseState && data.driversLicenseState.length === 2;
+  }
+  return true;
+}, {
+  message: 'Driver\'s license number and state are required when you have a driver\'s license',
+  path: ['driversLicenseNumber'], // This will show the error on the license number field
 });
 
 // Employment Eligibility Schema - EXPANDED
@@ -162,7 +175,10 @@ export const adminUserSchema = z.object({
 });
 
 // Form Step Validation Schemas (for multi-step form)
-export const stepPersonalInfoSchema = personalInfoSchema.merge(eligibilitySchema);
+export const stepPersonalInfoSchema = z.object({
+  personalInfo: personalInfoSchema,
+  eligibility: eligibilitySchema,
+});
 
 export const stepWorkExperienceSchema = z.object({
   workExperience: z.array(workExperienceSchema).min(1, 'At least one work experience is required'),

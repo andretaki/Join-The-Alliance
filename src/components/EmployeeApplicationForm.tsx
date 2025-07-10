@@ -54,11 +54,13 @@ export default function EmployeeApplicationForm() {
         zipCode: '',
         socialSecurityNumber: '',
         dateOfBirth: '',
+        hasDriversLicense: true,
         driversLicenseNumber: '',
         driversLicenseState: '',
         emergencyContactName: '',
         emergencyContactRelationship: '',
         emergencyContactPhone: '',
+        compensationType: 'salary' as const,
         availableStartDate: '',
         hoursAvailable: 'full-time' as const,
         shiftPreference: 'day' as const,
@@ -266,6 +268,26 @@ export default function EmployeeApplicationForm() {
   const handleTypedSignatureChange = (value: string) => {
     setTypedSignature(value);
     setValue('signatureDataUrl', value);
+  };
+
+  // Format SSN to XXX-XX-XXXX format
+  const formatSSN = (value: string) => {
+    // Remove all non-digits
+    const digits = value.replace(/\D/g, '');
+    
+    // Format as XXX-XX-XXXX
+    if (digits.length <= 3) {
+      return digits;
+    } else if (digits.length <= 5) {
+      return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    } else {
+      return `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5, 9)}`;
+    }
+  };
+
+  const handleSSNChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatSSN(e.target.value);
+    setValue('personalInfo.socialSecurityNumber', formatted);
   };
 
   const onSubmit = async (data: EmployeeApplicationForm) => {
@@ -823,6 +845,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="text"
               {...register('personalInfo.socialSecurityNumber')}
+              onChange={handleSSNChange}
               placeholder="XXX-XX-XXXX"
               maxLength={11}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -844,29 +867,46 @@ export default function EmployeeApplicationForm() {
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Driver's License Number *</label>
-            <input
-              type="text"
-              {...register('personalInfo.driversLicenseNumber')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.personalInfo?.driversLicenseNumber && (
-              <p className="mt-1 text-sm text-red-600">{errors.personalInfo.driversLicenseNumber.message}</p>
-            )}
-          </div>
+          <div className="md:col-span-2">
+            <div className="flex items-center space-x-3 mb-4">
+              <input
+                type="checkbox"
+                {...register('personalInfo.hasDriversLicense')}
+                className="w-4 h-4 text-blue-600 rounded"
+              />
+              <label className="text-sm font-medium text-gray-700">
+                I have a valid driver's license
+              </label>
+            </div>
+            
+            {watchedValues.personalInfo?.hasDriversLicense && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Driver's License Number *</label>
+                  <input
+                    type="text"
+                    {...register('personalInfo.driversLicenseNumber')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {errors.personalInfo?.driversLicenseNumber && (
+                    <p className="mt-1 text-sm text-red-600">{errors.personalInfo.driversLicenseNumber.message}</p>
+                  )}
+                </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">License State *</label>
-            <input
-              type="text"
-              {...register('personalInfo.driversLicenseState')}
-              placeholder="TX"
-              maxLength={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.personalInfo?.driversLicenseState && (
-              <p className="mt-1 text-sm text-red-600">{errors.personalInfo.driversLicenseState.message}</p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">License State *</label>
+                  <input
+                    type="text"
+                    {...register('personalInfo.driversLicenseState')}
+                    placeholder="TX"
+                    maxLength={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {errors.personalInfo?.driversLicenseState && (
+                    <p className="mt-1 text-sm text-red-600">{errors.personalInfo.driversLicenseState.message}</p>
+                  )}
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -984,13 +1024,35 @@ export default function EmployeeApplicationForm() {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Employment Preferences</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Desired Salary</label>
-            <input
-              type="text"
-              {...register('personalInfo.desiredSalary')}
-              placeholder="$XX,XXX or Negotiable"
+            <label className="block text-sm font-medium text-gray-700 mb-2">Compensation Type</label>
+            <select
+              {...register('personalInfo.compensationType')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            >
+              <option value="salary">Annual Salary</option>
+              <option value="hourly">Hourly Rate</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {watchedValues.personalInfo?.compensationType === 'hourly' ? 'Desired Hourly Rate' : 'Desired Salary'}
+            </label>
+            {watchedValues.personalInfo?.compensationType === 'hourly' ? (
+              <input
+                type="text"
+                {...register('personalInfo.desiredHourlyRate')}
+                placeholder="$XX.XX/hour or Negotiable"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            ) : (
+              <input
+                type="text"
+                {...register('personalInfo.desiredSalary')}
+                placeholder="$XX,XXX or Negotiable"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            )}
           </div>
 
           <div>

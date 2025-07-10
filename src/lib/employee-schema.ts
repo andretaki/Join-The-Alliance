@@ -39,8 +39,9 @@ export const employeeApplications = employeeSchema.table('employee_applications'
   // ✅ CRITICAL EMPLOYEE INFO - ENCRYPTED FIELDS
   socialSecurityNumber: text('social_security_number').notNull(), // Will be encrypted
   dateOfBirth: text('date_of_birth').notNull(), // YYYY-MM-DD format
-  driversLicenseNumber: text('drivers_license_number').notNull(),
-  driversLicenseState: text('drivers_license_state').notNull(),
+  hasDriversLicense: boolean('has_drivers_license').default(true),
+  driversLicenseNumber: text('drivers_license_number'), // Optional now
+  driversLicenseState: text('drivers_license_state'), // Optional now
   
   // Emergency Contact
   emergencyContactName: text('emergency_contact_name').notNull(),
@@ -49,7 +50,9 @@ export const employeeApplications = employeeSchema.table('employee_applications'
   emergencyContactAddress: text('emergency_contact_address'),
   
   // Employment Information
+  compensationType: text('compensation_type').default('salary'), // 'salary' or 'hourly'
   desiredSalary: text('desired_salary'),
+  desiredHourlyRate: text('desired_hourly_rate'),
   availableStartDate: text('available_start_date').notNull(), // YYYY-MM-DD format
   hoursAvailable: text('hours_available').notNull(), // 'full-time', 'part-time', 'either'
   shiftPreference: text('shift_preference').notNull(), // 'day', 'evening', 'night', 'rotating', 'any'
