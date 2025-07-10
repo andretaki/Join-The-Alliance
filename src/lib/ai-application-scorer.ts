@@ -303,7 +303,15 @@ Extract and return in JSON format:
     const content = response.choices[0]?.message?.content;
     if (!content) throw new Error('No response from AI');
 
-    return JSON.parse(content);
+    return safeJSONParse(content, {
+      tmsExperience: false,
+      shopifyExperience: false,
+      amazonExperience: false,
+      warehouseExperience: false,
+      chemicalExperience: false,
+      customerServiceYears: 0,
+      relevantSkills: []
+    });
   } catch (error) {
     console.error('Resume analysis error:', error);
     return {
@@ -351,7 +359,11 @@ Return as JSON array: ["Question 1", "Question 2", ...]
     const content = response.choices[0]?.message?.content;
     if (!content) throw new Error('No response from AI');
 
-    return JSON.parse(content);
+    return safeJSONParse(content, [
+      'Tell me about your relevant experience for this role',
+      'How do you handle challenging situations?',
+      'What interests you about working in chemical distribution?'
+    ]);
   } catch (error) {
     console.error('Question generation error:', error);
     return [

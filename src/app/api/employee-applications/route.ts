@@ -1,20 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
 import * as crypto from 'crypto';
-import { 
-  employeeApplications, 
-  workExperience, 
-  education, 
-  references, 
-  employeeSignatures, 
-  applicationFiles,
-  emailNotifications
-} from '@/lib/schema';
-import { employeeApplicationSchema } from '@/lib/employee-validation';
-import { eq } from 'drizzle-orm';
+
+// Force this API route to be dynamic to prevent static analysis issues
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  // Detect build-time calls and return early
+  // During build, the request doesn't have a proper user agent
+  const userAgent = request.headers.get('user-agent') || '';
+  if (!userAgent || userAgent.includes('Next.js')) {
+    return NextResponse.json({ message: 'Build-time call detected' }, { status: 200 });
+  }
+
   try {
+    // Dynamic imports to prevent build-time issues
+    const { db } = await import('@/lib/db');
+    const { 
+      employeeApplications, 
+      workExperience, 
+      education, 
+      references, 
+      employeeSignatures, 
+      applicationFiles,
+      emailNotifications
+    } = await import('@/lib/schema');
+    const { employeeApplicationSchema } = await import('@/lib/employee-validation');
+    const { eq } = await import('drizzle-orm');
+    const { safeJSONParse } = await import('@/lib/safe-json');
+
     // 1. Ensure request is multipart/form-data
     const contentType = request.headers.get('content-type') || '';
     if (!contentType.includes('multipart/form-data')) {
@@ -24,8 +37,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Pull formData
-    const formData = await request.formData();
+    // 2. Pull formData - Handle build-time errors gracefully
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+    } catch (formDataError) {
+      console.warn('Failed to parse form data (likely build-time call):', formDataError);
+      return NextResponse.json(
+        { error: 'Invalid form data' },
+        { status: 400 }
+      );
+    }
+
     const rawApplicationData = formData.get('applicationData');
     const resumeFile = formData.get('resume') as File | null;
     const idPhotoFile = formData.get('idPhoto') as File | null;
@@ -49,7 +72,7 @@ export async function POST(request: NextRequest) {
         throw new Error('applicationData is empty or undefined');
       }
       
-      applicationData = JSON.parse(rawApplicationData);
+      applicationData = safeJSONParse(rawApplicationData, {});
     } catch (err) {
       console.error('Invalid applicationData JSON:', rawApplicationData, err);
       return NextResponse.json(
@@ -222,6 +245,11 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    // Dynamic imports to prevent build-time issues
+    const { db } = await import('@/lib/db');
+    const { employeeApplications } = await import('@/lib/schema');
+    const { eq } = await import('drizzle-orm');
+
     const { searchParams } = new URL(request.url);
     const applicationId = searchParams.get('id');
 

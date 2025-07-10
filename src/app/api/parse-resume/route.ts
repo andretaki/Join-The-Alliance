@@ -1,14 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { OpenAI } from 'openai';
-import { safeJSONParse } from '@/lib/safe-json';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Force this API route to be dynamic to prevent static analysis issues
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  // Detect build-time calls and return early
+  // During build, the request doesn't have a proper user agent
+  const userAgent = request.headers.get('user-agent') || '';
+  if (!userAgent || userAgent.includes('Next.js')) {
+    return NextResponse.json({ message: 'Build-time call detected' }, { status: 200 });
+  }
+
   try {
-    const formData = await request.formData();
+    // Dynamic imports to prevent build-time issues
+    const { OpenAI } = await import('openai');
+    const { safeJSONParse } = await import('@/lib/safe-json');
+    
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    // Handle build-time errors gracefully
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+    } catch (formDataError) {
+      console.warn('Failed to parse form data (likely build-time call):', formDataError);
+      return NextResponse.json(
+        { error: 'Invalid form data' },
+        { status: 400 }
+      );
+    }
+
     const resumeFile = formData.get('resume') as File;
 
     if (!resumeFile) {
@@ -19,7 +42,7 @@ export async function POST(request: NextRequest) {
     const resumeText = await extractTextFromFile(resumeFile);
 
     // Use OpenAI to parse the resume
-    const parsedData = await parseResumeWithAI(resumeText);
+    const parsedData = await parseResumeWithAI(resumeText, openai, safeJSONParse);
 
     return NextResponse.json(parsedData);
 
@@ -45,7 +68,7 @@ async function extractTextFromFile(file: File): Promise<string> {
   return text;
 }
 
-async function parseResumeWithAI(resumeText: string) {
+async function parseResumeWithAI(resumeText: string, openai: any, safeJSONParse: any) {
   const prompt = `
     Parse the following resume and extract structured information. Return a JSON object with the following structure:
 

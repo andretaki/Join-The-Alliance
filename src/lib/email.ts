@@ -5,11 +5,13 @@ import { queueEmail, processEmailQueue, checkKVConnection } from '@/lib/email-qu
 const FORCE_DIRECT_SEND = true; // Temporary flag
 
 // Validate critical email configuration in production
-if (process.env.NODE_ENV === 'production') {
-  if (!process.env.EMAIL_FORM) {
-    const message = 'FATAL ERROR: EMAIL_FORM environment variable is required in production for sending form submissions.';
-    console.error(message);
-    throw new Error(message);
+function validateEmailConfig() {
+  if (process.env.NODE_ENV === 'production') {
+    if (!process.env.EMAIL_FORM) {
+      const message = 'FATAL ERROR: EMAIL_FORM environment variable is required in production for sending form submissions.';
+      console.error(message);
+      throw new Error(message);
+    }
   }
 }
 
@@ -212,6 +214,9 @@ export async function sendEmail(data: EmailDataBase, options?: {
   type?: 'application_summary' | 'ai_analysis' | 'approval_notification' | 'test';
   immediate?: boolean; // Skip queue for immediate sending
 }) {
+  // Validate configuration when actually sending email
+  validateEmailConfig();
+  
   console.log('📧 Email Service: Starting email send process');
   console.log(`📧 Email type: ${options?.type || 'test'}, Immediate: ${options?.immediate || false}`);
   
