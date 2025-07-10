@@ -15,6 +15,16 @@ export async function POST(request: NextRequest) {
   try {
     // Dynamic imports to prevent build-time issues
     const { db } = await import('@/lib/db');
+    
+    // Check if database is available
+    if (!db) {
+      console.error('Database connection is not available');
+      return NextResponse.json(
+        { error: 'Database service temporarily unavailable' },
+        { status: 503 }
+      );
+    }
+    
     const { 
       employeeApplications, 
       workExperience, 
@@ -113,16 +123,66 @@ export async function POST(request: NextRequest) {
       // 1. Insert main application
       const [application] = await tx.insert(employeeApplications).values({
         jobPostingId: validatedData.jobPostingId,
+        
+        // Personal Information
         firstName: validatedData.personalInfo.firstName,
         lastName: validatedData.personalInfo.lastName,
+        middleName: validatedData.personalInfo.middleName || null,
         email: validatedData.personalInfo.email,
         phone: validatedData.personalInfo.phone,
+        alternatePhone: validatedData.personalInfo.alternatePhone || null,
         address: validatedData.personalInfo.address,
         city: validatedData.personalInfo.city,
         state: validatedData.personalInfo.state,
         zipCode: validatedData.personalInfo.zipCode,
+        
+        // Critical Employee Info
+        socialSecurityNumber: validatedData.personalInfo.socialSecurityNumber,
+        dateOfBirth: validatedData.personalInfo.dateOfBirth,
+        hasDriversLicense: validatedData.personalInfo.hasDriversLicense,
+        driversLicenseNumber: validatedData.personalInfo.driversLicenseNumber || null,
+        driversLicenseState: validatedData.personalInfo.driversLicenseState || null,
+        
+        // Emergency Contact
+        emergencyContactName: validatedData.personalInfo.emergencyContactName,
+        emergencyContactRelationship: validatedData.personalInfo.emergencyContactRelationship,
+        emergencyContactPhone: validatedData.personalInfo.emergencyContactPhone,
+        emergencyContactAddress: validatedData.personalInfo.emergencyContactAddress || null,
+        
+        // Employment Information
+        compensationType: validatedData.personalInfo.compensationType,
+        desiredSalary: validatedData.personalInfo.desiredSalary || null,
+        desiredHourlyRate: validatedData.personalInfo.desiredHourlyRate || null,
+        availableStartDate: validatedData.personalInfo.availableStartDate,
+        hoursAvailable: validatedData.personalInfo.hoursAvailable,
+        shiftPreference: validatedData.personalInfo.shiftPreference,
+        
+        // Additional Information
+        hasTransportation: validatedData.personalInfo.hasTransportation,
+        hasBeenConvicted: validatedData.personalInfo.hasBeenConvicted,
+        convictionDetails: validatedData.personalInfo.convictionDetails || null,
+        hasPreviouslyWorkedHere: validatedData.personalInfo.hasPreviouslyWorkedHere,
+        previousWorkDetails: validatedData.personalInfo.previousWorkDetails || null,
+        
+        // Employment Eligibility
         eligibleToWork: validatedData.eligibility.eligibleToWork,
         requiresSponsorship: validatedData.eligibility.requiresSponsorship,
+        consentToBackgroundCheck: validatedData.eligibility.consentToBackgroundCheck,
+        consentToDrugTest: validatedData.eligibility.consentToDrugTest,
+        consentToReferenceCheck: validatedData.eligibility.consentToReferenceCheck,
+        consentToEmploymentVerification: validatedData.eligibility.consentToEmploymentVerification,
+        hasValidI9Documents: validatedData.eligibility.hasValidI9Documents,
+        
+        // Chemical Industry Specific
+        hasHazmatExperience: validatedData.eligibility.hasHazmatExperience,
+        hasForkliftCertification: validatedData.eligibility.hasForkliftCertification,
+        hasChemicalHandlingExperience: validatedData.eligibility.hasChemicalHandlingExperience,
+        willingToObtainCertifications: validatedData.eligibility.willingToObtainCertifications,
+        
+        // Additional info
+        aiSummary: validatedData.additionalInfo || null,
+        
+        // Metadata
         ipAddress,
         userAgent,
         applicationCompletedAt: new Date(),

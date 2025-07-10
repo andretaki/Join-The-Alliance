@@ -110,6 +110,38 @@ export const referenceSchema = z.object({
   yearsKnown: z.number().min(0, 'Years known must be positive').max(50, 'Years known too high').optional(),
 });
 
+// ✅ ROLE ASSESSMENT Schema - Customer Service Specialist
+export const roleAssessmentSchema = z.object({
+  // Technical Platform Experience
+  tmsMyCarrierExperience: z.enum(['none', 'basic', 'intermediate', 'advanced', 'expert']).optional(),
+  shopifyExperience: z.string().max(1000, 'Shopify experience too long').optional(),
+  amazonSellerCentralExperience: z.enum(['none', 'basic', 'intermediate', 'advanced']).optional(),
+  excelProficiency: z.enum(['basic', 'intermediate', 'advanced']).optional(),
+  canvaExperience: z.string().max(500, 'Canva experience too long').optional(),
+  
+  // Personal Work Style Assessment
+  learningUnderPressure: z.string().max(1000, 'Learning under pressure response too long').optional(),
+  conflictingInformation: z.string().max(1000, 'Conflicting information response too long').optional(),
+  workMotivation: z.string().max(1000, 'Work motivation response too long').optional(),
+  
+  // Customer Service Scenarios
+  delayedShipmentScenario: z.string().max(1000, 'Delayed shipment scenario response too long').optional(),
+  restrictedChemicalScenario: z.string().max(1000, 'Restricted chemical scenario response too long').optional(),
+  hazmatFreightScenario: z.string().max(1000, 'Hazmat freight scenario response too long').optional(),
+  customerQuoteScenario: z.string().max(1500, 'Customer quote scenario response too long').optional(),
+  
+  // Personal & Professional Assessment
+  softwareLearningExperience: z.string().max(1000, 'Software learning experience too long').optional(),
+  customerServiceMotivation: z.array(z.string()).max(10, 'Too many motivations selected').optional(),
+  stressManagement: z.string().max(1000, 'Stress management response too long').optional(),
+  automationIdeas: z.string().max(1000, 'Automation ideas response too long').optional(),
+  
+  // Advanced Role Assessment
+  b2bLoyaltyFactor: z.enum(['reliability', 'communication', 'expertise', 'pricing', 'relationships']).optional(),
+  dataAnalysisApproach: z.string().max(1000, 'Data analysis approach too long').optional(),
+  idealWorkEnvironment: z.string().max(1000, 'Ideal work environment response too long').optional(),
+});
+
 // File Upload Schema
 export const fileUploadSchema = z.object({
   file: z.instanceof(File),
@@ -132,6 +164,9 @@ export const employeeApplicationSchema = z.object({
   
   // Personal Information
   personalInfo: personalInfoSchema,
+  
+  // ✅ ROLE ASSESSMENT - Customer Service Specialist
+  roleAssessment: roleAssessmentSchema,
   
   // Employment Eligibility
   eligibility: eligibilitySchema,
@@ -247,6 +282,7 @@ export type PersonalInfo = z.infer<typeof personalInfoSchema>;
 export type WorkExperience = z.infer<typeof workExperienceSchema>;
 export type Education = z.infer<typeof educationSchema>;
 export type Reference = z.infer<typeof referenceSchema>;
+export type RoleAssessment = z.infer<typeof roleAssessmentSchema>;
 export type EmployeeApplicationForm = z.infer<typeof employeeApplicationSchema>;
 export type JobPostingForm = z.infer<typeof jobPostingSchema>;
 export type AdminUserForm = z.infer<typeof adminUserSchema>;

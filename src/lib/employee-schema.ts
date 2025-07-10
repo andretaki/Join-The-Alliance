@@ -83,6 +83,36 @@ export const employeeApplications = employeeSchema.table('employee_applications'
   hasChemicalHandlingExperience: boolean('has_chemical_handling_experience').notNull(),
   willingToObtainCertifications: boolean('willing_to_obtain_certifications').notNull(),
   
+  // ✅ ROLE ASSESSMENT - Customer Service Specialist
+  // Technical Platform Experience
+  tmsMyCarrierExperience: text('tms_mycarrier_experience'), // none, basic, intermediate, advanced, expert
+  shopifyExperience: text('shopify_experience'), // Detailed text response
+  amazonSellerCentralExperience: text('amazon_seller_central_experience'), // none, basic, intermediate, advanced
+  excelProficiency: text('excel_proficiency'), // basic, intermediate, advanced - general business software proficiency
+  canvaExperience: text('canva_experience'), // Detailed text response
+  
+  // Personal Work Style Assessment
+  learningUnderPressure: text('learning_under_pressure'), // Detailed text response
+  conflictingInformation: text('conflicting_information'), // Detailed text response
+  workMotivation: text('work_motivation'), // Detailed text response
+  
+  // Customer Service Scenarios
+  delayedShipmentScenario: text('delayed_shipment_scenario'), // Detailed text response
+  restrictedChemicalScenario: text('restricted_chemical_scenario'), // Detailed text response
+  hazmatFreightScenario: text('hazmat_freight_scenario'), // Detailed text response
+  customerQuoteScenario: text('customer_quote_scenario'), // Detailed text response
+  
+  // Personal & Professional Assessment
+  softwareLearningExperience: text('software_learning_experience'), // Detailed text response
+  customerServiceMotivation: text('customer_service_motivation'), // JSON array of selected options
+  stressManagement: text('stress_management'), // Detailed text response
+  automationIdeas: text('automation_ideas'), // Detailed text response
+  
+  // Advanced Role Assessment
+  b2bLoyaltyFactor: text('b2b_loyalty_factor'), // reliability, communication, expertise, pricing, relationships
+  dataAnalysisApproach: text('data_analysis_approach'), // Detailed text response
+  idealWorkEnvironment: text('ideal_work_environment'), // Detailed text response
+  
   // Files
   resumeUrl: text('resume_url'),
   idPhotoUrl: text('id_photo_url'),
@@ -193,10 +223,11 @@ export const adminUsers = employeeSchema.table('admin_users', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-// Indexes for better performance
-export const employeeApplicationsEmailIndex = index('employee_applications_email_idx').on(employeeApplications.email);
-export const employeeApplicationsJobPostingIndex = index('employee_applications_job_posting_idx').on(employeeApplications.jobPostingId);
-export const jobPostingsActiveIndex = index('job_postings_active_idx').on(jobPostings.isActive);
+// Indexes for better performance - TEMPORARILY DISABLED TO FIX JSON PARSING ERROR
+// TODO: Re-enable after investigating Drizzle ORM build-time issue
+// export const employeeApplicationsEmailIndex = index('employee_applications_email_idx').on(employeeApplications.email);
+// export const employeeApplicationsJobPostingIndex = index('employee_applications_job_posting_idx').on(employeeApplications.jobPostingId);
+// export const jobPostingsActiveIndex = index('job_postings_active_idx').on(jobPostings.isActive);
 
 // Export types for TypeScript inference
 export type JobPosting = typeof jobPostings.$inferSelect;

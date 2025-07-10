@@ -1,3 +1,5 @@
+
+
 "use client";
 import { useState, useRef, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -5,15 +7,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import SignatureCanvas from 'react-signature-canvas';
 import { employeeApplicationSchema, type EmployeeApplicationForm } from '@/lib/employee-validation';
+import { generateTestData, generateTestDataVariations } from '@/lib/test-data';
 
 const STEPS = [
-  { id: 'job', title: 'Position', icon: '💼' },
-  { id: 'personal', title: 'Personal Info', icon: '👤' },
-  { id: 'files', title: 'Documents', icon: '📄' },
-  { id: 'experience', title: 'Experience', icon: '🏢' },
-  { id: 'education', title: 'Education', icon: '🎓' },
-  { id: 'references', title: 'References', icon: '👥' },
-  { id: 'signature', title: 'Signature', icon: '✍️' }
+  { id: 'job', title: 'Position', icon: '💼', description: 'Select your role' },
+  { id: 'assessment', title: 'Assessment', icon: '📝', description: 'Role evaluation' },
+  { id: 'personal', title: 'Personal Info', icon: '👤', description: 'Basic details' },
+  { id: 'files', title: 'Documents', icon: '📄', description: 'Upload files' },
+  { id: 'experience', title: 'Experience', icon: '🏢', description: 'Work history' },
+  { id: 'education', title: 'Education', icon: '🎓', description: 'Academic background' },
+  { id: 'references', title: 'References', icon: '👥', description: 'Professional contacts' },
+  { id: 'signature', title: 'Signature', icon: '✍️', description: 'Final confirmation' }
 ];
 
 export default function EmployeeApplicationForm() {
@@ -28,6 +32,8 @@ export default function EmployeeApplicationForm() {
   const [typedSignature, setTypedSignature] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isStepValid, setIsStepValid] = useState<boolean[]>(new Array(STEPS.length).fill(false));
+  const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0]));
   const sigCanvas = useRef<SignatureCanvas>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -42,7 +48,28 @@ export default function EmployeeApplicationForm() {
     resolver: zodResolver(employeeApplicationSchema),
     mode: 'onChange',
     defaultValues: {
-      jobPostingId: undefined,
+      jobPostingId: 1, // Customer Service Specialist is the only option
+      roleAssessment: {
+        tmsMyCarrierExperience: undefined,
+        shopifyExperience: '',
+        amazonSellerCentralExperience: undefined,
+        excelProficiency: undefined,
+        canvaExperience: '',
+        learningUnderPressure: '',
+        conflictingInformation: '',
+        workMotivation: '',
+        delayedShipmentScenario: '',
+        restrictedChemicalScenario: '',
+        hazmatFreightScenario: '',
+        customerQuoteScenario: '',
+        softwareLearningExperience: '',
+        customerServiceMotivation: [],
+        stressManagement: '',
+        automationIdeas: '',
+        b2bLoyaltyFactor: undefined,
+        dataAnalysisApproach: '',
+        idealWorkEnvironment: '',
+      },
       personalInfo: {
         firstName: '',
         lastName: '',
@@ -231,13 +258,22 @@ export default function EmployeeApplicationForm() {
 
   const nextStep = () => {
     if (currentStep < STEPS.length - 1) {
-      setCurrentStep(currentStep + 1);
+      const newStep = currentStep + 1;
+      setCurrentStep(newStep);
+      setVisitedSteps(prev => new Set([...prev, newStep]));
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const goToStep = (stepIndex: number) => {
+    if (stepIndex >= 0 && stepIndex < STEPS.length) {
+      setCurrentStep(stepIndex);
+      setVisitedSteps(prev => new Set([...prev, stepIndex]));
     }
   };
 
@@ -290,6 +326,55 @@ export default function EmployeeApplicationForm() {
     setValue('personalInfo.socialSecurityNumber', formatted);
   };
 
+  // Test data population function
+  const populateTestData = (scenario: 'default' | 'entryLevel' | 'experienced' = 'default') => {
+    const testData = scenario === 'default' 
+      ? generateTestData() 
+      : generateTestDataVariations()[scenario];
+
+    // Set personal info
+    Object.entries(testData.personalInfo).forEach(([key, value]) => {
+      setValue(`personalInfo.${key}` as any, value);
+    });
+
+    // Set role assessment
+    Object.entries(testData.roleAssessment).forEach(([key, value]) => {
+      setValue(`roleAssessment.${key}` as any, value);
+    });
+
+    // Set eligibility
+    Object.entries(testData.eligibility).forEach(([key, value]) => {
+      setValue(`eligibility.${key}` as any, value);
+    });
+
+    // Set work experience
+    setValue('workExperience', testData.workExperience);
+
+    // Set education
+    setValue('education', testData.education);
+
+    // Set references
+    setValue('references', testData.references);
+
+    // Set job posting ID
+    setValue('jobPostingId', testData.jobPostingId);
+
+    // Set signature
+    setValue('signatureDataUrl', testData.signatureDataUrl);
+
+    // Set terms agreed
+    setValue('termsAgreed', testData.termsAgreed);
+
+    // Set additional info
+    if (testData.additionalInfo) {
+      setValue('additionalInfo', testData.additionalInfo);
+    }
+
+    // Show success message
+    setSuccessMessage(`Form populated with ${scenario === 'default' ? 'standard' : scenario} test data! You can now navigate through the steps.`);
+    setErrorMessage('');
+  };
+
   const onSubmit = async (data: EmployeeApplicationForm) => {
     setIsSubmitting(true);
     
@@ -329,10 +414,11 @@ export default function EmployeeApplicationForm() {
 
   const renderRoleSpecificQuestions = () => {
     const selectedJob = watchedValues.jobPostingId;
+    console.log('Selected job:', selectedJob); // Debug log
     
-    if (!selectedJob) return null;
-    
-    if (selectedJob === 1) {
+    // Since Customer Service Specialist is the only option and pre-selected, always show the questions
+    // Just always show them since it's the only position
+    if (true) {
       return (
         <div className="mt-8 bg-blue-50 rounded-lg p-6 border border-blue-200">
           <h3 className="text-lg font-semibold text-blue-800 mb-4">Customer Service Role Assessment</h3>
@@ -409,16 +495,6 @@ export default function EmployeeApplicationForm() {
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <h4 className="text-md font-semibold text-gray-800 mb-3">Personal Work Style Assessment</h4>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Describe a time when you had to learn a completely new software system under pressure. How did you approach it?
-                  </label>
-                  <textarea
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Focus on your learning process and adaptation strategies..."
-                  />
-                </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -487,16 +563,6 @@ export default function EmployeeApplicationForm() {
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <h4 className="text-md font-semibold text-gray-800 mb-3">Personal & Professional Assessment</h4>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Describe a time when you had to learn a complex software system quickly. How did you approach it?
-                  </label>
-                  <textarea
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Include the system, timeline, and your learning strategy..."
-                  />
-                </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -693,70 +759,376 @@ export default function EmployeeApplicationForm() {
   };
 
   const renderJobSelection = () => (
-    <div className="space-y-6" ref={(el) => { stepRefs.current[0] = el; }} tabIndex={-1}>
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Position</h2>
-        <p className="text-gray-600">Choose the position you're applying for</p>
+    <div className="space-y-8 animate-fade-in" ref={(el) => { stepRefs.current[0] = el; }} tabIndex={-1}>
+      <div className="text-center">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4">
+          <span className="text-2xl text-white">💼</span>
+        </div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-3">Select Your Position</h2>
+        <p className="text-gray-600 text-lg">Choose the role that matches your career goals</p>
       </div>
       
-      <fieldset className="grid gap-4">
-        <legend className="sr-only">Available Positions</legend>
-        {/* This would be populated from the database */}
-        <div className="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
-          <div className="flex items-center space-x-3">
-            <input
-              type="radio"
-              value="1"
-              id="job-1"
-              {...register('jobPostingId', { 
-                setValueAs: (value: string) => value === "" ? undefined : Number(value)
-              })}
-              className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-              aria-describedby="job-1-description"
-            />
-            <div>
-              <label htmlFor="job-1" className="font-semibold text-gray-900 cursor-pointer">
-                Customer Service Specialist
-              </label>
-              <p id="job-1-description" className="text-sm text-gray-600">Sales & Customer Support</p>
+      <fieldset className="grid gap-6">
+        <legend className="sr-only">Available Position</legend>
+        <div className="group relative">
+          <input
+            type="radio"
+            value="1"
+            id="job-1"
+            {...register('jobPostingId', { 
+              setValueAs: (value: string) => value === "" ? undefined : Number(value)
+            })}
+            className="sr-only peer"
+            aria-describedby="job-1-description"
+            defaultChecked
+          />
+          <label
+            htmlFor="job-1"
+            className="block cursor-pointer rounded-2xl border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-8 transition-all duration-300 hover:border-blue-400 hover:shadow-lg peer-checked:border-blue-500 peer-checked:bg-gradient-to-r peer-checked:from-blue-100 peer-checked:to-indigo-100 peer-checked:shadow-xl peer-focus:ring-4 peer-focus:ring-blue-200"
+          >
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white text-xl group-hover:scale-110 transition-transform duration-200">
+                  📞
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-xl font-bold text-blue-900 mb-2">Customer Service Specialist</h3>
+                <p className="text-blue-700 font-medium mb-3">Sales & Customer Support</p>
+                <p className="text-gray-700 leading-relaxed">
+                  Join our dynamic customer service team and help chemical industry professionals with their orders, 
+                  technical questions, and logistics needs. Perfect for detail-oriented individuals who love problem-solving.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    💰 Competitive Salary
+                  </span>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    🏠 Remote Friendly
+                  </span>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    📈 Growth Opportunities
+                  </span>
+                </div>
+              </div>
+              <div className="flex-shrink-0">
+                <div className="w-6 h-6 border-2 border-blue-300 rounded-full flex items-center justify-center peer-checked:bg-blue-500 peer-checked:border-blue-500 transition-all duration-200">
+                  <div className="w-3 h-3 bg-white rounded-full opacity-0 peer-checked:opacity-100 transition-opacity duration-200"></div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        
-        <div className="border border-gray-200 rounded-lg p-4 hover:border-blue-500 cursor-pointer focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
-          <div className="flex items-center space-x-3">
-            <input
-              type="radio"
-              value="2"
-              id="job-2"
-              {...register('jobPostingId', { 
-                setValueAs: (value: string) => value === "" ? undefined : Number(value)
-              })}
-              className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-              aria-describedby="job-2-description"
-            />
-            <div>
-              <label htmlFor="job-2" className="font-semibold text-gray-900 cursor-pointer">
-                Warehouse Associate
-              </label>
-              <p id="job-2-description" className="text-sm text-gray-600">Operations & Distribution</p>
-            </div>
-          </div>
+          </label>
         </div>
       </fieldset>
-      {errors.jobPostingId && (
-        <p className="text-sm text-red-600" role="alert" aria-live="polite">
-          {errors.jobPostingId.message}
-        </p>
-      )}
       
-      {/* Role-specific questions appear after selection */}
-      {renderRoleSpecificQuestions()}
+      {errors.jobPostingId && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p className="text-sm text-red-600 flex items-center" role="alert" aria-live="polite">
+            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            {errors.jobPostingId.message}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderAssessment = () => (
+    <div className="space-y-6" ref={el => { stepRefs.current[1] = el; }} tabIndex={-1}>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Customer Service Role Assessment</h2>
+        <p className="text-gray-600">Complete the following assessment questions to help us understand your qualifications and approach</p>
+      </div>
+      
+      {/* Tool Experience Questions */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Technical Platform Experience</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Rate your experience with TMS MyCarrier (Transportation Management System)
+            </label>
+            <select 
+              {...register('roleAssessment.tmsMyCarrierExperience')}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select experience level</option>
+              <option value="none">Never used</option>
+              <option value="basic">Basic - Can navigate and perform simple tasks</option>
+              <option value="intermediate">Intermediate - Can handle most customer inquiries</option>
+              <option value="advanced">Advanced - Can troubleshoot and train others</option>
+              <option value="expert">Expert - Can optimize workflows and processes</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Describe your experience with Shopify for order management and customer support
+            </label>
+            <textarea
+              {...register('roleAssessment.shopifyExperience')}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Describe specific tasks you've performed (order tracking, refunds, inventory inquiries, etc.)"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Amazon Seller Central experience level
+            </label>
+            <select 
+              {...register('roleAssessment.amazonSellerCentralExperience')}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select experience level</option>
+              <option value="none">No experience</option>
+              <option value="basic">Basic - Can view orders and basic account management</option>
+              <option value="intermediate">Intermediate - Can handle customer messages and returns</option>
+              <option value="advanced">Advanced - Can manage listings and resolve account issues</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Rate your proficiency with Microsoft Excel for data analysis and reporting
+            </label>
+            <select 
+              {...register('roleAssessment.excelProficiency')}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select proficiency level</option>
+              <option value="basic">Basic - Can learn new software with training and support</option>
+              <option value="intermediate">Intermediate - Comfortable with most business software and help desk tools</option>
+              <option value="advanced">Advanced - Quickly adapt to new systems and can train others</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Describe your experience with Canva for creating customer-facing materials
+            </label>
+            <textarea
+              {...register('roleAssessment.canvaExperience')}
+              rows={2}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Examples: flyers, social media posts, presentations, infographics..."
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* Personal Assessment Questions */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Personal Work Style Assessment</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Describe a time when you had to learn a completely new software system under pressure. How did you approach it?
+            </label>
+            <textarea
+              {...register('roleAssessment.learningUnderPressure')}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Focus on your learning process and adaptation strategies..."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              When you receive conflicting information from different sources (customer, system, supervisor), how do you determine the truth?
+            </label>
+            <textarea
+              {...register('roleAssessment.conflictingInformation')}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Describe your fact-checking and verification process..."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              What motivates you most: solving complex problems, helping people, or achieving measurable results? Explain why.
+            </label>
+            <textarea
+              {...register('roleAssessment.workMotivation')}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Help us understand what drives your work satisfaction..."
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* Scenario-Based Questions */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Service Scenarios</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              A customer calls saying their chemical shipment was delayed and they need it for production tomorrow. The carrier shows it's still in transit. How would you handle this?
+            </label>
+            <textarea
+              {...register('roleAssessment.delayedShipmentScenario')}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Describe your step-by-step approach..."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              You notice a customer has been placing increasingly large orders of a restricted chemical. What actions would you take?
+            </label>
+            <textarea
+              {...register('roleAssessment.restrictedChemicalScenario')}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Consider compliance, documentation, and escalation procedures..."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              A customer questions why their hazardous material shipment costs more than regular freight. How do you explain the additional fees?
+            </label>
+            <textarea
+              {...register('roleAssessment.hazmatFreightScenario')}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Explain your approach to educating customers about hazmat regulations..."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              A potential new customer, Barry from Widgets Inc., has requested a quote. You need to provide pricing for 4 drums of Acetic Acid at $800 per drum, with a total shipping cost of $200 to their location in Brooklyn, New York. Write the exact professional email you would send to Barry.
+            </label>
+            <textarea
+              {...register('roleAssessment.customerQuoteScenario')}
+              rows={6}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Write a professional quote email that presents pricing clearly and encourages the customer to place the order..."
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* Personal Assessment */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Personal & Professional Assessment</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Describe a time when you had to learn a complex software system quickly. How did you approach it?
+            </label>
+            <textarea
+              {...register('roleAssessment.softwareLearningExperience')}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Include the system, timeline, and your learning strategy..."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              What motivates you most in a customer service role? (Select all that apply)
+            </label>
+            <div className="space-y-2">
+              {[
+                'Solving complex problems',
+                'Building long-term customer relationships',
+                'Learning new technologies and processes',
+                'Working with data and analytics',
+                'Helping customers achieve their goals',
+                'Working in a fast-paced environment'
+              ].map((option, index) => (
+                <div key={option} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    {...register('roleAssessment.customerServiceMotivation')}
+                    value={option}
+                    className="w-4 h-4 text-blue-600 rounded"
+                  />
+                  <label className="text-sm text-gray-700">{option}</label>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              How do you handle stress when dealing with multiple urgent customer requests simultaneously?
+            </label>
+            <textarea
+              {...register('roleAssessment.stressManagement')}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Describe your prioritization and stress management techniques..."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              If you could automate one repetitive task in customer service, what would it be and why?
+            </label>
+            <textarea
+              {...register('roleAssessment.automationIdeas')}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Think about efficiency and customer experience improvements..."
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* Advanced Role Assessment */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Advanced Role Assessment</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              In your experience, what's the most important factor in maintaining customer loyalty in B2B sales?
+            </label>
+            <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Select your answer</option>
+              <option value="reliability">Consistent reliability and on-time delivery</option>
+              <option value="communication">Proactive communication and transparency</option>
+              <option value="expertise">Technical expertise and problem-solving</option>
+              <option value="pricing">Competitive pricing and value</option>
+              <option value="relationships">Personal relationships and trust</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              How would you use data from customer interactions to improve service quality?
+            </label>
+            <textarea
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Consider metrics, patterns, and actionable insights..."
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Describe your ideal work environment and team dynamics
+            </label>
+            <textarea
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Include communication style, collaboration preferences, and work pace..."
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 
   const renderPersonalInfo = () => (
-    <div className="space-y-8" ref={el => { stepRefs.current[1] = el; }} tabIndex={-1}>
+    <div className="space-y-8" ref={el => { stepRefs.current[2] = el; }} tabIndex={-1}>
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Personal Information</h2>
         <p className="text-gray-600">Complete employee information required</p>
@@ -766,15 +1138,28 @@ export default function EmployeeApplicationForm() {
       <div className="bg-white rounded-lg p-6 border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
-            <input
-              type="text"
-              {...register('personalInfo.firstName')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div className="group">
+            <label className="block text-sm font-semibold text-gray-700 mb-2 transition-colors group-focus-within:text-blue-600">
+              First Name *
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                {...register('personalInfo.firstName')}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder-gray-400"
+                placeholder="Enter your first name"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                <span className="text-gray-400">👤</span>
+              </div>
+            </div>
             {errors.personalInfo?.firstName && (
-              <p className="mt-1 text-sm text-red-600">{errors.personalInfo.firstName.message}</p>
+              <p className="mt-2 text-sm text-red-600 flex items-center animate-shake">
+                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                {errors.personalInfo.firstName.message}
+              </p>
             )}
           </div>
 
@@ -799,15 +1184,28 @@ export default function EmployeeApplicationForm() {
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-            <input
-              type="email"
-              {...register('personalInfo.email')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div className="group">
+            <label className="block text-sm font-semibold text-gray-700 mb-2 transition-colors group-focus-within:text-blue-600">
+              Email Address *
+            </label>
+            <div className="relative">
+              <input
+                type="email"
+                {...register('personalInfo.email')}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder-gray-400"
+                placeholder="Enter your email address"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                <span className="text-gray-400">📧</span>
+              </div>
+            </div>
             {errors.personalInfo?.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.personalInfo.email.message}</p>
+              <p className="mt-2 text-sm text-red-600 flex items-center animate-shake">
+                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                {errors.personalInfo.email.message}
+              </p>
             )}
           </div>
 
@@ -1326,91 +1724,169 @@ export default function EmployeeApplicationForm() {
   );
 
   const renderFileUploads = () => (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Upload Documents</h2>
-        <p className="text-gray-600">Upload your resume and ID photo</p>
+    <div className="space-y-8 animate-fade-in">
+      <div className="text-center">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full mb-4">
+          <span className="text-2xl text-white">📄</span>
+        </div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-3">Upload Documents</h2>
+        <p className="text-gray-600 text-lg">Help us get to know you better with your documents</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <div className="mb-4">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-semibold mb-2">Resume / CV</h3>
-          <p className="text-sm text-gray-600 mb-4">Upload PDF, DOC, or DOCX (max 10MB)</p>
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={handleResumeUpload}
-            className="hidden"
-            id="resume-upload"
-          />
-          <label
-            htmlFor="resume-upload"
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
-          >
-            Choose File
-          </label>
-          {uploadError && (
-            <p className="mt-2 text-sm text-red-600" role="alert">
-              ⚠️ {uploadError}
-            </p>
-          )}
-          {resumeFile && !uploadError && (
-            <p className="mt-2 text-sm text-green-600">✓ {resumeFile.name}</p>
-          )}
-          {aiParsing && (
-            <div className="mt-2">
-              <p className="text-sm text-blue-600">🤖 AI is parsing your resume...</p>
-              {uploadProgress > 0 && uploadProgress < 100 && (
-                <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${uploadProgress}%` }}
-                  ></div>
-                </div>
-              )}
-              {uploadProgress === 100 && (
-                <p className="text-sm text-green-600 mt-1">✓ Resume parsed successfully!</p>
-              )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Resume Upload */}
+        <div className="group">
+          <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/50 group-hover:shadow-lg">
+            <div className="mb-6">
+              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
             </div>
-          )}
+            
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Resume / CV</h3>
+            <p className="text-sm text-gray-600 mb-6">Upload PDF, DOC, or DOCX (max 10MB)</p>
+            
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleResumeUpload}
+              className="hidden"
+              id="resume-upload"
+            />
+            
+            <label
+              htmlFor="resume-upload"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-lg"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              Choose File
+            </label>
+            
+            <p className="text-xs text-gray-500 mt-3">Or drag and drop your file here</p>
+            
+            {uploadError && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-sm text-red-600 flex items-center" role="alert">
+                  <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  {uploadError}
+                </p>
+              </div>
+            )}
+            
+            {resumeFile && !uploadError && (
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-xl">
+                <p className="text-sm text-green-600 flex items-center">
+                  <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  {resumeFile.name}
+                </p>
+              </div>
+            )}
+            
+            {aiParsing && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <div className="flex items-center justify-center mb-3">
+                  <svg className="w-5 h-5 text-blue-600 animate-spin mr-2" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="text-sm font-medium text-blue-600">AI is parsing your resume...</span>
+                </div>
+                
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                  <div className="w-full bg-blue-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                )}
+                
+                {uploadProgress === 100 && (
+                  <p className="text-sm text-green-600 text-center font-medium">
+                    ✓ Resume parsed successfully! We've pre-filled some fields for you.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <div className="mb-4">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        {/* ID Photo Upload */}
+        <div className="group">
+          <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center transition-all duration-300 hover:border-purple-400 hover:bg-purple-50/50 group-hover:shadow-lg">
+            <div className="mb-6">
+              <div className="w-16 h-16 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-200">
+                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+            
+            <h3 className="text-xl font-bold text-gray-900 mb-2">ID Photo</h3>
+            <p className="text-sm text-gray-600 mb-6">Upload JPG or PNG (max 10MB)</p>
+            
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png"
+              onChange={handleIdUpload}
+              className="hidden"
+              id="id-upload"
+            />
+            
+            <label
+              htmlFor="id-upload"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:from-purple-600 hover:to-purple-700 cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-lg"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              Choose File
+            </label>
+            
+            <p className="text-xs text-gray-500 mt-3">Or drag and drop your photo here</p>
+            
+            {idFile && (
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-xl">
+                <p className="text-sm text-green-600 flex items-center">
+                  <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  {idFile.name}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+        <div className="flex items-start space-x-3">
+          <div className="flex-shrink-0">
+            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold mb-2">ID Photo</h3>
-          <p className="text-sm text-gray-600 mb-4">Upload JPG or PNG (max 10MB)</p>
-          <input
-            type="file"
-            accept=".jpg,.jpeg,.png"
-            onChange={handleIdUpload}
-            className="hidden"
-            id="id-upload"
-          />
-          <label
-            htmlFor="id-upload"
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
-          >
-            Choose File
-          </label>
-          {idFile && (
-            <p className="mt-2 text-sm text-green-600">✓ {idFile.name}</p>
-          )}
+          <div>
+            <h4 className="text-sm font-semibold text-blue-800">Document Privacy & Security</h4>
+            <p className="text-sm text-blue-700 mt-1">
+              Your documents are encrypted and securely stored. We only use them for employment verification purposes and will never share them with third parties without your consent.
+            </p>
+          </div>
         </div>
       </div>
     </div>
   );
 
   const renderWorkExperience = () => (
-    <div className="space-y-6">
+    <div className="space-y-6" ref={el => { stepRefs.current[4] = el; }} tabIndex={-1}>
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Work Experience</h2>
         <p className="text-gray-600">Tell us about your work history</p>
@@ -1510,7 +1986,7 @@ export default function EmployeeApplicationForm() {
   );
 
   const renderEducation = () => (
-    <div className="space-y-6">
+    <div className="space-y-6" ref={el => { stepRefs.current[5] = el; }} tabIndex={-1}>
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Education</h2>
         <p className="text-gray-600">Tell us about your educational background</p>
@@ -1596,7 +2072,7 @@ export default function EmployeeApplicationForm() {
   );
 
   const renderReferences = () => (
-    <div className="space-y-6">
+    <div className="space-y-6" ref={el => { stepRefs.current[6] = el; }} tabIndex={-1}>
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">References</h2>
         <p className="text-gray-600">Provide at least 2 references</p>
@@ -1696,7 +2172,7 @@ export default function EmployeeApplicationForm() {
   );
 
   const renderSignature = () => (
-    <div className="space-y-6">
+    <div className="space-y-6" ref={el => { stepRefs.current[7] = el; }} tabIndex={-1}>
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Digital Signature</h2>
         <p className="text-gray-600">Please sign to complete your application</p>
@@ -1746,100 +2222,279 @@ export default function EmployeeApplicationForm() {
   const renderStepContent = () => {
     switch (currentStep) {
       case 0: return renderJobSelection();
-      case 1: return renderPersonalInfo();
-      case 2: return renderFileUploads();
-      case 3: return renderWorkExperience();
-      case 4: return renderEducation();
-      case 5: return renderReferences();
-      case 6: return renderSignature();
+      case 1: return renderAssessment();
+      case 2: return renderPersonalInfo();
+      case 3: return renderFileUploads();
+      case 4: return renderWorkExperience();
+      case 5: return renderEducation();
+      case 6: return renderReferences();
+      case 7: return renderSignature();
       default: return null;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100 via-transparent to-transparent opacity-70"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-indigo-200 to-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-1000"></div>
+      
+      <div className="relative z-10 container mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <Image
-              src="/WIDE - Color on Transparent _RGB-01.png"
-              alt="Alliance Chemical Logo"
-              width={300}
-              height={75}
-              className="mx-auto mb-4"
-            />
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Employment Application</h1>
-            <p className="text-gray-600">Join the Alliance Chemical team</p>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              {STEPS.map((step, index) => (
-                <div
-                  key={step.id}
-                  className={`flex items-center ${index < STEPS.length - 1 ? 'flex-1' : ''}`}
-                >
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
-                      index <= currentStep
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}
-                  >
-                    {index < currentStep ? '✓' : step.icon}
-                  </div>
-                  <div className="ml-2 hidden sm:block">
-                    <div className={`text-sm font-medium ${
-                      index <= currentStep ? 'text-blue-600' : 'text-gray-500'
-                    }`}>
-                      {step.title}
-                    </div>
-                  </div>
-                  {index < STEPS.length - 1 && (
-                    <div className={`flex-1 h-0.5 mx-4 ${
-                      index < currentStep ? 'bg-blue-600' : 'bg-gray-200'
-                    }`} />
-                  )}
-                </div>
-              ))}
+          <div className="text-center mb-12">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20">
+              <Image
+                src="/WIDE - Color on Transparent _RGB-01.png"
+                alt="Alliance Chemical Logo"
+                width={320}
+                height={80}
+                className="mx-auto mb-6 drop-shadow-sm"
+              />
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-3">
+                Employment Application
+              </h1>
+              <p className="text-gray-600 text-lg font-medium">Join the Alliance Chemical team and grow your career with us</p>
+              <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-500">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <span>Secure & Encrypted Application Process</span>
+              </div>
             </div>
           </div>
 
-          {/* Form */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          {/* Enhanced Progress Bar */}
+          <div className="mb-10">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-800">Application Progress</h2>
+                <span className="text-sm text-gray-600">
+                  Step {currentStep + 1} of {STEPS.length}
+                </span>
+              </div>
+              
+              <div className="relative">
+                {/* Progress line */}
+                <div className="absolute top-6 left-0 right-0 h-0.5 bg-gray-200 rounded-full">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-700 ease-out"
+                    style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
+                  ></div>
+                </div>
+                
+                {/* Step indicators */}
+                <div className="relative flex justify-between">
+                  {STEPS.map((step, index) => {
+                    const isCompleted = index < currentStep;
+                    const isCurrent = index === currentStep;
+                    const isVisited = visitedSteps.has(index);
+                    
+                    return (
+                      <div key={step.id} className="flex flex-col items-center group">
+                        <button
+                          onClick={() => goToStep(index)}
+                          disabled={!isVisited && index !== currentStep}
+                          className={`relative w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-200 disabled:cursor-not-allowed ${
+                            isCompleted
+                              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg'
+                              : isCurrent
+                              ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg animate-pulse'
+                              : isVisited
+                              ? 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                              : 'bg-gray-100 text-gray-400'
+                          }`}
+                        >
+                          {isCompleted ? (
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          ) : (
+                            <span className="text-lg">{step.icon}</span>
+                          )}
+                          
+                          {isCurrent && (
+                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-orange-400 rounded-full animate-bounce"></div>
+                          )}
+                        </button>
+                        
+                        <div className="mt-3 text-center max-w-24">
+                          <div className={`text-sm font-medium transition-colors ${
+                            isCompleted || isCurrent ? 'text-blue-600' : 'text-gray-500'
+                          }`}>
+                            {step.title}
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1 hidden sm:block">
+                            {step.description}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Enhanced Test Data Section - Only in Development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mb-8">
+              <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl p-6 shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                      🧪
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-amber-800">Development Mode</h3>
+                      <p className="text-sm text-amber-700">Quick-fill the form with realistic test data</p>
+                    </div>
+                  </div>
+                  <div className="flex space-x-3">
+                    <button
+                      type="button"
+                      onClick={() => populateTestData('default')}
+                      className="px-4 py-2 text-sm bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                    >
+                      📋 Standard
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => populateTestData('entryLevel')}
+                      className="px-4 py-2 text-sm bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                    >
+                      🌱 Entry Level
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => populateTestData('experienced')}
+                      className="px-4 py-2 text-sm bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                    >
+                      🎆 Experienced
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Enhanced Success/Error Messages */}
+          {successMessage && (
+            <div className="mb-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl shadow-lg animate-fade-in">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg className="h-6 w-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-semibold text-green-800">Success!</h3>
+                  <p className="text-sm text-green-700">{successMessage}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="mb-8 p-6 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl shadow-lg animate-shake">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg className="h-6 w-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-semibold text-red-800">Error</h3>
+                  <p className="text-sm text-red-700">{errorMessage}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Enhanced Form Container */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+            {/* Form Header */}
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">{STEPS[currentStep].title}</h2>
+                  <p className="text-blue-100 mt-1">{STEPS[currentStep].description}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-white text-sm opacity-90">Step</div>
+                  <div className="text-2xl font-bold text-white">{currentStep + 1}/{STEPS.length}</div>
+                </div>
+              </div>
+            </div>
+            
             <form onSubmit={handleSubmit(onSubmit)}>
-              {renderStepContent()}
+              {/* Form Content */}
+              <div className="p-8">
+                <div className="transition-all duration-500 ease-in-out">
+                  {renderStepContent()}
+                </div>
+              </div>
 
-              {/* Navigation */}
-              <div className="flex justify-between mt-8">
-                <button
-                  type="button"
-                  onClick={prevStep}
-                  disabled={currentStep === 0}
-                  className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-
-                {currentStep < STEPS.length - 1 ? (
+              {/* Enhanced Navigation */}
+              <div className="bg-gray-50/80 px-8 py-6 border-t border-gray-200/50">
+                <div className="flex justify-between items-center">
                   <button
                     type="button"
-                    onClick={nextStep}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    onClick={prevStep}
+                    disabled={currentStep === 0}
+                    className="group px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2"
                   >
-                    Next
+                    <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span>Previous</span>
                   </button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-                  >
-                    {isSubmitting ? '🚀 Submitting...' : 'Submit Application'}
-                  </button>
-                )}
+
+                  <div className="flex items-center space-x-2 text-sm text-gray-500">
+                    <span>Press</span>
+                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-mono">Tab</kbd>
+                    <span>to navigate fields</span>
+                  </div>
+
+                  {currentStep < STEPS.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="group px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center space-x-2"
+                    >
+                      <span>Continue</span>
+                      <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="group px-10 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg flex items-center space-x-3"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Submitting Application...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Submit Application</span>
+                          <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                          </svg>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             </form>
           </div>
@@ -1847,4 +2502,80 @@ export default function EmployeeApplicationForm() {
       </div>
     </div>
   );
+}
+
+// Add custom CSS for animations and responsiveness
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    .animate-fade-in {
+      animation: fade-in 0.6s ease-out;
+    }
+    
+    .animate-shake {
+      animation: shake 0.5s ease-in-out;
+    }
+    
+    .signature-canvas {
+      border-radius: 12px;
+      background: #fafafa;
+    }
+    
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .md\:grid-cols-2,
+      .md\:grid-cols-3 {
+        grid-template-columns: 1fr;
+      }
+      
+      .text-4xl {
+        font-size: 2.5rem;
+      }
+      
+      .text-3xl {
+        font-size: 2rem;
+      }
+    }
+    
+    /* Focus styles for better accessibility */
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Smooth transitions */
+    * {
+      transition-property: color, background-color, border-color, opacity, transform;
+      transition-duration: 200ms;
+      transition-timing-function: ease-in-out;
+    }
+  `;
+  
+  if (!document.head.querySelector('style[data-employee-form]')) {
+    style.setAttribute('data-employee-form', 'true');
+    document.head.appendChild(style);
+  }
 }
