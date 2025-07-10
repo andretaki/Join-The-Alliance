@@ -1,11 +1,13 @@
 import { Client } from '@microsoft/microsoft-graph-client';
 import { ClientSecretCredential } from '@azure/identity';
-import { 
-  MICROSOFT_GRAPH_CLIENT_ID, 
-  MICROSOFT_GRAPH_CLIENT_SECRET, 
+import {
+  MICROSOFT_GRAPH_CLIENT_ID,
+  MICROSOFT_GRAPH_CLIENT_SECRET,
   MICROSOFT_GRAPH_TENANT_ID,
-  MICROSOFT_GRAPH_USER_EMAIL 
+  MICROSOFT_GRAPH_WEBHOOK_SECRET,
+  MICROSOFT_GRAPH_USER_EMAIL
 } from '@/lib/config';
+import crypto from 'crypto';
 
 interface GraphEmailData {
   to: string;
@@ -346,4 +348,109 @@ export function verifyGraphConfiguration(): {
     issues,
     config
   };
+} 
+
+// Webhook verification utility
+export async function verifyMicrosoftGraphWebhook(request: Request): Promise<boolean> {
+  if (!MICROSOFT_GRAPH_WEBHOOK_SECRET) {
+    console.warn('⚠️ MICROSOFT_GRAPH_WEBHOOK_SECRET not configured - webhook verification disabled');
+    return false;
+  }
+
+  try {
+    const signature = request.headers.get('x-ms-signature');
+    const timestamp = request.headers.get('x-ms-timestamp');
+    
+    if (!signature || !timestamp) {
+      console.warn('❌ Missing webhook signature or timestamp headers');
+      return false;
+    }
+
+    // Verify timestamp is recent (within 5 minutes)
+    const timestampAge = Date.now() - parseInt(timestamp);
+    if (timestampAge > 5 * 60 * 1000) {
+      console.warn('❌ Webhook timestamp too old');
+      return false;
+    }
+
+    // Verify signature
+    const payload = `${timestamp}.${await request.text()}`;
+    const expectedSignature = crypto
+      .createHmac('sha256', MICROSOFT_GRAPH_WEBHOOK_SECRET)
+      .update(payload)
+      .digest('base64');
+
+    const isValid = crypto.timingSafeEqual(
+      Buffer.from(signature, 'base64'),
+      Buffer.from(expectedSignature, 'base64')
+    );
+
+    if (isValid) {
+      console.log('✅ Webhook signature verified successfully');
+    } else {
+      console.warn('❌ Webhook signature verification failed');
+    }
+
+    return isValid;
+  } catch (error) {
+    console.error('❌ Webhook verification error:', error);
+    return false;
+  }
+}
+
+// Webhook handler for Microsoft Graph notifications
+export async function handleMicrosoftGraphWebhook(request: Request): Promise<Response> {
+  if (!(await verifyMicrosoftGraphWebhook(request))) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  try {
+    const webhookData = await request.json();
+    console.log('📧 Microsoft Graph webhook received:', webhookData);
+
+    // Handle different webhook event types
+    const { value } = webhookData;
+    
+    for (const notification of value) {
+      const { resource, changeType, clientState } = notification;
+      
+      console.log(`📧 Processing ${changeType} event for resource:`, resource);
+      
+      // Handle different change types
+      switch (changeType) {
+        case 'created':
+          await handleResourceCreated(resource, clientState);
+          break;
+        case 'updated':
+          await handleResourceUpdated(resource, clientState);
+          break;
+        case 'deleted':
+          await handleResourceDeleted(resource, clientState);
+          break;
+        default:
+          console.log(`📧 Unknown change type: ${changeType}`);
+      }
+    }
+
+    return new Response('OK', { status: 200 });
+  } catch (error) {
+    console.error('❌ Error processing Microsoft Graph webhook:', error);
+    return new Response('Internal Server Error', { status: 500 });
+  }
+}
+
+// Webhook event handlers
+async function handleResourceCreated(resource: any, clientState?: string) {
+  console.log('📧 Resource created:', resource);
+  // Implement your logic for resource creation
+}
+
+async function handleResourceUpdated(resource: any, clientState?: string) {
+  console.log('📧 Resource updated:', resource);
+  // Implement your logic for resource updates
+}
+
+async function handleResourceDeleted(resource: any, clientState?: string) {
+  console.log('📧 Resource deleted:', resource);
+  // Implement your logic for resource deletion
 } 

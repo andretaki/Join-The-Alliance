@@ -42,7 +42,7 @@ export default function EmployeeApplicationForm() {
     resolver: zodResolver(employeeApplicationSchema),
     mode: 'onChange',
     defaultValues: {
-      jobPostingId: 0,
+      jobPostingId: undefined,
       personalInfo: {
         firstName: '',
         lastName: '',
@@ -51,11 +51,33 @@ export default function EmployeeApplicationForm() {
         address: '',
         city: '',
         state: '',
-        zipCode: ''
+        zipCode: '',
+        socialSecurityNumber: '',
+        dateOfBirth: '',
+        driversLicenseNumber: '',
+        driversLicenseState: '',
+        emergencyContactName: '',
+        emergencyContactRelationship: '',
+        emergencyContactPhone: '',
+        availableStartDate: '',
+        hoursAvailable: 'full-time' as const,
+        shiftPreference: 'day' as const,
+        hasTransportation: false,
+        hasBeenConvicted: false,
+        hasPreviouslyWorkedHere: false
       },
       eligibility: {
         eligibleToWork: false,
-        requiresSponsorship: false
+        requiresSponsorship: false,
+        consentToBackgroundCheck: false,
+        consentToDrugTest: false,
+        consentToReferenceCheck: false,
+        consentToEmploymentVerification: false,
+        hasValidI9Documents: false,
+        hasHazmatExperience: false,
+        hasForkliftCertification: false,
+        hasChemicalHandlingExperience: false,
+        willingToObtainCertifications: false
       },
       workExperience: [
         {
@@ -283,6 +305,309 @@ export default function EmployeeApplicationForm() {
     }
   };
 
+  const renderRoleSpecificQuestions = () => {
+    const selectedJob = watchedValues.jobPostingId;
+    
+    if (!selectedJob) return null;
+    
+    if (selectedJob === 1) {
+      return (
+        <div className="mt-8 bg-blue-50 rounded-lg p-6 border border-blue-200">
+          <h3 className="text-lg font-semibold text-blue-800 mb-4">Customer Service Role Assessment</h3>
+          <div className="space-y-6">
+            
+            {/* Tool Experience Questions */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="text-md font-semibold text-gray-800 mb-3">Technical Platform Experience</h4>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Rate your experience with TMS MyCarrier (Transportation Management System)
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select experience level</option>
+                    <option value="none">Never used</option>
+                    <option value="basic">Basic - Can navigate and perform simple tasks</option>
+                    <option value="intermediate">Intermediate - Can handle most customer inquiries</option>
+                    <option value="advanced">Advanced - Can troubleshoot and train others</option>
+                    <option value="expert">Expert - Can optimize workflows and processes</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Describe your experience with Shopify for order management and customer support
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Describe specific tasks you've performed (order tracking, refunds, inventory inquiries, etc.)"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Amazon Seller Central experience level
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select experience level</option>
+                    <option value="none">No experience</option>
+                    <option value="basic">Basic - Can view orders and basic account management</option>
+                    <option value="intermediate">Intermediate - Can handle customer messages and returns</option>
+                    <option value="advanced">Advanced - Can manage listings and resolve account issues</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            {/* Scenario-Based Questions */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="text-md font-semibold text-gray-800 mb-3">Customer Service Scenarios</h4>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    A customer calls saying their chemical shipment was delayed and they need it for production tomorrow. The carrier shows it's still in transit. How would you handle this?
+                  </label>
+                  <textarea
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Describe your step-by-step approach..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    You notice a customer has been placing increasingly large orders of a restricted chemical. What actions would you take?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Consider compliance, documentation, and escalation procedures..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    A customer questions why their hazardous material shipment costs more than regular freight. How do you explain the additional fees?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Explain your approach to educating customers about hazmat regulations..."
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Personal Assessment */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="text-md font-semibold text-gray-800 mb-3">Personal & Professional Assessment</h4>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Describe a time when you had to learn a complex software system quickly. How did you approach it?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Include the system, timeline, and your learning strategy..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    What motivates you most in a customer service role? (Select all that apply)
+                  </label>
+                  <div className="space-y-2">
+                    {[
+                      'Solving complex problems',
+                      'Building long-term customer relationships',
+                      'Learning new technologies and processes',
+                      'Working with data and analytics',
+                      'Helping customers achieve their goals',
+                      'Working in a fast-paced environment'
+                    ].map((option) => (
+                      <div key={option} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 text-blue-600 rounded"
+                        />
+                        <label className="text-sm text-gray-700">{option}</label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    How do you handle stress when dealing with multiple urgent customer requests simultaneously?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Describe your prioritization and stress management techniques..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    If you could automate one repetitive task in customer service, what would it be and why?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Think about efficiency and customer experience improvements..."
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Advanced Assessment */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="text-md font-semibold text-gray-800 mb-3">Advanced Role Assessment</h4>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    In your experience, what's the most important factor in maintaining customer loyalty in B2B sales?
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select your answer</option>
+                    <option value="pricing">Competitive pricing</option>
+                    <option value="reliability">Consistent delivery and quality</option>
+                    <option value="communication">Proactive communication</option>
+                    <option value="problem-solving">Quick problem resolution</option>
+                    <option value="relationship">Personal relationships</option>
+                    <option value="expertise">Technical expertise and advice</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    How would you use data from customer interactions to improve service quality?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Consider metrics, patterns, and actionable insights..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Describe your ideal work environment and team dynamics
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Include communication style, collaboration preferences, and work pace..."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    if (selectedJob === 2) {
+      return (
+        <div className="mt-8 bg-orange-50 rounded-lg p-6 border border-orange-200">
+          <h3 className="text-lg font-semibold text-orange-800 mb-4">Warehouse Role Assessment</h3>
+          <div className="space-y-6">
+            
+            {/* Physical Requirements */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="text-md font-semibold text-gray-800 mb-3">Physical Capabilities</h4>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Can you lift 50+ pounds regularly throughout your shift?
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select answer</option>
+                    <option value="yes">Yes, comfortably</option>
+                    <option value="sometimes">Yes, with some difficulty</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Are you comfortable working in a chemical warehouse environment with proper PPE?
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select answer</option>
+                    <option value="yes">Yes, I have experience</option>
+                    <option value="willing">Yes, willing to learn</option>
+                    <option value="no">No, I prefer other environments</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            {/* Safety and Compliance */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="text-md font-semibold text-gray-800 mb-3">Safety & Compliance</h4>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Describe your understanding of chemical safety protocols
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Include SDS sheets, PPE, spill procedures, etc..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    How would you handle finding a damaged chemical container?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Describe step-by-step safety procedure..."
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Personal Assessment */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="text-md font-semibold text-gray-800 mb-3">Work Style & Motivation</h4>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    What motivates you to do quality work even when no one is watching?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Describe your intrinsic motivation and work ethic..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    How do you maintain focus during repetitive tasks?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Share your strategies for staying engaged..."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
   const renderJobSelection = () => (
     <div className="space-y-6" ref={(el) => { stepRefs.current[0] = el; }} tabIndex={-1}>
       <div>
@@ -297,9 +622,11 @@ export default function EmployeeApplicationForm() {
           <div className="flex items-center space-x-3">
             <input
               type="radio"
-              value={1}
+              value="1"
               id="job-1"
-              {...register('jobPostingId', { valueAsNumber: true })}
+              {...register('jobPostingId', { 
+                setValueAs: (value: string) => value === "" ? undefined : Number(value)
+              })}
               className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
               aria-describedby="job-1-description"
             />
@@ -316,9 +643,11 @@ export default function EmployeeApplicationForm() {
           <div className="flex items-center space-x-3">
             <input
               type="radio"
-              value={2}
+              value="2"
               id="job-2"
-              {...register('jobPostingId', { valueAsNumber: true })}
+              {...register('jobPostingId', { 
+                setValueAs: (value: string) => value === "" ? undefined : Number(value)
+              })}
               className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
               aria-describedby="job-2-description"
             />
@@ -336,6 +665,9 @@ export default function EmployeeApplicationForm() {
           {errors.jobPostingId.message}
         </p>
       )}
+      
+      {/* Role-specific questions appear after selection */}
+      {renderRoleSpecificQuestions()}
     </div>
   );
 

@@ -115,7 +115,7 @@ export const jobPostingSchema = z.object({
 
 // Complete Employee Application Schema
 export const employeeApplicationSchema = z.object({
-  jobPostingId: z.number().min(1, 'Please select a position'),
+  jobPostingId: z.coerce.number().min(1, 'Please select a position'),
   
   // Personal Information
   personalInfo: personalInfoSchema,

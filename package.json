@@ -10,7 +10,11 @@
     "security-test": "node scripts/security-test.js",
     "security-audit": "npm audit && npm run security-test",
     "type-check": "tsc --noEmit",
-    "build-secure": "npm run type-check && npm run lint && npm run build"
+    "build-secure": "npm run type-check && npm run lint && npm run build",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.817.0",

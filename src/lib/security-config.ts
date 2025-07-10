@@ -16,6 +16,7 @@ export const SECURITY_ENV = {
   MICROSOFT_GRAPH_CLIENT_ID: process.env.MICROSOFT_GRAPH_CLIENT_ID,
   MICROSOFT_GRAPH_CLIENT_SECRET: process.env.MICROSOFT_GRAPH_CLIENT_SECRET,
   MICROSOFT_GRAPH_TENANT_ID: process.env.MICROSOFT_GRAPH_TENANT_ID,
+  MICROSOFT_GRAPH_WEBHOOK_SECRET: process.env.MICROSOFT_GRAPH_WEBHOOK_SECRET,
   
   // Security Secrets
   SIGNATURE_SECRET: process.env.SIGNATURE_SECRET || generateSecureSecret(),
@@ -29,6 +30,9 @@ export const SECURITY_ENV = {
   
   // OpenAI Security
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  
+  // Google API Security (for future integrations)
+  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
   
   // Admin Authentication
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'andre@alliancechemical.com',
@@ -212,7 +216,8 @@ export function validateSecurityConfiguration(): { valid: boolean; errors: strin
   const hasAnyGraphConfig = !!(
     SECURITY_ENV.MICROSOFT_GRAPH_CLIENT_ID || 
     SECURITY_ENV.MICROSOFT_GRAPH_CLIENT_SECRET || 
-    SECURITY_ENV.MICROSOFT_GRAPH_TENANT_ID
+    SECURITY_ENV.MICROSOFT_GRAPH_TENANT_ID ||
+    SECURITY_ENV.MICROSOFT_GRAPH_WEBHOOK_SECRET
   );
   
   if (hasAnyGraphConfig) {
@@ -225,6 +230,14 @@ export function validateSecurityConfiguration(): { valid: boolean; errors: strin
     if (!SECURITY_ENV.MICROSOFT_GRAPH_TENANT_ID) {
       errors.push('MICROSOFT_GRAPH_TENANT_ID is required when using Microsoft Graph');
     }
+    if (!SECURITY_ENV.MICROSOFT_GRAPH_WEBHOOK_SECRET) {
+      errors.push('MICROSOFT_GRAPH_WEBHOOK_SECRET is required when using Microsoft Graph webhooks');
+    }
+  }
+  
+  // Google API configuration validation (for future integrations)
+  if (SECURITY_ENV.GOOGLE_API_KEY && SECURITY_ENV.GOOGLE_API_KEY.length < 10) {
+    errors.push('GOOGLE_API_KEY appears to be invalid (too short)');
   }
   
   return {
