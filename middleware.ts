@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { createHmac, timingSafeEqual } from 'crypto'
 
 // Rate limiting store (in production, use Redis or similar)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
@@ -28,7 +29,7 @@ function rateLimit(request: NextRequest): boolean {
 }
 
 // Authentication check for sensitive endpoints
-function requireAuth(request: NextRequest): boolean {
+async function requireAuth(request: NextRequest): Promise<boolean> {
   const pathname = request.nextUrl.pathname
   
   // Endpoints that require authentication
@@ -52,29 +53,78 @@ function requireAuth(request: NextRequest): boolean {
   
   // For credit approval, check for valid token or signed URL
   if (pathname.startsWith('/api/credit-approval')) {
-    const token = request.nextUrl.searchParams.get('token')
+    const signedUrlToken = request.nextUrl.searchParams.get('token')
     const signature = request.nextUrl.searchParams.get('sig')
     
     // Allow if it's a properly signed URL (for email links)
-    if (token && signature) {
+    if (signedUrlToken && signature) {
       // In production, verify the signature against a secret
-      return verifySignature(token, signature)
+      return verifySignature(signedUrlToken, signature)
     }
     
     // Check for admin authentication
-    return !!(authHeader || authToken || authCookie)
+    const adminToken = authHeader?.split(' ')[1] || authToken || authCookie?.value
+    return await verifyAdminToken(adminToken ?? undefined)
   }
   
   // For admin endpoints, require proper authentication
-  return !!(authHeader || authToken || authCookie)
+  const token = authHeader?.split(' ')[1] || authToken || authCookie?.value
+  return await verifyAdminToken(token ?? undefined)
 }
 
 // Simple signature verification (implement proper HMAC in production)
 function verifySignature(token: string, signature: string): boolean {
   // This is a simplified implementation
   // In production, use HMAC with a secret key
-  const expectedSignature = Buffer.from(`${token}-${process.env.SIGNATURE_SECRET || 'default-secret'}`).toString('base64')
-  return signature === expectedSignature
+  try {
+    const secret = process.env.SIGNATURE_SECRET
+    if (!secret) {
+      console.error('SIGNATURE_SECRET is not set in environment variables.')
+      return false
+    }
+    const hmac = createHmac('sha256', secret)
+    hmac.update(token)
+    const expectedSignature = hmac.digest('hex')
+
+    const a = Buffer.from(expectedSignature, 'hex')
+    const b = Buffer.from(signature, 'hex')
+    if (a.length !== b.length) {
+      // For timingSafeEqual, buffers must be the same length.
+      // We still compare a dummy buffer of the same size to avoid leaking length info.
+      const dummy = Buffer.alloc(b.length)
+      timingSafeEqual(dummy, b)
+      return false
+    }
+
+    return timingSafeEqual(a, b)
+  } catch (error) {
+    console.error('Error during signature verification:', error)
+    return false
+  }
+}
+
+// Placeholder for a real token verification function
+// This should be replaced with actual JWT validation or session lookup
+async function verifyAdminToken(token: string | undefined): Promise<boolean> {
+  if (!token) {
+    return false
+  }
+  
+  // In a real application, you would:
+  // 1. Decode the JWT.
+  // 2. Verify the signature using a secret key.
+  // 3. Check claims like expiration, issuer, etc.
+  // 4. Optionally, look up the user/session in the database.
+  
+  // For the purpose of this audit, we will simulate a secure check.
+  // This is NOT a real or secure implementation.
+  // Replace this with your actual authentication logic.
+  const isValid = token.startsWith('valid-token-') // Example check
+  
+  // Prevent timing attacks on the check
+  await new Promise(resolve => setTimeout(resolve, 50))
+  
+  return isValid
 }
 
 // Generate CSRF token
@@ -82,7 +132,7 @@ function generateCSRFToken(): string {
   return Buffer.from(`${Date.now()}-${Math.random()}`).toString('base64')
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const response = NextResponse.next()
   
   // 1. Rate Limiting
@@ -100,7 +150,7 @@ export function middleware(request: NextRequest) {
   }
   
   // 2. Authentication Check
-  if (!requireAuth(request)) {
+  if (!await requireAuth(request)) {
     console.warn(`Unauthorized access attempt to ${request.nextUrl.pathname} from ${request.ip}`)
     return new NextResponse('Unauthorized', { 
       status: 401,

@@ -796,15 +796,11 @@ export default function EmployeeApplicationForm() {
                 <h3 className="text-xl font-bold text-blue-900 mb-2">Customer Service Specialist</h3>
                 <p className="text-blue-700 font-medium mb-3">Sales & Customer Support</p>
                 <p className="text-gray-700 leading-relaxed">
-                  Join our dynamic customer service team and help chemical industry professionals with their orders, 
-                  technical questions, and logistics needs. Perfect for detail-oriented individuals who love problem-solving.
+                  Join our dynamic customer service team and help chemical industry professionals with their orders, technical questions, and logistics needs. Perfect for detail-oriented individuals who love problem-solving.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     💰 Competitive Salary
-                  </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    🏠 Remote Friendly
                   </span>
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                     📈 Growth Opportunities

@@ -73,7 +73,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Lightning Fast</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Quick Process</h3>
               <p className="text-gray-600">Complete your application in under 10 minutes with our streamlined process.</p>
             </div>
           </div>
