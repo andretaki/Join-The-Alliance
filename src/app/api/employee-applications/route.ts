@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import * as crypto from 'crypto';
 import { 
   employeeApplications, 
   workExperience, 
@@ -13,32 +14,70 @@ import { employeeApplicationSchema } from '@/lib/employee-validation';
 import { eq } from 'drizzle-orm';
 
 export async function POST(request: NextRequest) {
+  // 1. Ensure request is multipart/form-data
+  const contentType = request.headers.get('content-type') || '';
+  if (!contentType.includes('multipart/form-data')) {
+    return NextResponse.json(
+      { error: 'Expected multipart/form-data' },
+      { status: 400 }
+    );
+  }
+
+  // 2. Pull formData
+  const formData = await request.formData();
+  const rawApplicationData = formData.get('applicationData');
+  const resumeFile = formData.get('resume') as File | null;
+  const idPhotoFile = formData.get('idPhoto') as File | null;
+
+  if (!rawApplicationData) {
+    return NextResponse.json(
+      { error: 'Missing applicationData field' },
+      { status: 400 }
+    );
+  }
+
+  // 3. Safe-parse JSON
+  let applicationData: unknown;
   try {
-    const formData = await request.formData();
-    const applicationDataString = formData.get('applicationData') as string;
-    const resumeFile = formData.get('resume') as File | null;
-    const idPhotoFile = formData.get('idPhoto') as File | null;
-
-    if (!applicationDataString) {
-      return NextResponse.json({ error: 'Application data is required' }, { status: 400 });
+    if (typeof rawApplicationData !== 'string') {
+      throw new Error('applicationData must be a JSON string');
     }
+    applicationData = JSON.parse(rawApplicationData);
+  } catch (err) {
+    console.error('Invalid applicationData JSON:', rawApplicationData, err);
+    return NextResponse.json(
+      { error: 'Invalid applicationData payload' },
+      { status: 400 }
+    );
+  }
 
-    const applicationData = JSON.parse(applicationDataString);
-    
-    // Convert jobPostingId to number if it's a string
-    if (applicationData.jobPostingId && typeof applicationData.jobPostingId === 'string') {
-      applicationData.jobPostingId = parseInt(applicationData.jobPostingId, 10);
-    }
-    
-    // Validate the application data
-    const validatedData = employeeApplicationSchema.parse(applicationData);
+  // 4. Validate with Zod
+  let validatedData: ReturnType<typeof employeeApplicationSchema.parse>;
+  try {
+    validatedData = employeeApplicationSchema.parse(applicationData);
+  } catch (zodErr: any) {
+    console.error('Validation error:', zodErr);
+    return NextResponse.json(
+      { error: 'Validation failed', details: zodErr.errors ?? zodErr },
+      { status: 422 }
+    );
+  }
 
+  // Convert jobPostingId to number if it's a string (extra safety)
+  if (validatedData.jobPostingId && typeof validatedData.jobPostingId === 'string') {
+    validatedData.jobPostingId = parseInt(validatedData.jobPostingId, 10);
+  }
+
+  // ----------------------------
+  // Database transaction
+  // ----------------------------
+  try {
     // Get IP address and user agent
-    const ipAddress = request.headers.get('x-forwarded-for') || 
-                      request.headers.get('x-real-ip') || 
+    const ipAddress = request.headers.get('x-forwarded-for') ||
+                      request.headers.get('x-real-ip') ||
                       '127.0.0.1';
     const userAgent = request.headers.get('user-agent') || '';
-
+ 
     // Start transaction
     const result = await db.transaction(async (tx) => {
       // 1. Insert main application
@@ -147,29 +186,26 @@ export async function POST(request: NextRequest) {
       return application;
     });
 
-    // TODO: Process with AI and send email notification
-    // This would happen in a background job in production
+    // TODO: Process with AI and send email notification (background job)
     console.log('Application submitted successfully:', result.id);
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       applicationId: result.id,
       message: 'Application submitted successfully!'
     });
 
   } catch (error) {
     console.error('Error submitting application:', error);
-    
+
     if (error instanceof Error) {
-      return NextResponse.json({ 
-        error: 'Failed to submit application', 
-        details: error.message 
-      }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to submit application', details: error.message },
+        { status: 500 }
+      );
     }
-    
-    return NextResponse.json({ 
-      error: 'An unexpected error occurred' 
-    }, { status: 500 });
+
+    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }
 

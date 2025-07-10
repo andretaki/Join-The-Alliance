@@ -14,6 +14,7 @@ export interface ApplicationScore {
   strengths: string[];
   recommendations: string[];
   nextSteps: string[];
+  reasoning: string;
 }
 
 export interface CustomerServiceAssessment {
@@ -148,7 +149,8 @@ Return your analysis in this exact JSON format:
       redFlags: ['AI evaluation failed'],
       strengths: ['Manual review required'],
       recommendations: ['Conduct manual evaluation'],
-      nextSteps: ['Schedule phone screening']
+      nextSteps: ['Schedule phone screening'],
+      reasoning: 'AI system failure - manual review required'
     };
   }
 }
@@ -158,47 +160,59 @@ export async function scoreWarehouseApplication(
   resumeText?: string
 ): Promise<ApplicationScore> {
   const prompt = `
-As an expert HR analyst for a chemical distribution company, evaluate this Warehouse Associate application.
+You are a senior safety and operations manager with 20+ years in chemical warehouse operations. Evaluate this Warehouse Associate candidate for Alliance Chemical with extreme attention to safety protocols and reliability.
 
-ROLE REQUIREMENTS:
-- Physical capability (50+ lbs lifting)
-- Chemical safety knowledge
-- Forklift operation (preferred)
-- Attention to detail and safety protocols
-- Reliability and work ethic
+CRITICAL CONTEXT:
+Alliance Chemical stores and ships hazardous materials requiring strict OSHA compliance, DOT regulations, and emergency response protocols. Any safety failure could result in serious injury, environmental damage, or regulatory violations.
+
+ROLE REQUIREMENTS & PRIORITY:
+1. SAFETY FIRST (40%): Chemical safety knowledge, protocol adherence, risk awareness
+2. Physical Capability (25%): Sustained lifting, chemical environment tolerance
+3. Reliability (15%): Work ethic, consistency, accountability
+4. Technical Skills (10%): Equipment operation, documentation
+5. Communication (10%): Clear safety reporting, instruction following
 
 CANDIDATE ASSESSMENT:
-Physical Capabilities:
-- Lifting Ability: ${assessment.physicalCapabilities.liftingAbility}
-- Chemical Environment: ${assessment.physicalCapabilities.chemicalEnvironment}
+Physical Readiness:
+- 50+ lb Lifting Capability: ${assessment.physicalCapabilities.liftingAbility}
+- Chemical Environment Comfort: ${assessment.physicalCapabilities.chemicalEnvironment}
 
-Safety Knowledge:
-- Safety Protocols: ${assessment.safetyKnowledge.protocols}
-- Damaged Container Handling: ${assessment.safetyKnowledge.damagedContainer}
+Safety Knowledge (CRITICAL EVALUATION):
+- Safety Protocol Understanding: ${assessment.safetyKnowledge.protocols}
+- Emergency Response (Damaged Container): ${assessment.safetyKnowledge.damagedContainer}
 
-Work Style:
-- Motivation: ${assessment.workStyle.motivation}
-- Focus Strategies: ${assessment.workStyle.focus}
+Work Character:
+- Intrinsic Motivation: ${assessment.workStyle.motivation}
+- Focus Maintenance: ${assessment.workStyle.focus}
 
-${resumeText ? `Resume Summary: ${resumeText}` : ''}
+${resumeText ? `Background Analysis: ${resumeText}` : ''}
 
-SCORING CRITERIA:
-- Technical Score (0-100): Safety knowledge, equipment experience
-- Experience Score (0-100): Warehouse/chemical/industrial background
-- Communication Score (0-100): Response quality and safety awareness
-- Cultural Fit Score (0-100): Work ethic, reliability indicators
+SAFETY-CRITICAL RED FLAGS:
+- Dismissive attitude toward safety protocols
+- Overconfidence without experience
+- Poor emergency response judgment
+- Inability to follow detailed instructions
+- Physical limitations that could create hazards
 
-Provide evaluation in JSON format:
+EVALUATION SCALE:
+- 90-100: Exceptional safety mindset with strong capabilities
+- 80-89: Solid safety awareness with good work ethic
+- 70-79: Basic safety understanding with minor concerns
+- 60-69: Marginal fit requiring extensive training
+- Below 60: Safety risk - do not hire
+
+Return evaluation in this exact JSON format:
 {
   "overallScore": 75,
   "technicalScore": 70,
   "experienceScore": 80,
   "communicationScore": 75,
   "culturalFitScore": 78,
-  "redFlags": ["safety concerns if any"],
-  "strengths": ["positive indicators"],
-  "recommendations": ["hiring recommendations"],
-  "nextSteps": ["interview focus areas"]
+  "redFlags": ["specific safety concerns"],
+  "strengths": ["specific positive indicators"],
+  "recommendations": ["specific hiring actions"],
+  "nextSteps": ["safety-focused interview areas"],
+  "reasoning": "Safety-focused summary of key factors"
 }
 `;
 
@@ -224,7 +238,8 @@ Provide evaluation in JSON format:
       redFlags: ['AI evaluation failed'],
       strengths: ['Manual review required'],
       recommendations: ['Conduct manual evaluation'],
-      nextSteps: ['Schedule phone screening']
+      nextSteps: ['Schedule phone screening'],
+      reasoning: 'AI system failure - manual review required'
     };
   }
 }
