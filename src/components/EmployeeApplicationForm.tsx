@@ -2449,11 +2449,6 @@ export default function EmployeeApplicationForm() {
                     <span>Previous</span>
                   </button>
 
-                  <div className="flex items-center space-x-2 text-sm text-gray-500">
-                    <span>Press</span>
-                    <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-mono">Tab</kbd>
-                    <span>to navigate fields</span>
-                  </div>
 
                   {currentStep < STEPS.length - 1 ? (
                     <button
