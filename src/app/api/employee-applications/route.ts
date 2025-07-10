@@ -14,42 +14,49 @@ import { employeeApplicationSchema } from '@/lib/employee-validation';
 import { eq } from 'drizzle-orm';
 
 export async function POST(request: NextRequest) {
-  // 1. Ensure request is multipart/form-data
-  const contentType = request.headers.get('content-type') || '';
-  if (!contentType.includes('multipart/form-data')) {
-    return NextResponse.json(
-      { error: 'Expected multipart/form-data' },
-      { status: 400 }
-    );
-  }
-
-  // 2. Pull formData
-  const formData = await request.formData();
-  const rawApplicationData = formData.get('applicationData');
-  const resumeFile = formData.get('resume') as File | null;
-  const idPhotoFile = formData.get('idPhoto') as File | null;
-
-  if (!rawApplicationData) {
-    return NextResponse.json(
-      { error: 'Missing applicationData field' },
-      { status: 400 }
-    );
-  }
-
-  // 3. Safe-parse JSON
-  let applicationData: unknown;
   try {
-    if (typeof rawApplicationData !== 'string') {
-      throw new Error('applicationData must be a JSON string');
+    // 1. Ensure request is multipart/form-data
+    const contentType = request.headers.get('content-type') || '';
+    if (!contentType.includes('multipart/form-data')) {
+      return NextResponse.json(
+        { error: 'Expected multipart/form-data' },
+        { status: 400 }
+      );
     }
-    applicationData = JSON.parse(rawApplicationData);
-  } catch (err) {
-    console.error('Invalid applicationData JSON:', rawApplicationData, err);
-    return NextResponse.json(
-      { error: 'Invalid applicationData payload' },
-      { status: 400 }
-    );
-  }
+
+    // 2. Pull formData
+    const formData = await request.formData();
+    const rawApplicationData = formData.get('applicationData');
+    const resumeFile = formData.get('resume') as File | null;
+    const idPhotoFile = formData.get('idPhoto') as File | null;
+
+    if (!rawApplicationData) {
+      return NextResponse.json(
+        { error: 'Missing applicationData field' },
+        { status: 400 }
+      );
+    }
+
+    // 3. Safe-parse JSON with better error handling
+    let applicationData: unknown;
+    try {
+      if (typeof rawApplicationData !== 'string') {
+        throw new Error('applicationData must be a JSON string');
+      }
+      
+      // Check for undefined or null values before parsing
+      if (rawApplicationData === 'undefined' || rawApplicationData === 'null' || !rawApplicationData.trim()) {
+        throw new Error('applicationData is empty or undefined');
+      }
+      
+      applicationData = JSON.parse(rawApplicationData);
+    } catch (err) {
+      console.error('Invalid applicationData JSON:', rawApplicationData, err);
+      return NextResponse.json(
+        { error: 'Invalid applicationData payload' },
+        { status: 400 }
+      );
+    }
 
   // 4. Validate with Zod
   let validatedData: ReturnType<typeof employeeApplicationSchema.parse>;
@@ -206,6 +213,10 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
+  }
+  } catch (error) {
+    console.error('Error in POST handler:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
 

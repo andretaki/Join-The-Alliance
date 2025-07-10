@@ -357,6 +357,68 @@ export default function EmployeeApplicationForm() {
                     <option value="advanced">Advanced - Can manage listings and resolve account issues</option>
                   </select>
                 </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Rate your proficiency with Microsoft Excel for data analysis and reporting
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select proficiency level</option>
+                    <option value="basic">Basic - Can create simple spreadsheets and basic formulas</option>
+                    <option value="intermediate">Intermediate - Can use VLOOKUP, pivot tables, and charts</option>
+                    <option value="advanced">Advanced - Can create complex reports and macros</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Describe your experience with Canva for creating customer-facing materials
+                  </label>
+                  <textarea
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Examples: flyers, social media posts, presentations, infographics..."
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Personal Assessment Questions */}
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <h4 className="text-md font-semibold text-gray-800 mb-3">Personal Work Style Assessment</h4>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Describe a time when you had to learn a completely new software system under pressure. How did you approach it?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Focus on your learning process and adaptation strategies..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    When you receive conflicting information from different sources (customer, system, supervisor), how do you determine the truth?
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Describe your fact-checking and verification process..."
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    What motivates you most: solving complex problems, helping people, or achieving measurable results? Explain why.
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Help us understand what drives your work satisfaction..."
+                  />
+                </div>
               </div>
             </div>
             

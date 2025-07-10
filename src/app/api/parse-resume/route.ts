@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
+import { safeJSONParse } from '@/lib/safe-json';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -107,10 +108,9 @@ async function parseResumeWithAI(resumeText: string) {
     throw new Error('No response from AI');
   }
 
-  try {
-    return JSON.parse(content);
-  } catch (error) {
-    console.error('Failed to parse AI response as JSON:', content);
-    throw new Error('Invalid response format from AI');
-  }
+  return safeJSONParse(content, {
+    personalInfo: {},
+    workExperience: [],
+    education: []
+  });
 }

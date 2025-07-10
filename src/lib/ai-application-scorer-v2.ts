@@ -234,7 +234,7 @@ Provide comprehensive evaluation focusing on safety-critical thinking and techni
       functions: [SCORE_FUNCTION_SCHEMA],
       function_call: { name: "submitApplicationScore" },
       temperature: 0.1,
-      stream: options.stream || false,
+      // Note: streaming not supported with function calling
     });
 
     const functionCall = response.choices[0]?.message?.function_call;
@@ -242,7 +242,16 @@ Provide comprehensive evaluation focusing on safety-critical thinking and techni
       throw new Error('No function call arguments returned');
     }
 
-    const rawScore = JSON.parse(functionCall.arguments);
+    let rawScore;
+    try {
+      // Check for undefined or invalid JSON before parsing
+      if (!functionCall.arguments || functionCall.arguments === 'undefined' || functionCall.arguments.trim() === '') {
+        throw new Error('Function call arguments are undefined or empty');
+      }
+      rawScore = JSON.parse(functionCall.arguments);
+    } catch (parseError) {
+      throw new Error(`Invalid JSON in function call: ${functionCall.arguments}. Error: ${parseError}`);
+    }
     
     // Validate with Zod schema
     const validatedScore = ApplicationScoreSchema.parse(rawScore);
@@ -312,7 +321,7 @@ Focus on safety-critical thinking and reliability indicators. Physical limitatio
       functions: [SCORE_FUNCTION_SCHEMA],
       function_call: { name: "submitApplicationScore" },
       temperature: 0.1,
-      stream: options.stream || false,
+      // Note: streaming not supported with function calling
     });
 
     const functionCall = response.choices[0]?.message?.function_call;
@@ -320,7 +329,16 @@ Focus on safety-critical thinking and reliability indicators. Physical limitatio
       throw new Error('No function call arguments returned');
     }
 
-    const rawScore = JSON.parse(functionCall.arguments);
+    let rawScore;
+    try {
+      // Check for undefined or invalid JSON before parsing
+      if (!functionCall.arguments || functionCall.arguments === 'undefined' || functionCall.arguments.trim() === '') {
+        throw new Error('Function call arguments are undefined or empty');
+      }
+      rawScore = JSON.parse(functionCall.arguments);
+    } catch (parseError) {
+      throw new Error(`Invalid JSON in function call: ${functionCall.arguments}. Error: ${parseError}`);
+    }
     const validatedScore = ApplicationScoreSchema.parse(rawScore);
     
     return validatedScore;
@@ -373,6 +391,11 @@ Focus on identifying:
 
     const content = response.choices[0]?.message?.content;
     if (!content) throw new Error('No response from AI');
+    
+    // Check for undefined or invalid JSON before parsing
+    if (content === 'undefined' || content.trim() === '') {
+      throw new Error('Response content is undefined or empty');
+    }
 
     return JSON.parse(content);
   } catch (error) {
@@ -424,6 +447,11 @@ Return questions that will help determine if this candidate should be hired.`;
 
     const content = response.choices[0]?.message?.content;
     if (!content) throw new Error('No response from AI');
+    
+    // Check for undefined or invalid JSON before parsing
+    if (content === 'undefined' || content.trim() === '') {
+      throw new Error('Response content is undefined or empty');
+    }
 
     return JSON.parse(content);
   } catch (error) {

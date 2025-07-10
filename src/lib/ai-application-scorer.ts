@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { safeJSONParse } from './safe-json';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -136,7 +137,18 @@ Return your analysis in this exact JSON format:
     const content = response.choices[0]?.message?.content;
     if (!content) throw new Error('No response from AI');
 
-    return JSON.parse(content) as ApplicationScore;
+    return safeJSONParse(content, {
+      overallScore: 50,
+      technicalScore: 50,
+      experienceScore: 50,
+      communicationScore: 50,
+      culturalFitScore: 50,
+      redFlags: ['AI parsing failed'],
+      strengths: ['Manual review required'],
+      recommendations: ['Conduct manual evaluation'],
+      nextSteps: ['Schedule phone screening'],
+      reasoning: 'AI system failure - manual review required'
+    }) as ApplicationScore;
   } catch (error) {
     console.error('AI scoring error:', error);
     // Fallback scoring
@@ -226,7 +238,18 @@ Return evaluation in this exact JSON format:
     const content = response.choices[0]?.message?.content;
     if (!content) throw new Error('No response from AI');
 
-    return JSON.parse(content) as ApplicationScore;
+    return safeJSONParse(content, {
+      overallScore: 50,
+      technicalScore: 50,
+      experienceScore: 50,
+      communicationScore: 50,
+      culturalFitScore: 50,
+      redFlags: ['AI parsing failed'],
+      strengths: ['Manual review required'],
+      recommendations: ['Conduct manual evaluation'],
+      nextSteps: ['Schedule phone screening'],
+      reasoning: 'AI system failure - manual review required'
+    }) as ApplicationScore;
   } catch (error) {
     console.error('AI scoring error:', error);
     return {

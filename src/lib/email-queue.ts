@@ -174,6 +174,13 @@ export async function processEmailQueue(): Promise<{
       processed++;
       
       try {
+        // Check for undefined or invalid JSON before parsing
+        if (!emailJson || emailJson === 'undefined' || emailJson === 'null' || !emailJson.trim()) {
+          console.warn('Skipping invalid email data:', emailJson);
+          await kv.zrem(EMAIL_QUEUE_KEY, emailJson);
+          continue;
+        }
+        
         const email: QueuedEmail = JSON.parse(emailJson);
         console.log(`📧 Processing email: ${email.id} (attempt ${email.attempts + 1})`);
         
@@ -222,6 +229,13 @@ export async function processEmailQueue(): Promise<{
         
         // Re-parse email data in case it was corrupted
         try {
+          // Double-check before re-parsing
+          if (!emailJson || emailJson === 'undefined' || emailJson === 'null' || !emailJson.trim()) {
+            console.warn('Cannot reparse invalid email data:', emailJson);
+            failed++;
+            continue;
+          }
+          
           const email: QueuedEmail = JSON.parse(emailJson);
           email.attempts++;
           email.lastAttempt = new Date().toISOString();
