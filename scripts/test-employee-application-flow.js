@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+
+require("dotenv").config();
+const fetch = require("node-fetch");
+const FormData = require("form-data");
 /**
  * Test script for employee application flow
  * Tests PDF generation, S3 upload, and email notifications
@@ -30,7 +34,7 @@ const testApplication = {
     customerServiceMotivation: ['Solving complex problems', 'Building long-term customer relationships'],
     stressManagement: 'I manage stress through prioritization, clear communication, and taking short breaks when needed.',
     automationIdeas: 'I would automate order confirmations, shipping notifications, and basic FAQ responses.',
-    b2bLoyaltyFactor: 'consistent_quality',
+    b2bLoyaltyFactor: 'reliability',
     dataAnalysisApproach: 'I analyze trends, identify patterns, and create actionable insights for business decisions.',
     idealWorkEnvironment: 'A collaborative team environment with clear communication and opportunities for growth.'
   },
@@ -76,8 +80,8 @@ const testApplication = {
     {
       companyName: 'ABC Company',
       jobTitle: 'Customer Service Representative',
-      startDate: '2020-01-01',
-      endDate: '2023-12-31',
+      startDate: '2020-01',
+      endDate: '2023-12',
       isCurrent: false,
       responsibilities: 'Handled customer inquiries, processed orders, managed complaints, and maintained customer satisfaction records.',
       reasonForLeaving: 'Seeking new opportunities for career growth',
@@ -90,7 +94,7 @@ const testApplication = {
       institutionName: 'University of Houston',
       degreeType: 'Bachelor',
       fieldOfStudy: 'Business Administration',
-      graduationDate: '2019-05-15',
+      graduationDate: '2019-05',
       gpa: '3.5',
       isCompleted: true
     }
@@ -126,13 +130,17 @@ async function testEmployeeApplicationFlow() {
     formData.append('applicationData', JSON.stringify(testApplication));
     
     // Submit application
+    // Submit application
     const response = await fetch(`${BASE_URL}/api/employee-applications`, {
-      method: 'POST',
-      body: formData
+      method: "POST",
+      body: formData,
+      headers: formData.getHeaders()
     });
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('API Error Response:', errorText);
+      throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
     }
     
     const result = await response.json();
