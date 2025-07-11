@@ -9,13 +9,18 @@ import {
 } from '@/lib/config';
 import crypto from 'crypto';
 
-interface GraphEmailData {
-  to: string;
+export interface GraphEmailData {
+  to: string[];
   subject: string;
-  html: string;
-  text: string;
+  htmlContent: string;
+  textContent?: string;
   from?: string;
-  cc?: string;
+  cc?: string[];
+  attachments?: {
+    name: string;
+    contentType: string;
+    content: string; // base64 encoded
+  }[];
 }
 
 let graphClient: Client | null = null;
@@ -218,29 +223,33 @@ async function sendEmailInternal(client: Client, data: GraphEmailData): Promise<
       subject: data.subject,
       body: {
         contentType: 'HTML' as const,
-        content: data.html
+        content: data.htmlContent
       },
-      toRecipients: [
-        {
-          emailAddress: {
-            address: data.to
-          }
+      toRecipients: data.to.map(email => ({
+        emailAddress: {
+          address: email
         }
-      ],
-      ...(data.cc && {
-        ccRecipients: [
-          {
-            emailAddress: {
-              address: data.cc
-            }
+      })),
+      ...(data.cc && data.cc.length > 0 && {
+        ccRecipients: data.cc.map(email => ({
+          emailAddress: {
+            address: email
           }
-        ]
+        }))
       }),
       from: {
         emailAddress: {
           address: MICROSOFT_GRAPH_USER_EMAIL // Should be andre@alliancechemical.com
         }
-      }
+      },
+      ...(data.attachments && data.attachments.length > 0 && {
+        attachments: data.attachments.map(attachment => ({
+          '@odata.type': '#microsoft.graph.fileAttachment',
+          name: attachment.name,
+          contentType: attachment.contentType,
+          contentBytes: attachment.content
+        }))
+      })
     };
 
     console.log('🔄 Microsoft Graph: Calling API to send email...');

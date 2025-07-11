@@ -4,6 +4,14 @@ import * as crypto from 'crypto';
 // Force this API route to be dynamic to prevent static analysis issues
 export const dynamic = 'force-dynamic';
 
+// Background processing imports
+import { generateEmployeeApplicationPDF } from '@/lib/pdf-generator';
+import { generateApplicationSummary } from '@/lib/ai-application-summary';
+import { generateMultiAgentAnalysis } from '@/lib/ai-multi-agent-analyzer';
+import { uploadPDFToS3 } from '@/lib/s3-utils';
+import { sendApplicationNotificationEmails } from '@/lib/email-service';
+import { EmployeeApplicationForm } from '@/lib/employee-validation';
+
 export async function POST(request: NextRequest) {
   // Detect build-time calls and return early
   // During build, the request doesn't have a proper user agent
@@ -276,8 +284,13 @@ export async function POST(request: NextRequest) {
       return application;
     });
 
-    // TODO: Process with AI and send email notification (background job)
+    // Generate PDF and process with AI
     console.log('Application submitted successfully:', result.id);
+    
+    // Process in background - don't wait for completion
+    processApplicationPostSubmission(validatedData, result.id).catch(error => {
+      console.error('Background processing error:', error);
+    });
 
     return NextResponse.json({
       success: true,
@@ -300,6 +313,137 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error in POST handler:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}
+
+/**
+ * Background processing function for post-submission tasks
+ */
+async function processApplicationPostSubmission(
+  applicationData: EmployeeApplicationForm,
+  applicationId: number
+): Promise<void> {
+  try {
+    console.log(`Starting background processing for application ${applicationId}`);
+    
+    // Step 1: Generate PDF
+    const pdfResult = generateEmployeeApplicationPDF(applicationData, applicationId);
+    if (!pdfResult.success || !pdfResult.buffer) {
+      console.error('Failed to generate PDF:', pdfResult.error);
+      return;
+    }
+    console.log('PDF generated successfully');
+
+    // Step 2: Generate Multi-Agent AI Analysis
+    const multiAgentResult = await generateMultiAgentAnalysis(applicationData, applicationId);
+    if (!multiAgentResult.success) {
+      console.error('Failed to generate multi-agent analysis:', multiAgentResult.error);
+      // Fallback to simple summary
+      const fallbackSummary = await generateApplicationSummary(applicationData, applicationId);
+      console.log('Using fallback simple summary');
+    } else {
+      console.log('Multi-agent analysis generated successfully');
+    }
+
+    // Step 3: Upload PDF to S3
+    const s3Result = await uploadPDFToS3(
+      pdfResult.buffer,
+      applicationId,
+      `Application_${applicationId}.pdf`,
+      {
+        applicantName: `${applicationData.personalInfo.firstName} ${applicationData.personalInfo.lastName}`,
+        applicantEmail: applicationData.personalInfo.email,
+        submissionDate: new Date().toISOString()
+      }
+    );
+    
+    if (!s3Result.success) {
+      console.error('Failed to upload PDF to S3:', s3Result.error);
+      // Continue without S3 upload
+    } else {
+      console.log('PDF uploaded to S3 successfully:', s3Result.s3Key);
+    }
+
+    // Step 4: Send email notifications
+    const emailResult = await sendApplicationNotificationEmails(
+      applicationData,
+      applicationId,
+      pdfResult.buffer,
+      multiAgentResult.success ? multiAgentResult : undefined
+    );
+
+    if (!emailResult.success) {
+      console.error('Email notification failed:', emailResult.error);
+    } else {
+      console.log('Email notifications sent successfully:', {
+        employeeEmailSent: emailResult.employeeEmailSent,
+        bossEmailSent: emailResult.bossEmailSent
+      });
+    }
+
+    // Step 5: Update application record with processing status
+    await updateApplicationProcessingStatus(applicationId, {
+      pdfGenerated: pdfResult.success,
+      s3Uploaded: s3Result.success,
+      aiSummaryGenerated: multiAgentResult.success,
+      emailsSent: emailResult.success,
+      s3Key: s3Result.s3Key,
+              aiSummary: multiAgentResult.success ? multiAgentResult.executiveSummary : undefined,
+      processedAt: new Date().toISOString()
+    });
+
+    console.log(`Background processing completed for application ${applicationId}`);
+
+  } catch (error) {
+    console.error('Error in background processing:', error);
+    // Update application with error status
+    await updateApplicationProcessingStatus(applicationId, {
+      pdfGenerated: false,
+      s3Uploaded: false,
+      aiSummaryGenerated: false,
+      emailsSent: false,
+      processedAt: new Date().toISOString(),
+      processingError: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+}
+
+/**
+ * Update application record with processing status
+ */
+async function updateApplicationProcessingStatus(
+  applicationId: number,
+  status: {
+    pdfGenerated: boolean;
+    s3Uploaded: boolean;
+    aiSummaryGenerated: boolean;
+    emailsSent: boolean;
+    s3Key?: string;
+    aiSummary?: string;
+    processedAt: string;
+    processingError?: string;
+  }
+): Promise<void> {
+  try {
+    const { db } = await import('@/lib/db');
+    const { employeeApplications } = await import('@/lib/schema');
+    const { eq } = await import('drizzle-orm');
+
+    if (!db) {
+      console.error('Database connection not available for status update');
+      return;
+    }
+
+    await db.update(employeeApplications)
+      .set({
+        aiSummary: status.aiSummary || null,
+        // Add other fields as needed
+      })
+      .where(eq(employeeApplications.id, applicationId));
+
+    console.log(`Application ${applicationId} processing status updated`);
+  } catch (error) {
+    console.error('Error updating application processing status:', error);
   }
 }
 

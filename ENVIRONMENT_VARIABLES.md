@@ -79,6 +79,18 @@ This document lists all environment variables used in the Alliance Chemical appl
   - **Usage**: Email address for receiving application notifications
   - **Default**: andre@alliancechemical.com
 
+- **`BOSS_EMAIL`** ✅ **USED**
+  - **Location**: `src/lib/email-service.ts`, `src/app/api/employee-applications/route.ts`
+  - **Usage**: Email address of the boss/manager who should receive new employee application notifications with PDF attachments and AI summaries
+  - **Default**: andre@alliancechemical.com
+  - **Implementation**: Used in the employee application submission flow for automatic notifications
+
+- **`CC_EMAIL`** ✅ **USED**
+  - **Location**: `src/lib/email-service.ts`, `src/app/api/employee-applications/route.ts`
+  - **Usage**: Optional email address to CC on boss notifications for new employee applications
+  - **Required**: No (optional)
+  - **Implementation**: When set, this email will be CC'd on all boss notification emails with PDF attachments and AI summaries
+
 ### Security Configuration
 - **`SIGNATURE_SECRET`** ✅ **USED**
   - **Location**: `src/lib/security-config.ts`, `src/app/api/credit-approval/route.ts`, `middleware.ts`
