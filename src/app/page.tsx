@@ -73,27 +73,61 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors duration-300">Quick Process</h3>
-              <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">Complete your application in under 10 minutes with our streamlined process.</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors duration-300">Comprehensive Process</h3>
+              <p className="text-gray-600 group-hover:text-gray-700 transition-colors duration-300">Complete a thorough application designed to showcase your skills and experience effectively.</p>
             </div>
           </div>
 
           {/* Company Info */}
           <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-8 text-white hover:shadow-2xl transition-all duration-300 border border-gray-700">
-            <h2 className="text-3xl font-bold mb-4">Why Alliance Chemical?</h2>
+            <h2 className="text-3xl font-bold mb-6">Why Alliance Chemical?</h2>
             <div className="grid md:grid-cols-2 gap-8 text-left">
               <div className="group">
-                <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-300 transition-colors duration-300">Industry Leadership</h3>
+                <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-300 transition-colors duration-300 flex items-center">
+                  <span className="mr-2">🏆</span>
+                  Trusted by Industry Giants
+                </h3>
+                <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300 mb-4">
+                  Alliance Chemical is the trusted chemical distribution partner for some of the world's most demanding organizations, including <strong className="text-blue-300">Samsung</strong>, <strong className="text-blue-300">Department of Defense</strong>, <strong className="text-blue-300">SpaceX</strong>, and hundreds of other Fortune 500 companies.
+                </p>
                 <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
-                  Leading chemical distribution company with decades of experience in 
-                  logistics, e-commerce, and supply chain management.
+                  When precision, reliability, and compliance matter most, industry leaders choose Alliance Chemical for their critical supply chain needs.
                 </p>
               </div>
               <div className="group">
-                <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-300 transition-colors duration-300">Growth Opportunities</h3>
+                <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-300 transition-colors duration-300 flex items-center">
+                  <span className="mr-2">🚀</span>
+                  Cutting-Edge Operations
+                </h3>
+                <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300 mb-4">
+                  Our state-of-the-art facilities and advanced technology platforms handle everything from aerospace-grade chemicals to specialized industrial compounds, supporting missions that reach from Earth to space.
+                </p>
                 <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
-                  Join a growing team where your skills in logistics, technology, 
-                  and operations can make a real impact.
+                  Join a team where your expertise directly impacts cutting-edge projects in technology, defense, and space exploration.
+                </p>
+              </div>
+              <div className="group">
+                <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-300 transition-colors duration-300 flex items-center">
+                  <span className="mr-2">📈</span>
+                  Exceptional Growth & Impact
+                </h3>
+                <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300 mb-4">
+                  With decades of proven success in logistics, e-commerce, and supply chain management, Alliance Chemical continues to expand its market leadership and technological capabilities.
+                </p>
+                <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
+                  Your skills in customer service, logistics, and technology will directly contribute to supporting world-changing innovations and critical operations.
+                </p>
+              </div>
+              <div className="group">
+                <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-300 transition-colors duration-300 flex items-center">
+                  <span className="mr-2">🛡️</span>
+                  Mission-Critical Excellence
+                </h3>
+                <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300 mb-4">
+                  From supporting national defense initiatives to enabling breakthrough technologies, every role at Alliance Chemical contributes to projects that matter on a global scale.
+                </p>
+                <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
+                  Experience the pride of working for a company that powers innovation, protects national interests, and supports humanity's greatest achievements.
                 </p>
               </div>
             </div>

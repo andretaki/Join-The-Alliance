@@ -142,17 +142,23 @@ export const roleAssessmentSchema = z.object({
   
   // Customer Service Scenarios
   delayedShipmentScenario: z.string()
-    .min(30, 'Please provide at least 30 characters describing your approach to this scenario')
-    .max(1000, 'Delayed shipment scenario response too long'),
+    .min(50, 'Please provide at least 50 characters describing your approach to this scenario')
+    .max(1000, 'Delayed shipment scenario response too long')
+    .refine((val) => val.trim().split(/\s+/).length >= 15, 'Please provide at least 15 words for a thoughtful response'),
   restrictedChemicalScenario: z.string()
-    .min(30, 'Please provide at least 30 characters describing your approach to this scenario')
-    .max(1000, 'Restricted chemical scenario response too long'),
+    .min(50, 'Please provide at least 50 characters describing your approach to this scenario')
+    .max(1000, 'Restricted chemical scenario response too long')
+    .refine((val) => val.trim().split(/\s+/).length >= 15, 'Please provide at least 15 words for a thoughtful response'),
   hazmatFreightScenario: z.string()
-    .min(30, 'Please provide at least 30 characters describing your approach to this scenario')
-    .max(1000, 'Hazmat freight scenario response too long'),
+    .min(50, 'Please provide at least 50 characters describing your approach to this scenario')
+    .max(1000, 'Hazmat freight scenario response too long')
+    .refine((val) => val.trim().split(/\s+/).length >= 15, 'Please provide at least 15 words for a thoughtful response'),
   customerQuoteScenario: z.string()
-    .min(50, 'Please provide at least 50 characters for your professional email response')
-    .max(1500, 'Customer quote scenario response too long'),
+    .min(100, 'Please provide at least 100 characters for your professional email response')
+    .max(1500, 'Customer quote scenario response too long')
+    .refine((val) => val.trim().split(/\s+/).length >= 25, 'Please provide at least 25 words for a complete professional email')
+    .refine((val) => val.toLowerCase().includes('barry'), 'Please address the customer by name in your email')
+    .refine((val) => val.toLowerCase().includes('acetic acid'), 'Please mention the specific product in your email'),
   
   // Personal & Professional Assessment
   softwareLearningExperience: z.string()

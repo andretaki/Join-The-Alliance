@@ -29,6 +29,7 @@ export interface CustomerServiceAssessment {
     delayedShipment: string;
     restrictedChemical: string;
     hazmatExplanation: string;
+    customerQuoteEmail?: string;
   };
   personalAssessment: {
     learningApproach: string;
@@ -190,12 +191,18 @@ ${EVALUATION_FRAMEWORK}
 ${SAFETY_RED_FLAGS}
 
 Evaluate candidates using weighted criteria:
-1. Platform Expertise (25%): TMS MyCarrier, Shopify, Amazon Seller Central
-2. Regulatory Knowledge (20%): Hazmat understanding, compliance awareness  
-3. Problem-Solving (20%): Complex logistics scenarios, crisis management
-4. Communication (15%): Professional clarity, technical explanation ability
-5. Customer Focus (10%): B2B relationship building, service orientation
-6. Cultural Fit (10%): Work ethic, learning agility, stress management`;
+1. Professional Communication (25%): Analyze scenario responses and email drafts for clarity, tone, professionalism, and empathy. Pay special attention to written communication samples.
+2. Problem-Solving & Judgment (25%): Assess responses to logistics, compliance, and hazmat scenarios for safety awareness and critical thinking.
+3. Platform & Technical Proficiency (20%): TMS MyCarrier, Shopify, Amazon Seller Central expertise and learning ability.
+4. B2B & Industry Fit (15%): Understanding of B2B relationships, long-term customer loyalty factors, and cultural fit.
+5. Experience & Background (15%): Relevance of prior work history and demonstrated customer service excellence.
+
+CRITICAL EVALUATION POINTS:
+- Written Communication: Evaluate email samples for professional tone, clarity, persuasiveness, and appropriate business etiquette
+- B2B Relationship Management: Look for understanding of long-term business partnerships vs. transactional consumer support
+- Safety & Compliance Awareness: Chemical industry requires strict adherence to hazmat regulations
+- Adaptability: Ability to learn complex systems quickly under pressure
+- Customer Focus: Balance between helping customers and maintaining compliance/safety standards`;
 
   const userMessage = `Evaluate this Customer Service Specialist candidate:
 
@@ -208,6 +215,9 @@ SCENARIO RESPONSES (analyze depth, accuracy, safety awareness):
 1. Delayed Chemical Shipment Crisis: ${assessment.scenarioResponses.delayedShipment}
 2. Restricted Chemical Compliance: ${assessment.scenarioResponses.restrictedChemical}
 3. Hazmat Fee Explanation: ${assessment.scenarioResponses.hazmatExplanation}
+
+WRITTEN COMMUNICATION SAMPLE (Customer Quote Email):
+${assessment.scenarioResponses.customerQuoteEmail || 'Not provided'}
 
 PERSONAL ASSESSMENT:
 - Learning Complex Systems: ${assessment.personalAssessment.learningApproach}
@@ -222,7 +232,18 @@ ADVANCED ASSESSMENT:
 
 ${resumeText ? `RESUME ANALYSIS: ${resumeText}` : ''}
 
-Provide comprehensive evaluation focusing on safety-critical thinking and technical competency.`;
+Provide comprehensive evaluation focusing on:
+1. Professional written communication skills (email tone, clarity, persuasiveness)
+2. B2B relationship understanding and customer service philosophy
+3. Safety-critical thinking and compliance awareness
+4. Technical competency and learning agility
+5. Cultural fit for chemical distribution industry
+
+Pay special attention to the written communication sample and assess the candidate's ability to:
+- Present pricing information clearly and professionally
+- Use appropriate business tone and etiquette
+- Encourage customer action while maintaining professionalism
+- Demonstrate understanding of B2B sales communication`;
 
   try {
     const response = await openai.chat.completions.create({
