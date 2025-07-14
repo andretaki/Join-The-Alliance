@@ -68,86 +68,150 @@ export default function EmployeeApplicationForm() {
 
   // Test data population function - Development Mode Only
   const populateTestData = async (scenario: 'default' | 'entryLevel' | 'experienced' = 'default') => {
-    if (process.env.NODE_ENV === 'production') {
-      console.warn('Test data population is not available in production mode');
-      return;
-    }
-
     try {
-      // Dynamic import for development mode
-      const { generateTestData, generateTestDataVariations } = await import('@/lib/test-data');
-      
-      let testData;
-      if (scenario === 'default') {
-        testData = generateTestData();
-      } else {
-        const variations = generateTestDataVariations();
-        const index = scenario === 'entryLevel' ? 0 : scenario === 'experienced' ? 1 : 2;
-        testData = variations[index] || generateTestData();
-      }
+      // Simple inline test data to avoid import issues
+      const testData = {
+        jobPostingId: 1,
+        personalInfo: {
+          firstName: 'John',
+          lastName: 'Doe',
+          middleName: 'Michael',
+          email: 'john.doe@email.com',
+          phone: '555-123-4567',
+          alternatePhone: '555-987-6543',
+          address: '123 Main Street',
+          city: 'Austin',
+          state: 'TX',
+          zipCode: '78701',
+          socialSecurityNumber: '123-45-6789',
+          dateOfBirth: '1990-01-15',
+          hasDriversLicense: true,
+          driversLicenseNumber: 'D1234567890',
+          driversLicenseState: 'TX',
+          emergencyContactName: 'Jane Doe',
+          emergencyContactRelationship: 'Spouse',
+          emergencyContactPhone: '555-111-2222',
+          emergencyContactAddress: '123 Main Street, Austin, TX 78701',
+          compensationType: 'salary' as const,
+          desiredSalary: '75000',
+          availableStartDate: '2024-03-01',
+          hoursAvailable: 'full-time' as const,
+          shiftPreference: 'day' as const,
+          hasTransportation: true,
+          hasBeenConvicted: false,
+          hasPreviouslyWorkedHere: false
+        },
+        roleAssessment: {
+          tmsMyCarrierExperience: 'intermediate' as const,
+          shopifyExperience: 'I have 2 years of experience with Shopify managing product listings and customer orders',
+          amazonSellerCentralExperience: 'basic' as const,
+          excelProficiency: 'intermediate' as const,
+          canvaExperience: 'I use Canva regularly for creating marketing materials and product graphics',
+          learningUnderPressure: 'I stay calm under pressure and break down complex problems into manageable steps',
+          conflictingInformation: 'I verify information from multiple sources and escalate when needed',
+          workMotivation: 'I am motivated by helping customers solve problems and contributing to team success',
+          delayedShipmentScenario: 'I would immediately contact the customer to inform them of the delay, provide a realistic timeline, and offer solutions like expedited shipping or partial delivery where possible',
+          restrictedChemicalScenario: 'I would verify the customers licensing and certifications, review their order history for patterns, and escalate to management if there are any compliance concerns',
+          hazmatFreightScenario: 'I would ensure all proper documentation is complete, verify carrier certifications, and coordinate with logistics to ensure safe handling protocols are followed',
+          customerQuoteScenario: 'Hello Barry, Thank you for your inquiry about acetic acid. I am pleased to provide a competitive quote for your requirements. Product: Acetic Acid Industrial Grade, Quantity: 4 drums, Unit Price: $800 per drum, Total: $3200. This quote includes proper hazmat documentation and delivery within 5 business days. Please let me know if you have any questions about this acetic acid quote.',
+          softwareLearningExperience: 'I learn new software by exploring the interface, following tutorials, and practicing with real scenarios',
+          customerServiceMotivation: ['helping-customers', 'problem-solving'],
+          stressManagement: 'I manage stress through prioritization, clear communication, and taking short breaks when needed',
+          automationIdeas: 'I would suggest automating order confirmations, inventory alerts, and customer follow-up emails',
+          b2bLoyaltyFactor: 'reliability' as const,
+          dataAnalysisApproach: 'I analyze customer purchase patterns to identify trends and anticipate future needs',
+          idealWorkEnvironment: 'A collaborative environment with clear communication and opportunities for professional growth'
+        },
+        eligibility: {
+          eligibleToWork: true,
+          requiresSponsorship: false,
+          consentToBackgroundCheck: true,
+          consentToDrugTest: true,
+          consentToReferenceCheck: true,
+          consentToEmploymentVerification: true,
+          hasValidI9Documents: true,
+          hasHazmatExperience: false,
+          hasForkliftCertification: false,
+          hasChemicalHandlingExperience: true,
+          willingToObtainCertifications: true
+        },
+        workExperience: [{
+          companyName: 'ABC Corp',
+          jobTitle: 'Customer Service Representative',
+          startDate: '2020-01',
+          endDate: '2023-12',
+          isCurrent: false,
+          responsibilities: 'Handled customer inquiries and processed orders',
+          reasonForLeaving: 'Career advancement',
+          supervisorName: 'Jane Smith',
+          supervisorContact: 'jane.smith@abccorp.com'
+        }],
+        education: [{
+          institutionName: 'University of Texas',
+          degreeType: 'Bachelor' as const,
+          fieldOfStudy: 'Business Administration',
+          graduationDate: '2019-05',
+          gpa: '3.5',
+          isCompleted: true
+        }],
+        references: [
+          {
+            name: 'Jane Smith',
+            relationship: 'Former Supervisor',
+            company: 'ABC Corp',
+            phone: '555-123-4567',
+            email: 'jane.smith@abccorp.com',
+            yearsKnown: 3
+          },
+          {
+            name: 'Bob Johnson',
+            relationship: 'Colleague',
+            company: 'ABC Corp',
+            phone: '555-987-6543',
+            email: 'bob.johnson@abccorp.com',
+            yearsKnown: 2
+          }
+        ],
+        signatureDataUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+        termsAgreed: true,
+        additionalInfo: 'I am excited about this opportunity at Alliance Chemical.'
+      };
 
-      // Set personal info
+      // Set all form values
       Object.entries(testData.personalInfo).forEach(([key, value]) => {
         setValue(`personalInfo.${key}` as any, value);
       });
 
-      // Set role assessment
       Object.entries(testData.roleAssessment).forEach(([key, value]) => {
         setValue(`roleAssessment.${key}` as any, value);
       });
 
-      // Set eligibility
       Object.entries(testData.eligibility).forEach(([key, value]) => {
         setValue(`eligibility.${key}` as any, value);
       });
 
-      // Set work experience
       setValue('workExperience', testData.workExperience);
-
-      // Set education
       setValue('education', testData.education);
-
-      // Set references
       setValue('references', testData.references);
-
-      // Set job posting ID
       setValue('jobPostingId', testData.jobPostingId);
-
-      // Set signature data
       setValue('signatureDataUrl', testData.signatureDataUrl);
-
-      // Set terms agreed
       setValue('termsAgreed', testData.termsAgreed);
-
-      // Set additional info
-      if (testData.additionalInfo) {
-        setValue('additionalInfo', testData.additionalInfo);
-      }
+      setValue('additionalInfo', testData.additionalInfo);
 
       // Mark all steps as visited and valid
       setVisitedSteps(new Set(Array.from({ length: STEPS.length }, (_, i) => i)));
       setIsStepValid(new Array(STEPS.length).fill(true));
 
-      // Add mock signature to canvas if it exists
-      if (sigCanvas.current) {
-        sigCanvas.current.fromDataURL(testData.signatureDataUrl);
-      }
-
-      // Show enhanced success message
-      const scenarioName = scenario === 'default' ? 'Complete Application' : 
-                          scenario === 'entryLevel' ? 'Entry Level Profile' : 
-                          'Experienced Professional Profile';
-      
-      setSuccessMessage(`✅ ${scenarioName} data loaded! All steps are now filled and ready for submission. You can navigate through all steps or proceed directly to submit.`);
+      setSuccessMessage('✅ Test data loaded! Form is now ready for submission testing.');
       setErrorMessage('');
       
-      // Automatically navigate to the last step (signature) to show completion
+      // Navigate to the last step to test submission
       setTimeout(() => {
         setCurrentStep(STEPS.length - 1);
       }, 1000);
+
     } catch (error) {
       console.error('Error loading test data:', error);
-      console.error('Error details:', error instanceof Error ? error.message : String(error));
       setErrorMessage(`Failed to load test data: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
