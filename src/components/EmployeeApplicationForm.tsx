@@ -5,13 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import SignatureCanvas from 'react-signature-canvas';
 import { employeeApplicationSchema, type EmployeeApplicationForm } from '@/lib/employee-validation';
-// Test data imports - Development mode only
-let generateTestData: any, generateTestDataVariations: any;
-if (process.env.NODE_ENV === 'development') {
-  const testDataModule = require('@/lib/test-data');
-  generateTestData = testDataModule.generateTestData;
-  generateTestDataVariations = testDataModule.generateTestDataVariations;
-}
 
 const STEPS = [
   { id: 'job', title: 'Position', shortTitle: 'Job', icon: '💼', description: 'Select your role' },
@@ -46,6 +39,86 @@ export default function EmployeeApplicationForm() {
   const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0]));
   const sigCanvas = useRef<SignatureCanvas>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Test data population function - Development Mode Only
+  const populateTestData = async (scenario: 'default' | 'entryLevel' | 'experienced' = 'default') => {
+    if (process.env.NODE_ENV !== 'development') {
+      console.warn('Test data population is only available in development mode');
+      return;
+    }
+
+    try {
+      // Dynamic import for development mode
+      const { generateTestData, generateTestDataVariations } = await import('@/lib/test-data');
+      
+      const testData = scenario === 'default' 
+        ? generateTestData() 
+        : generateTestDataVariations()[scenario];
+
+      // Set personal info
+      Object.entries(testData.personalInfo).forEach(([key, value]) => {
+        setValue(`personalInfo.${key}` as any, value);
+      });
+
+      // Set role assessment
+      Object.entries(testData.roleAssessment).forEach(([key, value]) => {
+        setValue(`roleAssessment.${key}` as any, value);
+      });
+
+      // Set eligibility
+      Object.entries(testData.eligibility).forEach(([key, value]) => {
+        setValue(`eligibility.${key}` as any, value);
+      });
+
+      // Set work experience
+      setValue('workExperience', testData.workExperience);
+
+      // Set education
+      setValue('education', testData.education);
+
+      // Set references
+      setValue('references', testData.references);
+
+      // Set job posting ID
+      setValue('jobPostingId', testData.jobPostingId);
+
+      // Set signature data
+      setValue('signatureDataUrl', testData.signatureDataUrl);
+
+      // Set terms agreed
+      setValue('termsAgreed', testData.termsAgreed);
+
+      // Set additional info
+      if (testData.additionalInfo) {
+        setValue('additionalInfo', testData.additionalInfo);
+      }
+
+      // Mark all steps as visited and valid
+      setVisitedSteps(new Set(Array.from({ length: STEPS.length }, (_, i) => i)));
+      setIsStepValid(new Array(STEPS.length).fill(true));
+
+      // Add mock signature to canvas if it exists
+      if (sigCanvas.current) {
+        sigCanvas.current.fromDataURL(testData.signatureDataUrl);
+      }
+
+      // Show enhanced success message
+      const scenarioName = scenario === 'default' ? 'Complete Application' : 
+                          scenario === 'entryLevel' ? 'Entry Level Profile' : 
+                          'Experienced Professional Profile';
+      
+      setSuccessMessage(`✅ ${scenarioName} data loaded! All steps are now filled and ready for submission. You can navigate through all steps or proceed directly to submit.`);
+      setErrorMessage('');
+      
+      // Automatically navigate to the last step (signature) to show completion
+      setTimeout(() => {
+        setCurrentStep(STEPS.length - 1);
+      }, 1000);
+    } catch (error) {
+      console.error('Error loading test data:', error);
+      setErrorMessage('Failed to load test data');
+    }
+  };
 
   const {
     register,
@@ -377,81 +450,6 @@ export default function EmployeeApplicationForm() {
   const handleSSNChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatSSN(e.target.value);
     setValue('personalInfo.socialSecurityNumber', formatted);
-  };
-
-  // Enhanced test data population function - Development Mode Only
-  const populateTestData = process.env.NODE_ENV === 'development' ? (scenario: 'default' | 'entryLevel' | 'experienced' = 'default') => {
-    if (!generateTestData || !generateTestDataVariations) {
-      console.warn('Test data functions not available');
-      return;
-    }
-    
-    const testData = scenario === 'default' 
-      ? generateTestData() 
-      : generateTestDataVariations()[scenario];
-
-    // Set personal info
-    Object.entries(testData.personalInfo).forEach(([key, value]) => {
-      setValue(`personalInfo.${key}` as any, value);
-    });
-
-    // Set role assessment
-    Object.entries(testData.roleAssessment).forEach(([key, value]) => {
-      setValue(`roleAssessment.${key}` as any, value);
-    });
-
-    // Set eligibility
-    Object.entries(testData.eligibility).forEach(([key, value]) => {
-      setValue(`eligibility.${key}` as any, value);
-    });
-
-    // Set work experience
-    setValue('workExperience', testData.workExperience);
-
-    // Set education
-    setValue('education', testData.education);
-
-    // Set references
-    setValue('references', testData.references);
-
-    // Set job posting ID
-    setValue('jobPostingId', testData.jobPostingId);
-
-    // Set signature data
-    setValue('signatureDataUrl', testData.signatureDataUrl);
-
-    // Set terms agreed
-    setValue('termsAgreed', testData.termsAgreed);
-
-    // Set additional info
-    if (testData.additionalInfo) {
-      setValue('additionalInfo', testData.additionalInfo);
-    }
-
-    // Mark all steps as visited and valid
-    setVisitedSteps(new Set(Array.from({ length: STEPS.length }, (_, i) => i)));
-    setIsStepValid(new Array(STEPS.length).fill(true));
-
-    // Add mock signature to canvas if it exists
-    if (sigCanvas.current) {
-      sigCanvas.current.fromDataURL(testData.signatureDataUrl);
-    }
-
-    // Show enhanced success message
-    const scenarioName = scenario === 'default' ? 'Complete Application' : 
-                        scenario === 'entryLevel' ? 'Entry Level Profile' : 
-                        'Experienced Professional Profile';
-    
-    setSuccessMessage(`✅ ${scenarioName} data loaded! All steps are now filled and ready for submission. You can navigate through all steps or proceed directly to submit.`);
-    setErrorMessage('');
-    
-    // Automatically navigate to the last step (signature) to show completion
-    setTimeout(() => {
-      setCurrentStep(STEPS.length - 1);
-    }, 1000);
-  } : () => {
-    // No-op function for production
-    console.warn('Test data population is only available in development mode');
   };
 
   const onSubmit: SubmitHandler<EmployeeApplicationForm> = async (data) => {
@@ -2564,18 +2562,328 @@ export default function EmployeeApplicationForm() {
         <p className="text-gray-600">Please sign your application to complete the process.</p>
       </div>
 
-      {/* Add any signature components you want to include */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Digital Signature</h3>
+        
+        <div className="flex justify-center mb-6">
+          <div className="flex bg-gray-100 rounded-xl p-1">
+            <button
+              type="button"
+              onClick={() => handleSignatureMethodChange('draw')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                signatureMethod === 'draw'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Draw Signature
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSignatureMethodChange('type')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                signatureMethod === 'type'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Type Signature
+            </button>
+          </div>
+        </div>
+
+        {signatureMethod === 'draw' ? (
+          <div className="space-y-4">
+            <div className="border border-gray-300 rounded-lg">
+              <SignatureCanvas
+                ref={sigCanvas}
+                canvasProps={{
+                  width: 500,
+                  height: 200,
+                  className: 'signature-canvas w-full rounded-lg'
+                }}
+                onEnd={captureSignature}
+              />
+            </div>
+            
+            <div className="flex justify-center space-x-4">
+              <button
+                type="button"
+                onClick={clearSignature}
+                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                onClick={captureSignature}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Save Signature
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Type your full name as your signature
+              </label>
+              <input
+                type="text"
+                value={typedSignature}
+                onChange={(e) => handleTypedSignatureChange(e.target.value)}
+                placeholder="Enter your full name"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            {typedSignature && (
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600 mb-2">Signature Preview:</p>
+                <p className="text-2xl font-script italic text-blue-600">{typedSignature}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="mt-6 flex items-start space-x-3">
+          <input
+            type="checkbox"
+            {...register('termsAgreed')}
+            className="w-4 h-4 text-blue-600 rounded mt-1"
+          />
+          <label className="text-sm text-gray-700">
+            <strong>I certify that all information provided is true and accurate to the best of my knowledge *</strong>
+          </label>
+        </div>
+        {errors.termsAgreed && (
+          <p className="mt-1 text-sm text-red-600">{errors.termsAgreed.message}</p>
+        )}
+      </div>
+
+      {/* Additional Information */}
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Is there anything else you'd like us to know about your application?
+          </label>
+          <textarea
+            {...register('additionalInfo')}
+            rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Optional: Any additional information, accommodations needed, or questions..."
+          />
+        </div>
+      </div>
     </div>
   );
 
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 0:
+        return renderJobSelection();
+      case 1:
+        return renderAssessment();
+      case 2:
+        return renderPersonalInfo();
+      case 3:
+        return renderFileUploads();
+      case 4:
+        return renderWorkExperience();
+      case 5:
+        return renderEducation();
+      case 6:
+        return renderReferences();
+      case 7:
+        return renderReview();
+      case 8:
+        return renderSignature();
+      default:
+        return <div>Invalid step</div>;
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <form 
-        // @ts-ignore - Type conflict with react-hook-form submit handler
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        {/* Add your form fields here */}
-      </form>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Employee Application
+          </h1>
+          <p className="text-xl text-gray-600">
+            Join the Alliance Chemical Team
+          </p>
+        </div>
+
+        {/* Development Mode Test Data Buttons */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h3 className="text-lg font-semibold text-yellow-800 mb-3">🧪 Development Mode - Test Data</h3>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => populateTestData('default')}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+              >
+                Load Complete Application
+              </button>
+              <button
+                type="button"
+                onClick={() => populateTestData('entryLevel')}
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
+              >
+                Load Entry Level Profile
+              </button>
+              <button
+                type="button"
+                onClick={() => populateTestData('experienced')}
+                className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
+              >
+                Load Experienced Profile
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm font-medium text-gray-700">
+              Step {currentStep + 1} of {STEPS.length}
+            </span>
+            <span className="text-sm font-medium text-gray-700">
+              {Math.round(((currentStep + 1) / STEPS.length) * 100)}% Complete
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${((currentStep + 1) / STEPS.length) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Step Navigation */}
+        <div className="mb-8">
+          <div className="flex flex-wrap justify-center gap-2">
+            {STEPS.map((step, index) => (
+              <button
+                key={step.id}
+                type="button"
+                onClick={() => goToStep(index)}
+                className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  index === currentStep
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : visitedSteps.has(index)
+                    ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                    : 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                }`}
+                disabled={!visitedSteps.has(index) && index !== currentStep}
+              >
+                <span className="mr-2">{step.icon}</span>
+                <span className="hidden sm:inline">{step.shortTitle}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Messages */}
+        {errorMessage && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-sm text-red-600 flex items-center">
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              {errorMessage}
+            </p>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-sm text-green-600 flex items-center">
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              {successMessage}
+            </p>
+          </div>
+        )}
+
+        {/* Main Form */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Step Content */}
+            <div className="mb-8">
+              {renderStepContent()}
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={prevStep}
+                disabled={currentStep === 0}
+                className={`flex items-center px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+                  currentStep === 0
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300 transform hover:scale-105'
+                }`}
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+              </button>
+
+              <div className="flex space-x-4">
+                {currentStep === STEPS.length - 1 ? (
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`flex items-center px-8 py-3 rounded-xl font-medium transition-all duration-200 ${
+                      isSubmitting
+                        ? 'bg-gray-400 text-white cursor-not-allowed'
+                        : 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transform hover:scale-105 shadow-lg'
+                    }`}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <svg className="w-5 h-5 mr-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Submit Application
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 font-medium transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  >
+                    Next
+                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
