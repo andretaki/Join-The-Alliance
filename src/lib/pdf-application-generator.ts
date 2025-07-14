@@ -19,6 +19,18 @@ export class ApplicationPDFGenerator {
   }
 
   private addHeader(applicantName: string, position: string) {
+    // Add Alliance Chemical logo
+    try {
+      // Convert logo file to base64 data URL for embedding
+      const logoDataUrl = this.getLogoDataUrl();
+      if (logoDataUrl) {
+        this.doc.addImage(logoDataUrl, 'PNG', this.margin, this.yPosition, 80, 30);
+        this.yPosition += 40;
+      }
+    } catch (error) {
+      console.warn('Logo could not be added to PDF:', error);
+    }
+
     this.doc.setFontSize(20);
     this.doc.text('Employment Application', this.margin, this.yPosition);
     this.yPosition += 10;
