@@ -25,6 +25,11 @@ export default function EmployeeApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
+  const [idCaptureMethod, setIdCaptureMethod] = useState<'upload' | 'camera'>('upload');
+  const [showCamera, setShowCamera] = useState(false);
+  const [photoStream, setPhotoStream] = useState<MediaStream | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [aiParsing, setAiParsing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState('');
@@ -239,8 +244,77 @@ export default function EmployeeApplicationForm() {
 
   const handleIdUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setIdFile(file);
+    if (!file) return;
+
+    // Validate file type for ID (images only)
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError('Please upload a JPG, PNG, or WEBP image for ID');
+      return;
+    }
+
+    // Validate file size (5MB max for images)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      setUploadError('ID image must be less than 5MB');
+      return;
+    }
+
+    setUploadError('');
+    setIdFile(file);
+  };
+
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'environment', // Use back camera if available
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      });
+      
+      setPhotoStream(stream);
+      setShowCamera(true);
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      setUploadError('Unable to access camera. Please try uploading a file instead.');
+    }
+  };
+
+  const stopCamera = () => {
+    if (photoStream) {
+      photoStream.getTracks().forEach(track => track.stop());
+      setPhotoStream(null);
+    }
+    setShowCamera(false);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0);
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], 'id-photo.jpg', { type: 'image/jpeg' });
+            setIdFile(file);
+            stopCamera();
+          }
+        }, 'image/jpeg', 0.8);
+      }
     }
   };
 
@@ -281,12 +355,22 @@ export default function EmployeeApplicationForm() {
   useEffect(() => {
     const stepContainer = stepRefs.current[currentStep];
     if (stepContainer) {
-      const firstFocusable = stepContainer.querySelector('input, select, textarea, button, [tabindex="0"]') as HTMLElement;
-      if (firstFocusable) {
-        firstFocusable.focus();
-      } else {
+      // For iOS Safari, delay focus to prevent automatic dropdown opening
+      const focusDelay = /iPhone|iPad|iPod/.test(navigator.userAgent) ? 300 : 0;
+      
+      setTimeout(() => {
+        // First, blur any currently focused element to prevent iOS dropdown issues
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+        
+        // Then focus the step container instead of the first focusable element
+        // This prevents iOS Safari from automatically opening select dropdowns
         stepContainer.focus();
-      }
+        
+        // Set tabIndex to make it focusable
+        stepContainer.setAttribute('tabindex', '-1');
+      }, focusDelay);
     }
   }, [currentStep]);
 
