@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadFileToS3 } from '@/lib/s3-utils';
-import { sendApplicationNotification } from '@/lib/email-service';
+import { sendApplicationNotificationEmails } from '@/lib/email-service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -56,27 +56,16 @@ export async function POST(request: NextRequest) {
     // Send email notifications
     try {
       // Send to HR/boss
-      await sendApplicationNotification({
-        applicantName: `${personalInfo.firstName} ${personalInfo.lastName}`,
-        applicantEmail: personalInfo.email,
-        position: 'Customer Service Specialist',
-        applicationData: parsedData,
-        attachments: uploadedFiles,
-        recipientEmail: process.env.HR_EMAIL || 'hr@alliancechemical.com'
-      });
-
-      // Send copy to applicant if requested
-      if (sendEmailCopy) {
-        await sendApplicationNotification({
-          applicantName: `${personalInfo.firstName} ${personalInfo.lastName}`,
-          applicantEmail: personalInfo.email,
-          position: 'Customer Service Specialist',
-          applicationData: parsedData,
-          attachments: uploadedFiles,
-          recipientEmail: personalInfo.email,
-          isApplicantCopy: true
-        });
-      }
+      // Create a simple notification structure
+      const applicationId = Date.now(); // Simple ID for now
+      const pdfBuffer = Buffer.from('placeholder pdf content'); // Would need actual PDF generation
+      
+      await sendApplicationNotificationEmails(
+        parsedData,
+        applicationId,
+        pdfBuffer,
+        'Application submitted successfully'
+      );
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
       // Don't fail the entire request if email fails

@@ -31,7 +31,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()'
+            value: 'camera=(self), microphone=(), geolocation=(), interest-cohort=()'
           },
           // HSTS only in production
           ...(process.env.NODE_ENV === 'production' ? [{

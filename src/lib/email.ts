@@ -304,8 +304,18 @@ export async function sendEmail(data: EmailDataBase, options?: {
   try {
     console.log('🔄 Sending email via Microsoft Graph...');
     
+    // Convert EmailDataBase to GraphEmailData format
+    const graphEmailData = {
+      to: [data.to], // Convert string to array
+      subject: data.subject,
+      htmlContent: data.html,
+      textContent: data.text,
+      from: data.from,
+      cc: data.cc ? [data.cc] : undefined // Convert string to array if exists
+    };
+    
     // Add timeout for the entire email send process
-    const emailPromise = sendEmailViaGraph(data);
+    const emailPromise = sendEmailViaGraph(graphEmailData);
     const emailTimeout = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error('Email send timeout after 20 seconds')), 20000);
     });

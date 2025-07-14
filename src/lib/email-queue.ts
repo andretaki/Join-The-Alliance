@@ -190,12 +190,12 @@ export async function processEmailQueue(): Promise<{
         // Send email
         const { sendEmailViaGraph } = await import('@/lib/microsoft-graph');
         const result = await sendEmailViaGraph({
-          to: email.to,
+          to: [email.to], // Convert string to array
           subject: email.subject,
-          html: email.html,
-          text: email.text,
+          htmlContent: email.html,
+          textContent: email.text,
           from: email.from,
-          cc: email.cc
+          cc: email.cc ? [email.cc] : undefined // Convert string to array if exists
         });
 
         if (result.success) {
