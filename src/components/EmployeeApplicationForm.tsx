@@ -1,5 +1,3 @@
-
-
 "use client";
 import { useState, useRef, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
@@ -514,7 +512,7 @@ export default function EmployeeApplicationForm() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Rate your experience with TMS MyCarrier (Transportation Management System)
+                    Rate your experience with <strong>TMS MyCarrier</strong> (<strong>Transportation Management System</strong>)
                   </label>
                   <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select experience level</option>
@@ -528,7 +526,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Describe your experience with Shopify for order management and customer support
+                    Describe your experience with <strong>Shopify</strong> for <strong>order management</strong> and <strong>customer support</strong>
                   </label>
                   <textarea
                     rows={3}
@@ -539,7 +537,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Amazon Seller Central experience level
+                    <strong>Amazon Seller Central</strong> experience level
                   </label>
                   <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select experience level</option>
@@ -552,7 +550,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Rate your proficiency with Microsoft Excel for data analysis and reporting
+                    Rate your proficiency with <strong>Microsoft Excel</strong> for <strong>data analysis</strong> and <strong>reporting</strong>
                   </label>
                   <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select proficiency level</option>
@@ -564,7 +562,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Describe your experience with Canva for creating customer-facing materials
+                    Describe your experience with <strong>Canva</strong> for creating <strong>customer-facing materials</strong>
                   </label>
                   <textarea
                     rows={2}
@@ -582,7 +580,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    When you receive conflicting information from different sources (customer, system, supervisor), how do you determine the truth?
+                    When you receive <strong>conflicting information</strong> from different sources (<strong>customer</strong>, <strong>system</strong>, <strong>supervisor</strong>), how do you determine the truth?
                   </label>
                   <textarea
                     rows={3}
@@ -593,7 +591,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    What motivates you most: solving complex problems, helping people, or achieving measurable results? Explain why.
+                    What motivates you most: <strong>solving complex problems</strong>, <strong>helping people</strong>, or <strong>achieving measurable results</strong>? Explain why.
                   </label>
                   <textarea
                     rows={3}
@@ -610,7 +608,7 @@ export default function EmployeeApplicationForm() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    A customer calls saying their chemical shipment was delayed and they need it for production tomorrow. The carrier shows it's still in transit. How would you handle this?
+                    A customer calls saying their <strong>chemical shipment</strong> was <strong>delayed</strong> and they need it for <strong>production tomorrow</strong>. The <strong>carrier</strong> shows it's still in transit. How would you handle this?
                   </label>
                   <textarea
                     rows={4}
@@ -621,7 +619,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    You notice a customer has been placing increasingly large orders of a restricted chemical. What actions would you take?
+                    You notice a customer has been placing increasingly large orders of a <strong>restricted chemical</strong>. What actions would you take?
                   </label>
                   <textarea
                     rows={3}
@@ -632,7 +630,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    A customer questions why their hazardous material shipment costs more than regular freight. How do you explain the additional fees?
+                    A customer questions why their <strong>hazardous material</strong> shipment costs more than <strong>regular freight</strong>. How do you explain the additional fees?
                   </label>
                   <textarea
                     rows={3}
@@ -650,7 +648,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    What motivates you most in a customer service role? (Select all that apply)
+                    What motivates you most in a <strong>customer service role</strong>? (Select all that apply)
                   </label>
                   <div className="space-y-2">
                     {[
@@ -674,7 +672,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    How do you handle stress when dealing with multiple urgent customer requests simultaneously?
+                    How do you handle <strong>stress</strong> when dealing with <strong>multiple urgent customer requests</strong> simultaneously?
                   </label>
                   <textarea
                     rows={3}
@@ -685,7 +683,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    If you could automate one repetitive task in customer service, what would it be and why?
+                    If you could <strong>automate</strong> one <strong>repetitive task</strong> in customer service, what would it be and why?
                   </label>
                   <textarea
                     rows={3}
@@ -702,7 +700,7 @@ export default function EmployeeApplicationForm() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    In your experience, what's the most important factor in maintaining customer loyalty in B2B sales?
+                    In your experience, what's the most important factor in maintaining <strong>customer loyalty</strong> in <strong>B2B sales</strong>?
                   </label>
                   <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
                     <option value="">Select your answer</option>
@@ -717,7 +715,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    How would you use data from customer interactions to improve service quality?
+                    How would you use <strong>data</strong> from <strong>customer interactions</strong> to improve <strong>service quality</strong>?
                   </label>
                   <textarea
                     rows={3}
@@ -728,7 +726,7 @@ export default function EmployeeApplicationForm() {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Describe your ideal work environment and team dynamics
+                    Describe your ideal <strong>work environment</strong> and <strong>team dynamics</strong>
                   </label>
                   <textarea
                     rows={3}
@@ -927,7 +925,7 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rate your experience with TMS MyCarrier (Transportation Management System) *
+              Rate your experience with <strong>TMS MyCarrier</strong> (<strong>Transportation Management System</strong>) *
             </label>
             <select 
               {...register('roleAssessment.tmsMyCarrierExperience')}
@@ -951,7 +949,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe your experience with Shopify for order management and customer support *
+              Describe your experience with <strong>Shopify</strong> for <strong>order management</strong> and <strong>customer support</strong> *
             </label>
             <textarea
               {...register('roleAssessment.shopifyExperience')}
@@ -970,7 +968,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Amazon Seller Central experience level *
+              <strong>Amazon Seller Central</strong> experience level *
             </label>
             <select 
               {...register('roleAssessment.amazonSellerCentralExperience')}
@@ -993,7 +991,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rate your proficiency with Microsoft Excel for data analysis and reporting *
+              Rate your proficiency with <strong>Microsoft Excel</strong> for <strong>data analysis</strong> and <strong>reporting</strong> *
             </label>
             <select 
               {...register('roleAssessment.excelProficiency')}
@@ -1004,9 +1002,9 @@ export default function EmployeeApplicationForm() {
               }`}
             >
               <option value="">Select proficiency level</option>
-              <option value="basic">Basic - Can learn new software with training and support</option>
-              <option value="intermediate">Intermediate - Comfortable with most business software and help desk tools</option>
-              <option value="advanced">Advanced - Quickly adapt to new systems and can train others</option>
+              <option value="basic">Basic - Can create simple spreadsheets and basic formulas</option>
+              <option value="intermediate">Intermediate - Can use VLOOKUP, pivot tables, and charts</option>
+              <option value="advanced">Advanced - Can create complex reports and macros</option>
             </select>
             {errors.roleAssessment?.excelProficiency && (
               <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.excelProficiency.message}</p>
@@ -1015,7 +1013,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe your experience with Canva for creating customer-facing materials *
+              Describe your experience with <strong>Canva</strong> for creating <strong>customer-facing materials</strong> *
             </label>
             <textarea
               {...register('roleAssessment.canvaExperience')}
@@ -1040,7 +1038,7 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe a time when you had to learn a completely new software system under pressure. How did you approach it? *
+              Describe a time when you had to learn a completely new <strong>software system</strong> under <strong>pressure</strong>. How did you approach it? *
             </label>
             <textarea
               {...register('roleAssessment.learningUnderPressure')}
@@ -1059,7 +1057,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              When you receive conflicting information from different sources (customer, system, supervisor), how do you determine the truth? *
+              When you receive <strong>conflicting information</strong> from different sources (<strong>customer</strong>, <strong>system</strong>, <strong>supervisor</strong>), how do you determine the truth? *
             </label>
             <textarea
               {...register('roleAssessment.conflictingInformation')}
@@ -1078,7 +1076,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              What motivates you most: solving complex problems, helping people, or achieving measurable results? Explain why. *
+              What motivates you most: <strong>solving complex problems</strong>, <strong>helping people</strong>, or <strong>achieving measurable results</strong>? Explain why. *
             </label>
             <textarea
               {...register('roleAssessment.workMotivation')}
@@ -1103,7 +1101,7 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              A customer calls saying their chemical shipment was delayed and they need it for production tomorrow. The carrier shows it's still in transit. How would you handle this? *
+              A customer calls saying their <strong>chemical shipment</strong> was <strong>delayed</strong> and they need it for <strong>production tomorrow</strong>. The <strong>carrier</strong> shows it's still in transit. How would you handle this? *
             </label>
             <textarea
               {...register('roleAssessment.delayedShipmentScenario')}
@@ -1122,7 +1120,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              You notice a customer has been placing increasingly large orders of a restricted chemical. What actions would you take? *
+              You notice a customer has been placing increasingly large orders of a <strong>restricted chemical</strong>. What actions would you take? *
             </label>
             <textarea
               {...register('roleAssessment.restrictedChemicalScenario')}
@@ -1141,39 +1139,39 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              A customer questions why their hazardous material shipment costs more than regular freight. How do you explain the additional fees? *
+              A customer questions why their <strong>hazardous material</strong> shipment costs more than <strong>regular freight</strong>. How do you explain the additional fees? *
             </label>
             <textarea
-              {...register('roleAssessment.hazmatFreightScenario')}
+              {...register('roleAssessment.hazmatExplanationScenario')}
               rows={3}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.roleAssessment?.hazmatFreightScenario 
+                errors.roleAssessment?.hazmatExplanationScenario 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
               }`}
               placeholder="Explain your approach to educating customers about hazmat regulations..."
             />
-            {errors.roleAssessment?.hazmatFreightScenario && (
-              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.hazmatFreightScenario.message}</p>
+            {errors.roleAssessment?.hazmatExplanationScenario && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.hazmatExplanationScenario.message}</p>
             )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              A potential new customer, Barry from Widgets Inc., has requested a quote. You need to provide pricing for 4 drums of Acetic Acid at $800 per drum, with a total shipping cost of $200 to their location in Brooklyn, New York. Write the exact professional email you would send to Barry. *
+              A potential new customer, <strong>Barry from Widgets Inc.</strong>, has requested a <strong>quote</strong>. You need to provide pricing for <strong>4 drums of Acetic Acid</strong> at <strong>$800 per drum</strong>, with a total <strong>shipping cost of $200</strong> to their location in <strong>Brooklyn, New York</strong>. Write the exact professional email you would send to Barry. *
             </label>
             <textarea
-              {...register('roleAssessment.customerQuoteScenario')}
+              {...register('roleAssessment.professionalEmailScenario')}
               rows={6}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.roleAssessment?.customerQuoteScenario 
+                errors.roleAssessment?.professionalEmailScenario 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
               }`}
               placeholder="Write a professional quote email that presents pricing clearly and encourages the customer to place the order..."
             />
-            {errors.roleAssessment?.customerQuoteScenario && (
-              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.customerQuoteScenario.message}</p>
+            {errors.roleAssessment?.professionalEmailScenario && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.professionalEmailScenario.message}</p>
             )}
           </div>
         </div>
@@ -1185,7 +1183,7 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe a time when you had to learn a complex software system quickly. How did you approach it? *
+              Describe a time when you had to learn a <strong>complex software system</strong> quickly. How did you approach it? *
             </label>
             <textarea
               {...register('roleAssessment.softwareLearningExperience')}
@@ -1204,36 +1202,36 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              What motivates you most in a customer service role? (Select all that apply) *
+              What motivates you most in a <strong>customer service role</strong>? (Select all that apply) *
             </label>
             <div className="space-y-2">
               {[
-                'Solving complex problems',
-                'Building long-term customer relationships',
-                'Learning new technologies and processes',
-                'Working with data and analytics',
-                'Helping customers achieve their goals',
-                'Working in a fast-paced environment'
-              ].map((option, index) => (
-                <div key={option} className="flex items-center space-x-2">
+                { value: 'solvingProblems', label: 'Solving complex problems' },
+                { value: 'buildingRelationships', label: 'Building long-term customer relationships' },
+                { value: 'learningTechnologies', label: 'Learning new technologies and processes' },
+                { value: 'workingWithData', label: 'Working with data and analytics' },
+                { value: 'helpingCustomers', label: 'Helping customers achieve their goals' },
+                { value: 'fastPacedEnvironment', label: 'Working in a fast-paced environment' }
+              ].map((option) => (
+                <div key={option.value} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    {...register('roleAssessment.customerServiceMotivation')}
-                    value={option}
+                    {...register('roleAssessment.customerServiceMotivations')}
+                    value={option.value}
                     className="w-4 h-4 text-blue-600 rounded"
                   />
-                  <label className="text-sm text-gray-700">{option}</label>
+                  <label className="text-sm text-gray-700">{option.label}</label>
                 </div>
               ))}
             </div>
-            {errors.roleAssessment?.customerServiceMotivation && (
-              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.customerServiceMotivation.message}</p>
+            {errors.roleAssessment?.customerServiceMotivations && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.customerServiceMotivations.message}</p>
             )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              How do you handle stress when dealing with multiple urgent customer requests simultaneously? *
+              How do you handle <strong>stress</strong> when dealing with <strong>multiple urgent customer requests</strong> simultaneously? *
             </label>
             <textarea
               {...register('roleAssessment.stressManagement')}
@@ -1252,7 +1250,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              If you could automate one repetitive task in customer service, what would it be and why? *
+              If you could <strong>automate</strong> one <strong>repetitive task</strong> in customer service, what would it be and why? *
             </label>
             <textarea
               {...register('roleAssessment.automationIdeas')}
@@ -1277,7 +1275,7 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              In your experience, what's the most important factor in maintaining customer loyalty in B2B sales? *
+              In your experience, what's the most important factor in maintaining <strong>customer loyalty</strong> in <strong>B2B sales</strong>? *
             </label>
             <select 
               {...register('roleAssessment.b2bLoyaltyFactor')}
@@ -1288,11 +1286,12 @@ export default function EmployeeApplicationForm() {
               }`}
             >
               <option value="">Select your answer</option>
-              <option value="reliability">Consistent reliability and on-time delivery</option>
-              <option value="communication">Proactive communication and transparency</option>
-              <option value="expertise">Technical expertise and problem-solving</option>
-              <option value="pricing">Competitive pricing and value</option>
-              <option value="relationships">Personal relationships and trust</option>
+              <option value="pricing">Competitive pricing</option>
+              <option value="reliability">Consistent delivery and quality</option>
+              <option value="communication">Proactive communication</option>
+              <option value="problemSolving">Quick problem resolution</option>
+              <option value="relationship">Personal relationships</option>
+              <option value="expertise">Technical expertise and advice</option>
             </select>
             {errors.roleAssessment?.b2bLoyaltyFactor && (
               <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.b2bLoyaltyFactor.message}</p>
@@ -1301,7 +1300,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              How would you use data from customer interactions to improve service quality? *
+              How would you use <strong>data</strong> from <strong>customer interactions</strong> to improve <strong>service quality</strong>? *
             </label>
             <textarea
               {...register('roleAssessment.dataAnalysisApproach')}
@@ -1320,7 +1319,7 @@ export default function EmployeeApplicationForm() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe your ideal work environment and team dynamics *
+              Describe your ideal <strong>work environment</strong> and <strong>team dynamics</strong> *
             </label>
             <textarea
               {...register('roleAssessment.idealWorkEnvironment')}
