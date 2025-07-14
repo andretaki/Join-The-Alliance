@@ -1,0 +1,1 @@
+INSERT INTO employee_applications.job_postings (title, department, description, requirements, reviewer_email, is_active) VALUES ('Customer Service Specialist', 'Sales', 'Provide exceptional customer service and support for chemical product inquiries', 'Experience with customer service, communication skills, attention to detail', 'alliance@alliancechemical.com', true);

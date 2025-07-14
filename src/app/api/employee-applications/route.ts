@@ -34,13 +34,12 @@ export async function POST(request: NextRequest) {
     }
     
     const { 
-      employeeApplications, 
-      workExperience, 
+      employeeApplications,
+      workExperience,
       education, 
-      references, 
-      employeeSignatures, 
-      applicationFiles,
-      emailNotifications
+      references,
+      employeeSignatures,
+      applicationFiles
     } = await import('@/lib/schema');
     const { employeeApplicationSchema } = await import('@/lib/employee-validation');
     const { eq } = await import('drizzle-orm');

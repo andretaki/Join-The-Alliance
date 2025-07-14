@@ -27,7 +27,7 @@ async function checkDatabase(): Promise<HealthCheck> {
   try {
     // Dynamic import to prevent build-time issues
     const { db } = await import('@/lib/db');
-    const { applications } = await import('@/lib/db/schema');
+    const { applications } = await import('@/lib/schema');
     
     // Simple query to test connection
     await db.select().from(applications).limit(1);

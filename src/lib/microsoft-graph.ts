@@ -187,9 +187,9 @@ export async function sendEmailViaGraph(data: GraphEmailData): Promise<{success:
   // Add overall timeout for the entire email send process
   const overallTimeoutPromise = new Promise<never>((_, reject) => {
     setTimeout(() => {
-      console.error('⏰ Microsoft Graph: Overall email send process timed out after 10 seconds');
+      console.error('⏰ Microsoft Graph: Overall email send process timed out after 30 seconds');
       reject(new Error('Overall Microsoft Graph process timeout'));
-    }, 10000);
+    }, 30000);
   });
 
   try {
@@ -256,7 +256,7 @@ async function sendEmailInternal(client: Client, data: GraphEmailData): Promise<
     
     // Add shorter timeout for Vercel serverless environment
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Microsoft Graph API timeout after 8 seconds')), 8000);
+      setTimeout(() => reject(new Error('Microsoft Graph API timeout after 25 seconds')), 25000);
     });
 
     // Send email using Microsoft Graph with timeout and retry

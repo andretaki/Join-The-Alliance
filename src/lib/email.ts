@@ -2,7 +2,7 @@ import { sendEmailViaGraph, isGraphConfigured, verifyGraphConfiguration } from '
 import { queueEmail, processEmailQueue, checkKVConnection } from '@/lib/email-queue';
 
 // Quick fix - Force Direct Send
-const FORCE_DIRECT_SEND = true; // Temporary flag
+const FORCE_DIRECT_SEND = false; // Use queue when available
 
 // Validate critical email configuration in production
 function validateEmailConfig() {
@@ -317,7 +317,7 @@ export async function sendEmail(data: EmailDataBase, options?: {
     // Add timeout for the entire email send process
     const emailPromise = sendEmailViaGraph(graphEmailData);
     const emailTimeout = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Email send timeout after 20 seconds')), 20000);
+      setTimeout(() => reject(new Error('Email send timeout after 35 seconds')), 35000);
     });
     
     const result = await Promise.race([emailPromise, emailTimeout]);
