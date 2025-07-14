@@ -36,16 +36,16 @@ describe('EmployeeApplicationForm', () => {
     render(<EmployeeApplicationForm />);
     
     expect(screen.getByText('Employment Application')).toBeInTheDocument();
-    expect(screen.getByText('Position')).toBeInTheDocument();
-    expect(screen.getByText('🧪 Test Mode')).toBeInTheDocument();
+    expect(screen.getAllByText('Position')[0]).toBeInTheDocument();
+    expect(screen.getByText('Quick Fill Options')).toBeInTheDocument();
   });
 
   it('shows test mode buttons in development', () => {
     render(<EmployeeApplicationForm />);
     
-    expect(screen.getByText('Fill Standard')).toBeInTheDocument();
-    expect(screen.getByText('Fill Entry Level')).toBeInTheDocument();
-    expect(screen.getByText('Fill Experienced')).toBeInTheDocument();
+    expect(screen.getByText('📋 Fill Everything')).toBeInTheDocument();
+    expect(screen.getByText('🌱 Entry Level')).toBeInTheDocument();
+    expect(screen.getByText('🎆 Experienced')).toBeInTheDocument();
   });
 
   it('hides test mode buttons in production', () => {
@@ -54,13 +54,13 @@ describe('EmployeeApplicationForm', () => {
     render(<EmployeeApplicationForm />);
     
     expect(screen.queryByText('🧪 Test Mode')).not.toBeInTheDocument();
-    expect(screen.queryByText('Fill Standard')).not.toBeInTheDocument();
+    expect(screen.queryByText('📋 Fill Everything')).not.toBeInTheDocument();
   });
 
-  it('populates form with test data when Fill Standard is clicked', async () => {
+  it('populates form with test data when 📋 Fill Everything is clicked', async () => {
     render(<EmployeeApplicationForm />);
     
-    const fillStandardButton = screen.getByText('Fill Standard');
+    const fillStandardButton = screen.getByText('📋 Fill Everything');
     fireEvent.click(fillStandardButton);
     
     await waitFor(() => {
@@ -72,7 +72,7 @@ describe('EmployeeApplicationForm', () => {
     render(<EmployeeApplicationForm />);
     
     // Fill with test data first
-    const fillStandardButton = screen.getByText('Fill Standard');
+    const fillStandardButton = screen.getByText('📋 Fill Everything');
     fireEvent.click(fillStandardButton);
     
     // Navigate to next step
@@ -107,7 +107,7 @@ describe('EmployeeApplicationForm', () => {
     render(<EmployeeApplicationForm />);
     
     // Fill form with test data
-    const fillStandardButton = screen.getByText('Fill Standard');
+    const fillStandardButton = screen.getByText('📋 Fill Everything');
     fireEvent.click(fillStandardButton);
     
     // Navigate to last step
@@ -166,7 +166,7 @@ describe('EmployeeApplicationForm', () => {
       render(<EmployeeApplicationForm />);
       
       // Navigate to personal info step
-      const fillStandardButton = screen.getByText('Fill Standard');
+      const fillStandardButton = screen.getByText('📋 Fill Everything');
       fireEvent.click(fillStandardButton);
       
       const nextButton = screen.getByText('Next');
@@ -182,7 +182,7 @@ describe('EmployeeApplicationForm', () => {
       render(<EmployeeApplicationForm />);
       
       // Fill with test data and navigate to personal info
-      const fillStandardButton = screen.getByText('Fill Standard');
+      const fillStandardButton = screen.getByText('📋 Fill Everything');
       fireEvent.click(fillStandardButton);
       
       const nextButton = screen.getByText('Next');
@@ -203,12 +203,12 @@ describe('EmployeeApplicationForm', () => {
       render(<EmployeeApplicationForm />);
       
       // Fill form with test data
-      const fillStandardButton = screen.getByText('Fill Standard');
+      const fillStandardButton = screen.getByText('📋 Fill Everything');
       fireEvent.click(fillStandardButton);
       
       // Navigate to submit step (would require more complex navigation in real test)
       // For now, just test that the error handling exists
-      expect(screen.getByText('Fill Standard')).toBeInTheDocument();
+      expect(screen.getByText('📋 Fill Everything')).toBeInTheDocument();
     });
   });
 }); 

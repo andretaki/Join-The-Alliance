@@ -408,7 +408,7 @@ export default function EmployeeApplicationForm() {
     setValue('personalInfo.socialSecurityNumber', formatted);
   };
 
-  // Test data population function
+  // Enhanced test data population function
   const populateTestData = (scenario: 'default' | 'entryLevel' | 'experienced' = 'default') => {
     const testData = scenario === 'default' 
       ? generateTestData() 
@@ -441,7 +441,7 @@ export default function EmployeeApplicationForm() {
     // Set job posting ID
     setValue('jobPostingId', testData.jobPostingId);
 
-    // Set signature
+    // Set signature data
     setValue('signatureDataUrl', testData.signatureDataUrl);
 
     // Set terms agreed
@@ -452,9 +452,27 @@ export default function EmployeeApplicationForm() {
       setValue('additionalInfo', testData.additionalInfo);
     }
 
-    // Show success message
-    setSuccessMessage(`Form populated with ${scenario === 'default' ? 'standard' : scenario} test data! You can now navigate through the steps.`);
+    // Mark all steps as visited and valid
+    setVisitedSteps(new Set(Array.from({ length: STEPS.length }, (_, i) => i)));
+    setIsStepValid(new Array(STEPS.length).fill(true));
+
+    // Add mock signature to canvas if it exists
+    if (sigCanvas.current) {
+      sigCanvas.current.fromDataURL(testData.signatureDataUrl);
+    }
+
+    // Show enhanced success message
+    const scenarioName = scenario === 'default' ? 'Complete Application' : 
+                        scenario === 'entryLevel' ? 'Entry Level Profile' : 
+                        'Experienced Professional Profile';
+    
+    setSuccessMessage(`✅ ${scenarioName} data loaded! All steps are now filled and ready for submission. You can navigate through all steps or proceed directly to submit.`);
     setErrorMessage('');
+    
+    // Automatically navigate to the last step (signature) to show completion
+    setTimeout(() => {
+      setCurrentStep(STEPS.length - 1);
+    }, 1000);
   };
 
   const onSubmit = async (data: EmployeeApplicationForm) => {
@@ -2637,47 +2655,55 @@ export default function EmployeeApplicationForm() {
             </div>
           </div>
 
-          {/* Enhanced Test Data Section - Only in Development */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mb-8">
-              <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl p-6 shadow-lg">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                      🧪
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-amber-800">Development Mode</h3>
-                      <p className="text-sm text-amber-700">Quick-fill the form with realistic test data</p>
-                    </div>
+          {/* Enhanced Test Data Section - Always Available */}
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl p-6 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                    🚀
                   </div>
-                  <div className="flex space-x-3">
-                    <button
-                      type="button"
-                      onClick={() => populateTestData('default')}
-                      className="px-4 py-2 text-sm bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-md"
-                    >
-                      📋 Standard
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => populateTestData('entryLevel')}
-                      className="px-4 py-2 text-sm bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-md"
-                    >
-                      🌱 Entry Level
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => populateTestData('experienced')}
-                      className="px-4 py-2 text-sm bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-md"
-                    >
-                      🎆 Experienced
-                    </button>
+                  <div>
+                    <h3 className="text-lg font-semibold text-amber-800">Quick Fill Options</h3>
+                    <p className="text-sm text-amber-700">Fill the form instantly with realistic test data for demos and testing</p>
                   </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => populateTestData('default')}
+                    className="px-4 py-2 text-sm bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                  >
+                    📋 Fill Everything
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => populateTestData('entryLevel')}
+                    className="px-4 py-2 text-sm bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                  >
+                    🌱 Entry Level
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => populateTestData('experienced')}
+                    className="px-4 py-2 text-sm bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                  >
+                    🎆 Experienced
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      populateTestData('default');
+                      setTimeout(() => setCurrentStep(STEPS.length - 1), 500);
+                    }}
+                    className="px-4 py-2 text-sm bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                  >
+                    🚀 Skip to End
+                  </button>
                 </div>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Enhanced Success/Error Messages */}
           {successMessage && (
