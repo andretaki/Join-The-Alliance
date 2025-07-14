@@ -39,6 +39,8 @@ export default function EmployeeApplicationForm() {
   const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0]));
   const sigCanvas = useRef<SignatureCanvas>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const signatureContainerRef = useRef<HTMLDivElement>(null);
+  const [canvasSize, setCanvasSize] = useState({ width: 600, height: 200 });
 
   // Test data population function - Development Mode Only
   const populateTestData = async (scenario: 'default' | 'entryLevel' | 'experienced' = 'default') => {
@@ -51,9 +53,14 @@ export default function EmployeeApplicationForm() {
       // Dynamic import for development mode
       const { generateTestData, generateTestDataVariations } = await import('@/lib/test-data');
       
-      const testData = scenario === 'default' 
-        ? generateTestData() 
-        : generateTestDataVariations()[scenario];
+      let testData;
+      if (scenario === 'default') {
+        testData = generateTestData();
+      } else {
+        const variations = generateTestDataVariations();
+        const index = scenario === 'entryLevel' ? 0 : scenario === 'experienced' ? 1 : 2;
+        testData = variations[index] || generateTestData();
+      }
 
       // Set personal info
       Object.entries(testData.personalInfo).forEach(([key, value]) => {
@@ -128,8 +135,7 @@ export default function EmployeeApplicationForm() {
     setValue,
     formState: { errors, isValid }
   } = useForm<EmployeeApplicationForm>({
-    // @ts-ignore - Type conflict between react-hook-form versions
-    resolver: zodResolver(employeeApplicationSchema),
+    resolver: zodResolver(employeeApplicationSchema) as any,
     mode: 'onChange',
     defaultValues: {
       jobPostingId: 1, // Customer Service Specialist is the only option
@@ -416,6 +422,22 @@ export default function EmployeeApplicationForm() {
     }
   }, [currentStep]);
 
+  // Signature canvas resize handler
+  useEffect(() => {
+    const handleResize = () => {
+      if (signatureContainerRef.current) {
+        const container = signatureContainerRef.current;
+        const rect = container.getBoundingClientRect();
+        const width = Math.min(rect.width - 20, 600); // 20px padding
+        setCanvasSize({ width, height: 200 });
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [currentStep]);
+
   // Handle signature method change
   const handleSignatureMethodChange = (method: 'draw' | 'type') => {
     setSignatureMethod(method);
@@ -452,7 +474,7 @@ export default function EmployeeApplicationForm() {
     setValue('personalInfo.socialSecurityNumber', formatted);
   };
 
-  const onSubmit: SubmitHandler<EmployeeApplicationForm> = async (data) => {
+  const onSubmit = async (data: EmployeeApplicationForm) => {
     setIsSubmitting(true);
     
     try {
@@ -2594,13 +2616,27 @@ export default function EmployeeApplicationForm() {
 
         {signatureMethod === 'draw' ? (
           <div className="space-y-4">
-            <div className="border border-gray-300 rounded-lg">
+            <div className="text-center">
+              <p className="text-sm text-gray-600 mb-2">
+                Draw your signature in the box below using your mouse or touch
+              </p>
+            </div>
+            <div 
+              ref={signatureContainerRef}
+              className="border border-gray-300 rounded-lg p-2 bg-gray-50"
+            >
               <SignatureCanvas
                 ref={sigCanvas}
                 canvasProps={{
-                  width: 500,
-                  height: 200,
-                  className: 'signature-canvas w-full rounded-lg'
+                  width: canvasSize.width,
+                  height: canvasSize.height,
+                  className: 'signature-canvas border-0 rounded-lg bg-white',
+                  style: {
+                    width: `${canvasSize.width}px`,
+                    height: `${canvasSize.height}px`,
+                    display: 'block',
+                    margin: '0 auto'
+                  }
                 }}
                 onEnd={captureSignature}
               />
