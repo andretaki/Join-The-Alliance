@@ -927,11 +927,15 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rate your experience with TMS MyCarrier (Transportation Management System)
+              Rate your experience with TMS MyCarrier (Transportation Management System) *
             </label>
             <select 
               {...register('roleAssessment.tmsMyCarrierExperience')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.tmsMyCarrierExperience 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
             >
               <option value="">Select experience level</option>
               <option value="none">Never used</option>
@@ -940,27 +944,41 @@ export default function EmployeeApplicationForm() {
               <option value="advanced">Advanced - Can troubleshoot and train others</option>
               <option value="expert">Expert - Can optimize workflows and processes</option>
             </select>
+            {errors.roleAssessment?.tmsMyCarrierExperience && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.tmsMyCarrierExperience.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe your experience with Shopify for order management and customer support
+              Describe your experience with Shopify for order management and customer support *
             </label>
             <textarea
               {...register('roleAssessment.shopifyExperience')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.shopifyExperience 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Describe specific tasks you've performed (order tracking, refunds, inventory inquiries, etc.)"
             />
+            {errors.roleAssessment?.shopifyExperience && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.shopifyExperience.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Amazon Seller Central experience level
+              Amazon Seller Central experience level *
             </label>
             <select 
               {...register('roleAssessment.amazonSellerCentralExperience')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.amazonSellerCentralExperience 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
             >
               <option value="">Select experience level</option>
               <option value="none">No experience</option>
@@ -968,33 +986,50 @@ export default function EmployeeApplicationForm() {
               <option value="intermediate">Intermediate - Can handle customer messages and returns</option>
               <option value="advanced">Advanced - Can manage listings and resolve account issues</option>
             </select>
+            {errors.roleAssessment?.amazonSellerCentralExperience && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.amazonSellerCentralExperience.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rate your proficiency with Microsoft Excel for data analysis and reporting
+              Rate your proficiency with Microsoft Excel for data analysis and reporting *
             </label>
             <select 
               {...register('roleAssessment.excelProficiency')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.excelProficiency 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
             >
               <option value="">Select proficiency level</option>
               <option value="basic">Basic - Can learn new software with training and support</option>
               <option value="intermediate">Intermediate - Comfortable with most business software and help desk tools</option>
               <option value="advanced">Advanced - Quickly adapt to new systems and can train others</option>
             </select>
+            {errors.roleAssessment?.excelProficiency && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.excelProficiency.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe your experience with Canva for creating customer-facing materials
+              Describe your experience with Canva for creating customer-facing materials *
             </label>
             <textarea
               {...register('roleAssessment.canvaExperience')}
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.canvaExperience 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Examples: flyers, social media posts, presentations, infographics..."
             />
+            {errors.roleAssessment?.canvaExperience && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.canvaExperience.message}</p>
+            )}
           </div>
         </div>
       </div>
@@ -1005,38 +1040,59 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe a time when you had to learn a completely new software system under pressure. How did you approach it?
+              Describe a time when you had to learn a completely new software system under pressure. How did you approach it? *
             </label>
             <textarea
               {...register('roleAssessment.learningUnderPressure')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.learningUnderPressure 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Focus on your learning process and adaptation strategies..."
             />
+            {errors.roleAssessment?.learningUnderPressure && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.learningUnderPressure.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              When you receive conflicting information from different sources (customer, system, supervisor), how do you determine the truth?
+              When you receive conflicting information from different sources (customer, system, supervisor), how do you determine the truth? *
             </label>
             <textarea
               {...register('roleAssessment.conflictingInformation')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.conflictingInformation 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Describe your fact-checking and verification process..."
             />
+            {errors.roleAssessment?.conflictingInformation && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.conflictingInformation.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              What motivates you most: solving complex problems, helping people, or achieving measurable results? Explain why.
+              What motivates you most: solving complex problems, helping people, or achieving measurable results? Explain why. *
             </label>
             <textarea
               {...register('roleAssessment.workMotivation')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.workMotivation 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Help us understand what drives your work satisfaction..."
             />
+            {errors.roleAssessment?.workMotivation && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.workMotivation.message}</p>
+            )}
           </div>
         </div>
       </div>
@@ -1047,50 +1103,78 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              A customer calls saying their chemical shipment was delayed and they need it for production tomorrow. The carrier shows it's still in transit. How would you handle this?
+              A customer calls saying their chemical shipment was delayed and they need it for production tomorrow. The carrier shows it's still in transit. How would you handle this? *
             </label>
             <textarea
               {...register('roleAssessment.delayedShipmentScenario')}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.delayedShipmentScenario 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Describe your step-by-step approach..."
             />
+            {errors.roleAssessment?.delayedShipmentScenario && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.delayedShipmentScenario.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              You notice a customer has been placing increasingly large orders of a restricted chemical. What actions would you take?
+              You notice a customer has been placing increasingly large orders of a restricted chemical. What actions would you take? *
             </label>
             <textarea
               {...register('roleAssessment.restrictedChemicalScenario')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.restrictedChemicalScenario 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Consider compliance, documentation, and escalation procedures..."
             />
+            {errors.roleAssessment?.restrictedChemicalScenario && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.restrictedChemicalScenario.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              A customer questions why their hazardous material shipment costs more than regular freight. How do you explain the additional fees?
+              A customer questions why their hazardous material shipment costs more than regular freight. How do you explain the additional fees? *
             </label>
             <textarea
               {...register('roleAssessment.hazmatFreightScenario')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.hazmatFreightScenario 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Explain your approach to educating customers about hazmat regulations..."
             />
+            {errors.roleAssessment?.hazmatFreightScenario && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.hazmatFreightScenario.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              A potential new customer, Barry from Widgets Inc., has requested a quote. You need to provide pricing for 4 drums of Acetic Acid at $800 per drum, with a total shipping cost of $200 to their location in Brooklyn, New York. Write the exact professional email you would send to Barry.
+              A potential new customer, Barry from Widgets Inc., has requested a quote. You need to provide pricing for 4 drums of Acetic Acid at $800 per drum, with a total shipping cost of $200 to their location in Brooklyn, New York. Write the exact professional email you would send to Barry. *
             </label>
             <textarea
               {...register('roleAssessment.customerQuoteScenario')}
               rows={6}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.customerQuoteScenario 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Write a professional quote email that presents pricing clearly and encourages the customer to place the order..."
             />
+            {errors.roleAssessment?.customerQuoteScenario && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.customerQuoteScenario.message}</p>
+            )}
           </div>
         </div>
       </div>
@@ -1101,19 +1185,26 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe a time when you had to learn a complex software system quickly. How did you approach it?
+              Describe a time when you had to learn a complex software system quickly. How did you approach it? *
             </label>
             <textarea
               {...register('roleAssessment.softwareLearningExperience')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.softwareLearningExperience 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Include the system, timeline, and your learning strategy..."
             />
+            {errors.roleAssessment?.softwareLearningExperience && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.softwareLearningExperience.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              What motivates you most in a customer service role? (Select all that apply)
+              What motivates you most in a customer service role? (Select all that apply) *
             </label>
             <div className="space-y-2">
               {[
@@ -1135,30 +1226,47 @@ export default function EmployeeApplicationForm() {
                 </div>
               ))}
             </div>
+            {errors.roleAssessment?.customerServiceMotivation && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.customerServiceMotivation.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              How do you handle stress when dealing with multiple urgent customer requests simultaneously?
+              How do you handle stress when dealing with multiple urgent customer requests simultaneously? *
             </label>
             <textarea
               {...register('roleAssessment.stressManagement')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.stressManagement 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Describe your prioritization and stress management techniques..."
             />
+            {errors.roleAssessment?.stressManagement && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.stressManagement.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              If you could automate one repetitive task in customer service, what would it be and why?
+              If you could automate one repetitive task in customer service, what would it be and why? *
             </label>
             <textarea
               {...register('roleAssessment.automationIdeas')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.automationIdeas 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Think about efficiency and customer experience improvements..."
             />
+            {errors.roleAssessment?.automationIdeas && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.automationIdeas.message}</p>
+            )}
           </div>
         </div>
       </div>
@@ -1169,9 +1277,16 @@ export default function EmployeeApplicationForm() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              In your experience, what's the most important factor in maintaining customer loyalty in B2B sales?
+              In your experience, what's the most important factor in maintaining customer loyalty in B2B sales? *
             </label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select 
+              {...register('roleAssessment.b2bLoyaltyFactor')}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.b2bLoyaltyFactor 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
+            >
               <option value="">Select your answer</option>
               <option value="reliability">Consistent reliability and on-time delivery</option>
               <option value="communication">Proactive communication and transparency</option>
@@ -1179,28 +1294,47 @@ export default function EmployeeApplicationForm() {
               <option value="pricing">Competitive pricing and value</option>
               <option value="relationships">Personal relationships and trust</option>
             </select>
+            {errors.roleAssessment?.b2bLoyaltyFactor && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.b2bLoyaltyFactor.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              How would you use data from customer interactions to improve service quality?
+              How would you use data from customer interactions to improve service quality? *
             </label>
             <textarea
+              {...register('roleAssessment.dataAnalysisApproach')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.dataAnalysisApproach 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Consider metrics, patterns, and actionable insights..."
             />
+            {errors.roleAssessment?.dataAnalysisApproach && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.dataAnalysisApproach.message}</p>
+            )}
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe your ideal work environment and team dynamics
+              Describe your ideal work environment and team dynamics *
             </label>
             <textarea
+              {...register('roleAssessment.idealWorkEnvironment')}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.idealWorkEnvironment 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
               placeholder="Include communication style, collaboration preferences, and work pace..."
             />
+            {errors.roleAssessment?.idealWorkEnvironment && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.idealWorkEnvironment.message}</p>
+            )}
           </div>
         </div>
       </div>

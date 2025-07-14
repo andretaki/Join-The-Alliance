@@ -113,33 +113,71 @@ export const referenceSchema = z.object({
 // ✅ ROLE ASSESSMENT Schema - Customer Service Specialist
 export const roleAssessmentSchema = z.object({
   // Technical Platform Experience
-  tmsMyCarrierExperience: z.enum(['none', 'basic', 'intermediate', 'advanced', 'expert']).optional(),
-  shopifyExperience: z.string().max(1000, 'Shopify experience too long').optional(),
-  amazonSellerCentralExperience: z.enum(['none', 'basic', 'intermediate', 'advanced']).optional(),
-  excelProficiency: z.enum(['basic', 'intermediate', 'advanced']).optional(),
-  canvaExperience: z.string().max(500, 'Canva experience too long').optional(),
+  tmsMyCarrierExperience: z.enum(['none', 'basic', 'intermediate', 'advanced', 'expert'], {
+    required_error: 'Please select your TMS MyCarrier experience level'
+  }),
+  shopifyExperience: z.string()
+    .min(10, 'Please provide at least 10 characters describing your Shopify experience')
+    .max(1000, 'Shopify experience too long'),
+  amazonSellerCentralExperience: z.enum(['none', 'basic', 'intermediate', 'advanced'], {
+    required_error: 'Please select your Amazon Seller Central experience level'
+  }),
+  excelProficiency: z.enum(['basic', 'intermediate', 'advanced'], {
+    required_error: 'Please select your Excel proficiency level'
+  }),
+  canvaExperience: z.string()
+    .min(10, 'Please provide at least 10 characters describing your Canva experience')
+    .max(500, 'Canva experience too long'),
   
   // Personal Work Style Assessment
-  learningUnderPressure: z.string().max(1000, 'Learning under pressure response too long').optional(),
-  conflictingInformation: z.string().max(1000, 'Conflicting information response too long').optional(),
-  workMotivation: z.string().max(1000, 'Work motivation response too long').optional(),
+  learningUnderPressure: z.string()
+    .min(20, 'Please provide at least 20 characters describing your learning approach')
+    .max(1000, 'Learning under pressure response too long'),
+  conflictingInformation: z.string()
+    .min(20, 'Please provide at least 20 characters describing your conflict resolution approach')
+    .max(1000, 'Conflicting information response too long'),
+  workMotivation: z.string()
+    .min(20, 'Please provide at least 20 characters describing your work motivation')
+    .max(1000, 'Work motivation response too long'),
   
   // Customer Service Scenarios
-  delayedShipmentScenario: z.string().max(1000, 'Delayed shipment scenario response too long').optional(),
-  restrictedChemicalScenario: z.string().max(1000, 'Restricted chemical scenario response too long').optional(),
-  hazmatFreightScenario: z.string().max(1000, 'Hazmat freight scenario response too long').optional(),
-  customerQuoteScenario: z.string().max(1500, 'Customer quote scenario response too long').optional(),
+  delayedShipmentScenario: z.string()
+    .min(30, 'Please provide at least 30 characters describing your approach to this scenario')
+    .max(1000, 'Delayed shipment scenario response too long'),
+  restrictedChemicalScenario: z.string()
+    .min(30, 'Please provide at least 30 characters describing your approach to this scenario')
+    .max(1000, 'Restricted chemical scenario response too long'),
+  hazmatFreightScenario: z.string()
+    .min(30, 'Please provide at least 30 characters describing your approach to this scenario')
+    .max(1000, 'Hazmat freight scenario response too long'),
+  customerQuoteScenario: z.string()
+    .min(50, 'Please provide at least 50 characters for your professional email response')
+    .max(1500, 'Customer quote scenario response too long'),
   
   // Personal & Professional Assessment
-  softwareLearningExperience: z.string().max(1000, 'Software learning experience too long').optional(),
-  customerServiceMotivation: z.array(z.string()).max(10, 'Too many motivations selected').optional(),
-  stressManagement: z.string().max(1000, 'Stress management response too long').optional(),
-  automationIdeas: z.string().max(1000, 'Automation ideas response too long').optional(),
+  softwareLearningExperience: z.string()
+    .min(20, 'Please provide at least 20 characters describing your software learning experience')
+    .max(1000, 'Software learning experience too long'),
+  customerServiceMotivation: z.array(z.string())
+    .min(1, 'Please select at least one motivation factor')
+    .max(10, 'Too many motivations selected'),
+  stressManagement: z.string()
+    .min(20, 'Please provide at least 20 characters describing your stress management approach')
+    .max(1000, 'Stress management response too long'),
+  automationIdeas: z.string()
+    .min(20, 'Please provide at least 20 characters describing your automation ideas')
+    .max(1000, 'Automation ideas response too long'),
   
   // Advanced Role Assessment
-  b2bLoyaltyFactor: z.enum(['reliability', 'communication', 'expertise', 'pricing', 'relationships']).optional(),
-  dataAnalysisApproach: z.string().max(1000, 'Data analysis approach too long').optional(),
-  idealWorkEnvironment: z.string().max(1000, 'Ideal work environment response too long').optional(),
+  b2bLoyaltyFactor: z.enum(['reliability', 'communication', 'expertise', 'pricing', 'relationships'], {
+    required_error: 'Please select the most important factor for B2B customer loyalty'
+  }),
+  dataAnalysisApproach: z.string()
+    .min(20, 'Please provide at least 20 characters describing your data analysis approach')
+    .max(1000, 'Data analysis approach too long'),
+  idealWorkEnvironment: z.string()
+    .min(20, 'Please provide at least 20 characters describing your ideal work environment')
+    .max(1000, 'Ideal work environment response too long'),
 });
 
 // File Upload Schema
