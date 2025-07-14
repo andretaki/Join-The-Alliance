@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 import { generateTestData } from '@/lib/test-data';
 
 // Mock the database
-jest.mock('@/lib/db', () => ({
+jest.mock('../../../lib/db', () => ({
   db: {
     insert: jest.fn().mockReturnValue({
       values: jest.fn().mockResolvedValue([{ id: 1 }]),
@@ -13,12 +13,12 @@ jest.mock('@/lib/db', () => ({
 }));
 
 // Mock S3 utilities
-jest.mock('@/lib/s3-utils', () => ({
+jest.mock('../../../lib/s3-utils', () => ({
   uploadFileToS3: jest.fn().mockResolvedValue('https://example.com/resume.pdf'),
 }));
 
 // Mock email service
-jest.mock('@/lib/email-service', () => ({
+jest.mock('../../../lib/email-service', () => ({
   sendApplicationNotification: jest.fn().mockResolvedValue(true),
 }));
 

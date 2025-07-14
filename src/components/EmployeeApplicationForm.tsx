@@ -1911,27 +1911,116 @@ export default function EmployeeApplicationForm() {
             </div>
             
             <h3 className="text-xl font-bold text-gray-900 mb-2">ID Photo</h3>
-            <p className="text-sm text-gray-600 mb-6">Upload JPG or PNG (max 10MB)</p>
+            <p className="text-sm text-gray-600 mb-6">Upload JPG or PNG (max 5MB) or take a photo</p>
             
-            <input
-              type="file"
-              accept=".jpg,.jpeg,.png"
-              onChange={handleIdUpload}
-              className="hidden"
-              id="id-upload"
-            />
-            
-            <label
-              htmlFor="id-upload"
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:from-purple-600 hover:to-purple-700 cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-lg"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-              Choose File
-            </label>
-            
-            <p className="text-xs text-gray-500 mt-3">Or drag and drop your photo here</p>
+            {/* Method Selection */}
+            <div className="flex justify-center mb-6">
+              <div className="flex bg-gray-100 rounded-xl p-1">
+                <button
+                  type="button"
+                  onClick={() => setIdCaptureMethod('upload')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    idCaptureMethod === 'upload'
+                      ? 'bg-white text-purple-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Upload File
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIdCaptureMethod('camera')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    idCaptureMethod === 'camera'
+                      ? 'bg-white text-purple-600 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Take Photo
+                </button>
+              </div>
+            </div>
+
+            {/* Upload Option */}
+            {idCaptureMethod === 'upload' && (
+              <>
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.webp"
+                  onChange={handleIdUpload}
+                  className="hidden"
+                  id="id-upload"
+                />
+                
+                <label
+                  htmlFor="id-upload"
+                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:from-purple-600 hover:to-purple-700 cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-lg"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  Choose File
+                </label>
+                
+                <p className="text-xs text-gray-500 mt-3">Or drag and drop your photo here</p>
+              </>
+            )}
+
+            {/* Camera Option */}
+            {idCaptureMethod === 'camera' && (
+              <div className="space-y-4">
+                {!showCamera ? (
+                  <button
+                    type="button"
+                    onClick={startCamera}
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-lg"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Start Camera
+                  </button>
+                ) : (
+                  <div className="relative">
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      className="w-full max-w-md mx-auto rounded-lg shadow-lg"
+                      style={{ maxHeight: '300px' }}
+                    />
+                    <canvas
+                      ref={canvasRef}
+                      className="hidden"
+                    />
+                    <div className="flex justify-center space-x-4 mt-4">
+                      <button
+                        type="button"
+                        onClick={capturePhoto}
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-lg"
+                      >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Capture Photo
+                      </button>
+                      <button
+                        type="button"
+                        onClick={stopCamera}
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl hover:from-gray-600 hover:to-gray-700 cursor-pointer transition-all duration-200 transform hover:scale-105 shadow-lg"
+                      >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             
             {idFile && (
               <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-xl">
