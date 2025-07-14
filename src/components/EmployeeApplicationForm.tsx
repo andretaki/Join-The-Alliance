@@ -68,8 +68,8 @@ export default function EmployeeApplicationForm() {
 
   // Test data population function - Development Mode Only
   const populateTestData = async (scenario: 'default' | 'entryLevel' | 'experienced' = 'default') => {
-    if (process.env.NODE_ENV !== 'development') {
-      console.warn('Test data population is only available in development mode');
+    if (process.env.NODE_ENV === 'production') {
+      console.warn('Test data population is not available in production mode');
       return;
     }
 
@@ -147,7 +147,8 @@ export default function EmployeeApplicationForm() {
       }, 1000);
     } catch (error) {
       console.error('Error loading test data:', error);
-      setErrorMessage('Failed to load test data');
+      console.error('Error details:', error instanceof Error ? error.message : String(error));
+      setErrorMessage(`Failed to load test data: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
@@ -499,6 +500,8 @@ export default function EmployeeApplicationForm() {
   };
 
   const onSubmit = async (data: EmployeeApplicationForm) => {
+    console.log('🚀 Submit button clicked - starting submission process');
+    console.log('Form data:', data);
     setIsSubmitting(true);
     
     try {
@@ -586,6 +589,7 @@ export default function EmployeeApplicationForm() {
                     </Tooltip>
                   </label>
                   <textarea
+                    {...register('roleAssessment.shopifyExperience')}
                     rows={3}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.roleAssessment?.shopifyExperience 
@@ -629,7 +633,10 @@ export default function EmployeeApplicationForm() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Rate your proficiency with <strong>Microsoft Excel</strong> for <strong>data analysis</strong> and <strong>reporting</strong>
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white">
+                  <select 
+                    {...register('roleAssessment.excelProficiency')}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                  >
                     <option value="">Select proficiency level</option>
                     <option value="basic">Basic - Can create simple spreadsheets and basic formulas</option>
                     <option value="intermediate">Intermediate - Can use VLOOKUP, pivot tables, and charts</option>
@@ -642,6 +649,7 @@ export default function EmployeeApplicationForm() {
                     Describe your experience with <strong>Canva</strong> for creating <strong>customer-facing materials</strong>
                   </label>
                   <textarea
+                    {...register('roleAssessment.canvaExperience')}
                     rows={2}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Examples: flyers, social media posts, presentations, infographics..."
@@ -660,6 +668,7 @@ export default function EmployeeApplicationForm() {
                     When you receive <strong>conflicting information</strong> from different sources (<strong>customer</strong>, <strong>system</strong>, <strong>supervisor</strong>), how do you determine the truth?
                   </label>
                   <textarea
+                    {...register('roleAssessment.conflictingInformation')}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Describe your fact-checking and verification process..."
@@ -671,6 +680,7 @@ export default function EmployeeApplicationForm() {
                     What motivates you most: <strong>solving complex problems</strong>, <strong>helping people</strong>, or <strong>achieving measurable results</strong>? Explain why.
                   </label>
                   <textarea
+                    {...register('roleAssessment.workMotivation')}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Help us understand what drives your work satisfaction..."
@@ -688,6 +698,7 @@ export default function EmployeeApplicationForm() {
                     A customer calls saying their <strong>chemical shipment</strong> was <strong>delayed</strong> and they need it for <strong>production tomorrow</strong>. The <strong>carrier</strong> shows it's still in transit. How would you handle this?
                   </label>
                   <textarea
+                    {...register('roleAssessment.delayedShipmentScenario')}
                     rows={4}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Describe your step-by-step approach..."
@@ -699,6 +710,7 @@ export default function EmployeeApplicationForm() {
                     You notice a customer has been placing increasingly large orders of a <strong>restricted chemical</strong>. What actions would you take?
                   </label>
                   <textarea
+                    {...register('roleAssessment.restrictedChemicalScenario')}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Consider compliance, documentation, and escalation procedures..."
@@ -2779,32 +2791,38 @@ export default function EmployeeApplicationForm() {
         </div>
 
         {/* Development Mode Test Data Buttons */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h3 className="text-lg font-semibold text-yellow-800 mb-3">🧪 Development Mode - Test Data</h3>
-            <div className="flex flex-wrap gap-2">
+        {(process.env.NODE_ENV === 'development' || process.env.NODE_ENV !== 'production' || typeof window !== 'undefined' && window.location.hostname === 'localhost') && (
+          <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-yellow-800 mb-3">🧪 Development Mode - Test Data Auto-Fill</h3>
+            <p className="text-sm text-yellow-700 mb-3">
+              Click any button below to automatically fill the form with realistic test data:
+            </p>
+            <div className="flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={() => populateTestData('default')}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-105"
               >
-                Load Complete Application
+                📋 Load Complete Application
               </button>
               <button
                 type="button"
                 onClick={() => populateTestData('entryLevel')}
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
+                className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-105"
               >
-                Load Entry Level Profile
+                🌱 Load Entry Level Profile
               </button>
               <button
                 type="button"
                 onClick={() => populateTestData('experienced')}
-                className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
+                className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-105"
               >
-                Load Experienced Profile
+                🚀 Load Experienced Profile
               </button>
             </div>
+            <p className="text-xs text-yellow-600 mt-2">
+              💡 After clicking, navigate through steps or jump to the signature step to submit the test application.
+            </p>
           </div>
         )}
 
@@ -2875,7 +2893,108 @@ export default function EmployeeApplicationForm() {
 
         {/* Main Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit, (errors) => {
+            console.log('❌ Form validation failed:', errors);
+            console.log('All form errors:', Object.keys(errors));
+            
+            // Create a user-friendly error message
+            const errorMessages = [];
+            
+            if (errors.personalInfo) {
+              errorMessages.push('Personal Information section has errors');
+            }
+            if (errors.roleAssessment) {
+              const roleErrors = [];
+              if (errors.roleAssessment.tmsMyCarrierExperience) {
+                roleErrors.push('TMS MyCarrier experience level');
+              }
+              if (errors.roleAssessment.shopifyExperience) {
+                roleErrors.push('Shopify experience description (min 10 characters)');
+              }
+              if (errors.roleAssessment.amazonSellerCentralExperience) {
+                roleErrors.push('Amazon Seller Central experience level');
+              }
+              if (errors.roleAssessment.excelProficiency) {
+                roleErrors.push('Excel proficiency level');
+              }
+              if (errors.roleAssessment.canvaExperience) {
+                roleErrors.push('Canva experience description (min 10 characters)');
+              }
+              if (errors.roleAssessment.learningUnderPressure) {
+                roleErrors.push('Learning under pressure response (min 20 characters)');
+              }
+              if (errors.roleAssessment.conflictingInformation) {
+                roleErrors.push('Conflicting information response (min 20 characters)');
+              }
+              if (errors.roleAssessment.workMotivation) {
+                roleErrors.push('Work motivation response (min 20 characters)');
+              }
+              if (errors.roleAssessment.delayedShipmentScenario) {
+                roleErrors.push('Delayed shipment scenario (min 50 characters, 15 words)');
+              }
+              if (errors.roleAssessment.restrictedChemicalScenario) {
+                roleErrors.push('Restricted chemical scenario (min 50 characters, 15 words)');
+              }
+              if (errors.roleAssessment.hazmatFreightScenario) {
+                roleErrors.push('Hazmat freight scenario (min 50 characters, 15 words)');
+              }
+              if (errors.roleAssessment.customerQuoteScenario) {
+                roleErrors.push('Customer quote email (min 100 characters, 25 words, mention "Barry" and "acetic acid")');
+              }
+              if (errors.roleAssessment.softwareLearningExperience) {
+                roleErrors.push('Software learning experience (min 20 characters)');
+              }
+              if (errors.roleAssessment.customerServiceMotivation) {
+                roleErrors.push('Customer service motivation (select at least one)');
+              }
+              if (errors.roleAssessment.stressManagement) {
+                roleErrors.push('Stress management approach (min 20 characters)');
+              }
+              if (errors.roleAssessment.automationIdeas) {
+                roleErrors.push('Automation ideas (min 20 characters)');
+              }
+              if (errors.roleAssessment.b2bLoyaltyFactor) {
+                roleErrors.push('B2B customer loyalty factor');
+              }
+              if (errors.roleAssessment.dataAnalysisApproach) {
+                roleErrors.push('Data analysis approach (min 20 characters)');
+              }
+              if (errors.roleAssessment.idealWorkEnvironment) {
+                roleErrors.push('Ideal work environment (min 20 characters)');
+              }
+              
+              if (roleErrors.length > 0) {
+                errorMessages.push('Role Assessment - Fix these fields:\n    • ' + roleErrors.join('\n    • '));
+              } else {
+                errorMessages.push('Role Assessment section has errors');
+              }
+            }
+            if (errors.eligibility) {
+              errorMessages.push('Eligibility section has errors');
+            }
+            if (errors.workExperience) {
+              errorMessages.push('Work Experience section needs at least one entry');
+            }
+            if (errors.education) {
+              errorMessages.push('Education section needs at least one entry');
+            }
+            if (errors.references) {
+              errorMessages.push('References section needs at least two entries');
+            }
+            if (errors.signatureDataUrl) {
+              errorMessages.push('Digital signature is required');
+            }
+            if (errors.termsAgreed) {
+              errorMessages.push('You must agree to terms and conditions');
+            }
+            
+            const message = errorMessages.length > 0 
+              ? '❌ Cannot submit application:\n\n• ' + errorMessages.join('\n• ')
+              : '❌ Form validation failed. Please check all required fields.';
+              
+            setErrorMessage(message);
+            alert(message);
+          })}>
             {/* Step Content */}
             <div className="mb-8">
               {renderStepContent()}
@@ -2904,6 +3023,10 @@ export default function EmployeeApplicationForm() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
+                    onClick={() => {
+                      console.log('🚀 Submit button clicked!');
+                      setErrorMessage(''); // Clear any previous errors
+                    }}
                     className={`flex items-center px-8 py-3 rounded-xl font-medium transition-all duration-200 ${
                       isSubmitting
                         ? 'bg-gray-400 text-white cursor-not-allowed'

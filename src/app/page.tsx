@@ -100,10 +100,10 @@ export default function Home() {
                   Cutting-Edge Operations
                 </h3>
                 <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300 mb-4">
-                  Our state-of-the-art facilities and advanced technology platforms handle everything from aerospace-grade chemicals to specialized industrial compounds, supporting missions that reach from Earth to space.
+                  Our modern facilities and efficient systems handle a wide range of chemical products, from specialty chemicals to industrial compounds, serving diverse industries and applications.
                 </p>
                 <p className="text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
-                  Join a team where your expertise directly impacts cutting-edge projects in technology, defense, and space exploration.
+                  Join a team where your expertise contributes to reliable chemical distribution and excellent customer service across multiple industries.
                 </p>
               </div>
               <div className="group">
