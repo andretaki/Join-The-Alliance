@@ -6,6 +6,30 @@ import Image from 'next/image';
 import SignatureCanvas from 'react-signature-canvas';
 import { employeeApplicationSchema, type EmployeeApplicationForm } from '@/lib/employee-validation';
 
+// Tooltip component for better user experience
+const Tooltip = ({ text, children }: { text: string; children: React.ReactNode }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <div className="relative inline-block">
+      <div
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+        onClick={() => setIsVisible(!isVisible)}
+        className="cursor-help"
+      >
+        {children}
+      </div>
+      {isVisible && (
+        <div className="absolute z-50 px-3 py-2 text-sm text-white bg-gray-900 rounded-lg shadow-lg -top-2 left-6 transform -translate-y-full min-w-[250px] max-w-[300px]">
+          {text}
+          <div className="absolute top-full left-2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const STEPS = [
   { id: 'job', title: 'Position', shortTitle: 'Job', icon: '💼', description: 'Select your role' },
   { id: 'assessment', title: 'Assessment', shortTitle: 'Test', icon: '📝', description: 'Role evaluation' },
@@ -530,9 +554,9 @@ export default function EmployeeApplicationForm() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Rate your experience with <strong>TMS MyCarrier</strong> (<strong>Transportation Management System</strong>) *
-                    <span className="ml-2 text-gray-500 cursor-help" title="TMS MyCarrier is a Transportation Management System used for coordinating freight, tracking shipments, and managing logistics for chemical distribution.">
-                      ❓
-                    </span>
+                    <Tooltip text="TMS MyCarrier is a Transportation Management System used for coordinating freight, tracking shipments, and managing logistics for chemical distribution.">
+                      <span className="ml-2 text-blue-500 cursor-help">❓</span>
+                    </Tooltip>
                   </label>
                   <select 
                     {...register('roleAssessment.tmsMyCarrierExperience')}
@@ -557,9 +581,9 @@ export default function EmployeeApplicationForm() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Describe your experience with <strong>Shopify</strong> for <strong>order management</strong> and <strong>customer support</strong> *
-                    <span className="ml-2 text-gray-500 cursor-help" title="Shopify is an e-commerce platform used for online store management, order processing, inventory tracking, and customer support.">
-                      ❓
-                    </span>
+                    <Tooltip text="Shopify is an e-commerce platform used for online store management, order processing, inventory tracking, and customer support.">
+                      <span className="ml-2 text-blue-500 cursor-help">❓</span>
+                    </Tooltip>
                   </label>
                   <textarea
                     rows={3}
@@ -578,9 +602,9 @@ export default function EmployeeApplicationForm() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <strong>Amazon Seller Central</strong> experience level *
-                    <span className="ml-2 text-gray-500 cursor-help" title="Amazon Seller Central is a platform for managing product listings, orders, customer messages, and account settings on Amazon marketplace.">
-                      ❓
-                    </span>
+                    <Tooltip text="Amazon Seller Central is a platform for managing product listings, orders, customer messages, and account settings on Amazon marketplace.">
+                      <span className="ml-2 text-blue-500 cursor-help">❓</span>
+                    </Tooltip>
                   </label>
                   <select 
                     {...register('roleAssessment.amazonSellerCentralExperience')}
@@ -986,9 +1010,9 @@ export default function EmployeeApplicationForm() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Rate your experience with <strong>TMS MyCarrier</strong> (<strong>Transportation Management System</strong>) *
-              <span className="ml-2 text-gray-500 cursor-help" title="TMS MyCarrier is a Transportation Management System used for coordinating freight, tracking shipments, and managing logistics for chemical distribution.">
-                ❓
-              </span>
+              <Tooltip text="TMS MyCarrier is a Transportation Management System used for coordinating freight, tracking shipments, and managing logistics for chemical distribution.">
+                <span className="ml-2 text-blue-500 cursor-help">❓</span>
+              </Tooltip>
             </label>
             <select 
               {...register('roleAssessment.tmsMyCarrierExperience')}
@@ -1013,9 +1037,9 @@ export default function EmployeeApplicationForm() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Describe your experience with <strong>Shopify</strong> for <strong>order management</strong> and <strong>customer support</strong> *
-              <span className="ml-2 text-gray-500 cursor-help" title="Shopify is an e-commerce platform used for online store management, order processing, inventory tracking, and customer support.">
-                ❓
-              </span>
+              <Tooltip text="Shopify is an e-commerce platform used for online store management, order processing, inventory tracking, and customer support.">
+                <span className="ml-2 text-blue-500 cursor-help">❓</span>
+              </Tooltip>
             </label>
             <textarea
               {...register('roleAssessment.shopifyExperience')}
@@ -1035,9 +1059,9 @@ export default function EmployeeApplicationForm() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <strong>Amazon Seller Central</strong> experience level *
-              <span className="ml-2 text-gray-500 cursor-help" title="Amazon Seller Central is a platform for managing product listings, orders, customer messages, and account settings on Amazon marketplace.">
-                ❓
-              </span>
+              <Tooltip text="Amazon Seller Central is a platform for managing product listings, orders, customer messages, and account settings on Amazon marketplace.">
+                <span className="ml-2 text-blue-500 cursor-help">❓</span>
+              </Tooltip>
             </label>
             <select 
               {...register('roleAssessment.amazonSellerCentralExperience')}
