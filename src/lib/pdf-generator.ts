@@ -1,10 +1,32 @@
 import { jsPDF } from 'jspdf';
 import { EmployeeApplicationForm } from './employee-validation';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export interface PDFGenerationResult {
   success: boolean;
   buffer?: Buffer;
   error?: string;
+}
+
+/**
+ * Load logo file and convert to base64 data URL
+ */
+function loadLogoBase64(): string | null {
+  try {
+    const logoPath = path.join(process.cwd(), 'public', 'WIDE - Color on Transparent _RGB-01.png');
+    
+    if (fs.existsSync(logoPath)) {
+      const logoBuffer = fs.readFileSync(logoPath);
+      const base64Logo = logoBuffer.toString('base64');
+      return `data:image/png;base64,${base64Logo}`;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error loading logo:', error);
+    return null;
+  }
 }
 
 /**
@@ -58,6 +80,29 @@ export function generateEmployeeApplicationPDF(
       const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
       addText(`${label}: ${displayValue}`, 10, false);
     };
+
+    // Add Alliance Chemical logo
+    try {
+      const logoDataUrl = loadLogoBase64();
+      if (logoDataUrl) {
+        // Add logo image
+        pdf.addImage(logoDataUrl, 'PNG', margin, currentY, 120, 45);
+        currentY += 55;
+      } else {
+        // Fallback to text if logo can't be loaded
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Alliance Chemical', margin, currentY);
+        currentY += 20;
+      }
+    } catch (error) {
+      console.warn('Logo could not be added to PDF:', error);
+      // Fallback to text
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Alliance Chemical', margin, currentY);
+      currentY += 20;
+    }
 
     // Document header
     pdf.setFontSize(18);
@@ -189,7 +234,35 @@ export function generateEmployeeApplicationPDF(
 
     // Digital Signature
     addSectionHeader('Digital Signature');
-    addText('Application digitally signed and submitted.', 10, false);
+    
+    // Add actual signature if available
+    if (applicationData.signatureDataUrl) {
+      try {
+        if (applicationData.signatureDataUrl.startsWith('data:image')) {
+          // It's a drawn signature (image)
+          if (currentY > pageHeight - margin - 60) {
+            pdf.addPage();
+            currentY = margin;
+          }
+          
+          // Add signature image
+          pdf.addImage(applicationData.signatureDataUrl, 'PNG', margin, currentY, 120, 40);
+          currentY += 50;
+          
+          addText(`Digitally signed on: ${new Date().toLocaleDateString()}`, 10, false);
+        } else {
+          // It's a typed signature
+          addText(`Digital Signature: ${applicationData.signatureDataUrl}`, 12, true);
+          addText(`Signed on: ${new Date().toLocaleDateString()}`, 10, false);
+        }
+      } catch (error) {
+        console.error('Error adding signature to PDF:', error);
+        addText('Digital signature could not be displayed', 10, false);
+      }
+    } else {
+      addText('Application digitally signed and submitted.', 10, false);
+    }
+    
     addText('Terms and conditions accepted.', 10, false);
 
     // Footer

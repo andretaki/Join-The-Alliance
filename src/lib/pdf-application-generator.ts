@@ -56,6 +56,20 @@ export class ApplicationPDFGenerator {
     }
   }
 
+  private getLogoDataUrl(): string | null {
+    // In a real application, you would load the logo file and convert it to base64
+    // For now, we'll return null to handle the case where logo isn't available
+    // This should be replaced with actual logo loading logic
+    try {
+      // This is a placeholder - in a real implementation, you'd load the logo file
+      // and convert it to base64 data URL
+      return null;
+    } catch (error) {
+      console.warn('Could not load logo:', error);
+      return null;
+    }
+  }
+
   private addSection(title: string, content: Record<string, any>) {
     this.checkPageBreak(30);
     

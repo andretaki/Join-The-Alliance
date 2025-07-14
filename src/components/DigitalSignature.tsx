@@ -53,10 +53,22 @@ export default function DigitalSignature({ applicationId, onSignatureComplete }:
       let currentY = margin;
 
       // Header with company logo area
-      pdf.setFontSize(20);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Alliance Chemical', margin, currentY);
-      currentY += 8;
+      try {
+        // Add Alliance Chemical logo
+        const logoPath = '/WIDE - Color on Transparent _RGB-01.png';
+        // Note: In a real implementation, you'd need to convert the logo to base64
+        // For now, we'll use text as fallback
+        pdf.setFontSize(20);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Alliance Chemical', margin, currentY);
+        currentY += 8;
+      } catch (error) {
+        console.warn('Logo could not be added to PDF:', error);
+        pdf.setFontSize(20);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Alliance Chemical', margin, currentY);
+        currentY += 8;
+      }
       
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
