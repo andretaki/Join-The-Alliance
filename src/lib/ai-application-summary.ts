@@ -17,6 +17,10 @@ export async function generateApplicationSummary(
     // Prepare the application data for AI analysis
     const applicationText = prepareApplicationText(applicationData);
     
+    // Temporarily disabled - AI chat endpoint not available
+    console.log('🤖 AI Application Summary disabled - would analyze application data');
+    return 'Application summary temporarily unavailable - all required data has been collected and stored successfully.';
+
     const prompt = `
 You are an HR professional reviewing an employee application. Please provide a comprehensive summary of the candidate's qualifications, experience, and suitability for the Customer Service Specialist position at Alliance Chemical.
 
@@ -218,6 +222,10 @@ ${applicationText}
 
 Focus on the candidate's name, key qualifications, and overall fit for the role.
     `;
+
+    // Temporarily disabled - AI chat endpoint not available
+    console.log('🤖 AI Quick Summary disabled - using fallback');
+    return `Quick summary temporarily unavailable for ${applicationData.personalInfo?.firstName || 'candidate'}.`;
 
     const response = await fetch('/api/ai-chat', {
       method: 'POST',

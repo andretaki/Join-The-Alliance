@@ -335,6 +335,10 @@ Focus on chemical industry-specific requirements and B2B customer service nuance
  */
 async function callAIAgent(prompt: string, agentType: string): Promise<any> {
   try {
+    // Temporarily disabled - AI chat endpoint not available
+    console.log(`🤖 AI Agent ${agentType} disabled - would analyze: ${prompt.substring(0, 100)}...`);
+    return null;
+    
     const response = await fetch('/api/ai-chat', {
       method: 'POST',
       headers: {
