@@ -40,7 +40,6 @@ describe('Security Validation Tests', () => {
           conflictingInformation: 'test',
           workMotivation: 'test',
           delayedShipmentScenario: 'test',
-          restrictedChemicalScenario: 'test',
           hazmatFreightScenario: 'test',
           customerQuoteScenario: 'test',
           softwareLearningExperience: 'test',
@@ -115,7 +114,6 @@ describe('Security Validation Tests', () => {
           conflictingInformation: 'test',
           workMotivation: 'test',
           delayedShipmentScenario: 'test',
-          restrictedChemicalScenario: 'test',
           hazmatFreightScenario: 'test',
           customerQuoteScenario: 'test',
           softwareLearningExperience: 'test',
@@ -184,7 +182,6 @@ describe('Security Validation Tests', () => {
           conflictingInformation: 'test',
           workMotivation: 'test',
           delayedShipmentScenario: 'test',
-          restrictedChemicalScenario: 'test',
           hazmatFreightScenario: 'test',
           customerQuoteScenario: 'test',
           softwareLearningExperience: 'test',
@@ -253,7 +250,6 @@ describe('Security Validation Tests', () => {
           conflictingInformation: 'test',
           workMotivation: 'test',
           delayedShipmentScenario: 'test',
-          restrictedChemicalScenario: 'test',
           hazmatFreightScenario: 'test',
           customerQuoteScenario: 'test',
           softwareLearningExperience: 'test',
@@ -324,7 +320,6 @@ describe('Security Validation Tests', () => {
           conflictingInformation: 'test',
           workMotivation: 'test',
           delayedShipmentScenario: 'test',
-          restrictedChemicalScenario: 'test',
           hazmatFreightScenario: 'test',
           customerQuoteScenario: 'test',
           softwareLearningExperience: 'test',
@@ -396,7 +391,6 @@ describe('Security Validation Tests', () => {
           conflictingInformation: 'test',
           workMotivation: 'test',
           delayedShipmentScenario: 'test',
-          restrictedChemicalScenario: 'test',
           hazmatFreightScenario: 'test',
           customerQuoteScenario: 'test',
           softwareLearningExperience: 'test',
@@ -470,7 +464,6 @@ describe('Security Validation Tests', () => {
           conflictingInformation: 'test',
           workMotivation: 'test',
           delayedShipmentScenario: '<script>alert("xss")</script>',
-          restrictedChemicalScenario: '<img src="x" onerror="alert(1)">',
           hazmatFreightScenario: 'test',
           customerQuoteScenario: '<script>document.cookie="malicious=true"</script>',
           softwareLearningExperience: 'test',
@@ -500,7 +493,6 @@ describe('Security Validation Tests', () => {
         const errors = result.error.errors;
         expect(errors.some(error => 
           error.path.includes('delayedShipmentScenario') || 
-          error.path.includes('restrictedChemicalScenario') ||
           error.path.includes('customerQuoteScenario')
         )).toBe(true);
       }

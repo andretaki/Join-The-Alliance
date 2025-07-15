@@ -21,7 +21,7 @@ test.describe('Accessibility', () => {
 
   test('should have proper form labels', async ({ page }) => {
     // Fill with test data and navigate to a form step
-    await page.getByText('Fill Standard').click();
+    await page.getByText('📋 Load Complete Application').click();
     await page.getByText('Next').click(); // Assessment
     await page.getByText('Next').click(); // Personal
     
@@ -91,12 +91,12 @@ test.describe('Accessibility', () => {
 
   test('should support Enter key for button activation', async ({ page }) => {
     // Focus on Fill Standard button and press Enter
-    const fillButton = page.getByText('Fill Standard');
+    const fillButton = page.getByText('📋 Load Complete Application');
     await fillButton.focus();
     await page.keyboard.press('Enter');
     
     // Should trigger the action
-    await expect(page.getByText('Form populated with test data!')).toBeVisible();
+    await expect(page.getByText('✅ Test data loaded!')).toBeVisible();
   });
 
   test('should have proper color contrast', async ({ page }) => {
@@ -136,7 +136,7 @@ test.describe('Accessibility', () => {
 
   test('should have proper ARIA attributes for form validation', async ({ page }) => {
     // Navigate to personal info form
-    await page.getByText('Fill Standard').click();
+    await page.getByText('📋 Load Complete Application').click();
     await page.getByText('Next').click();
     await page.getByText('Next').click();
     
@@ -177,7 +177,7 @@ test.describe('Accessibility', () => {
 
   test('should handle screen reader announcements', async ({ page }) => {
     // Fill form and navigate - check for live regions
-    await page.getByText('Fill Standard').click();
+    await page.getByText('📋 Load Complete Application').click();
     
     // Should have aria-live regions for dynamic content
     const liveRegions = await page.locator('[aria-live]').count();

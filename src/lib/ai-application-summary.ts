@@ -149,9 +149,6 @@ function prepareApplicationText(applicationData: EmployeeApplicationForm): strin
     if (applicationData.roleAssessment.delayedShipmentScenario) {
       sections.push(`Delayed Shipment Scenario: ${applicationData.roleAssessment.delayedShipmentScenario}`);
     }
-    if (applicationData.roleAssessment.restrictedChemicalScenario) {
-      sections.push(`Restricted Chemical Scenario: ${applicationData.roleAssessment.restrictedChemicalScenario}`);
-    }
     if (applicationData.roleAssessment.hazmatFreightScenario) {
       sections.push(`Hazmat Freight Scenario: ${applicationData.roleAssessment.hazmatFreightScenario}`);
     }

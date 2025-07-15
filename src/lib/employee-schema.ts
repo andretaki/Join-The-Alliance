@@ -98,7 +98,6 @@ export const employeeApplications = employeeSchema.table('employee_applications'
   
   // Customer Service Scenarios
   delayedShipmentScenario: text('delayed_shipment_scenario'), // Detailed text response
-  restrictedChemicalScenario: text('restricted_chemical_scenario'), // Detailed text response
   hazmatFreightScenario: text('hazmat_freight_scenario'), // Detailed text response
   customerQuoteScenario: text('customer_quote_scenario'), // Detailed text response
   

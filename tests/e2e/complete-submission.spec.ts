@@ -7,8 +7,8 @@ test.describe('Complete Application Submission', () => {
 
   test('should complete entire application flow', async ({ page }) => {
     // Fill with test data
-    await page.getByText('Fill Standard').click();
-    await expect(page.getByText('Form populated with test data!')).toBeVisible();
+    await page.getByText('📋 Load Complete Application').click();
+    await expect(page.getByText('✅ Test data loaded!')).toBeVisible();
 
     // Navigate through all steps
     const steps = [
@@ -79,7 +79,7 @@ test.describe('Complete Application Submission', () => {
 
   test('should validate signature requirement', async ({ page }) => {
     // Fill with test data and navigate to signature
-    await page.getByText('Fill Standard').click();
+    await page.getByText('📋 Load Complete Application').click();
     
     // Navigate to signature step
     for (let i = 0; i < 7; i++) {
@@ -109,7 +109,7 @@ test.describe('Complete Application Submission', () => {
     });
 
     // Complete form
-    await page.getByText('Fill Standard').click();
+    await page.getByText('📋 Load Complete Application').click();
     
     // Navigate to submission
     for (let i = 0; i < 7; i++) {
@@ -132,7 +132,7 @@ test.describe('Complete Application Submission', () => {
 
   test('should show loading state during submission', async ({ page }) => {
     // Complete form
-    await page.getByText('Fill Standard').click();
+    await page.getByText('📋 Load Complete Application').click();
     
     // Navigate to submission
     for (let i = 0; i < 7; i++) {
@@ -155,7 +155,7 @@ test.describe('Complete Application Submission', () => {
 
   test('should maintain form data across page refresh', async ({ page }) => {
     // Fill some data
-    await page.getByText('Fill Standard').click();
+    await page.getByText('📋 Load Complete Application').click();
     await page.getByText('Next').click();
     
     // Navigate to personal info and modify something

@@ -11,7 +11,7 @@ test.describe('Mobile Experience', () => {
       await page.goto('/employee-application');
       
       // Fill with test data and navigate to assessment
-      await page.getByText('Fill Standard').click();
+      await page.getByText('📋 Load Complete Application').click();
       await page.getByText('Next').click();
       
       await expect(page.getByText('Assessment')).toBeVisible();
@@ -45,7 +45,7 @@ test.describe('Mobile Experience', () => {
       await page.context().grantPermissions(['camera']);
       
       // Navigate to documents section
-      await page.getByText('Fill Standard').click();
+      await page.getByText('📋 Load Complete Application').click();
       await page.getByText('Next').click(); // Assessment
       await page.getByText('Next').click(); // Personal
       await page.getByText('Next').click(); // Documents
@@ -65,7 +65,7 @@ test.describe('Mobile Experience', () => {
       await expect(page.getByText('Employment Application')).toBeVisible();
       
       // Test navigation
-      await page.getByText('Fill Standard').click();
+      await page.getByText('📋 Load Complete Application').click();
       await page.getByText('Next').click();
       
       await expect(page.getByText('Assessment')).toBeVisible();
@@ -102,8 +102,8 @@ test.describe('Mobile Experience', () => {
         await expect(page.getByText('Employment Application')).toBeVisible();
         
         // Navigation should work
-        await page.getByText('Fill Standard').click();
-        await expect(page.getByText('Form populated with test data!')).toBeVisible();
+        await page.getByText('📋 Load Complete Application').click();
+        await expect(page.getByText('✅ Test data loaded!')).toBeVisible();
       }
     });
 

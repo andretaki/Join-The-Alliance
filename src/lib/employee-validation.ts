@@ -145,10 +145,6 @@ export const roleAssessmentSchema = z.object({
     .min(50, 'Please provide at least 50 characters describing your approach to this scenario')
     .max(1000, 'Delayed shipment scenario response too long')
     .refine((val) => val.trim().split(/\s+/).length >= 15, 'Please provide at least 15 words for a thoughtful response'),
-  restrictedChemicalScenario: z.string()
-    .min(50, 'Please provide at least 50 characters describing your approach to this scenario')
-    .max(1000, 'Restricted chemical scenario response too long')
-    .refine((val) => val.trim().split(/\s+/).length >= 15, 'Please provide at least 15 words for a thoughtful response'),
   hazmatFreightScenario: z.string()
     .min(50, 'Please provide at least 50 characters describing your approach to this scenario')
     .max(1000, 'Hazmat freight scenario response too long')

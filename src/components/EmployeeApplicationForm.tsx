@@ -111,7 +111,6 @@ export default function EmployeeApplicationForm() {
           conflictingInformation: 'I verify information from multiple sources and escalate when needed',
           workMotivation: 'I am motivated by helping customers solve problems and contributing to team success',
           delayedShipmentScenario: 'I would immediately contact the customer to inform them of the delay, provide a realistic timeline, and offer solutions like expedited shipping or partial delivery where possible',
-          restrictedChemicalScenario: 'I would verify the customers licensing and certifications, review their order history for patterns, and escalate to management if there are any compliance concerns',
           hazmatFreightScenario: 'I would ensure all proper documentation is complete, verify carrier certifications, and coordinate with logistics to ensure safe handling protocols are followed',
           customerQuoteScenario: 'Hello Barry, Thank you for your inquiry about acetic acid. I am pleased to provide a competitive quote for your requirements. Product: Acetic Acid Industrial Grade, Quantity: 4 drums, Unit Price: $800 per drum, Total: $3200. This quote includes proper hazmat documentation and delivery within 5 business days. Please let me know if you have any questions about this acetic acid quote.',
           softwareLearningExperience: 'I learn new software by exploring the interface, following tutorials, and practicing with real scenarios',
@@ -238,7 +237,6 @@ export default function EmployeeApplicationForm() {
         conflictingInformation: '',
         workMotivation: '',
         delayedShipmentScenario: '',
-        restrictedChemicalScenario: '',
         hazmatFreightScenario: '',
         customerQuoteScenario: '',
         softwareLearningExperience: '',
@@ -774,7 +772,6 @@ export default function EmployeeApplicationForm() {
                     You notice a customer has been placing increasingly large orders of a <strong>restricted chemical</strong>. What actions would you take?
                   </label>
                   <textarea
-                    {...register('roleAssessment.restrictedChemicalScenario')}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Consider compliance, documentation, and escalation procedures..."
@@ -1287,24 +1284,6 @@ export default function EmployeeApplicationForm() {
             )}
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              You notice a customer has been placing increasingly large orders of a <strong>restricted chemical</strong>. What actions would you take? *
-            </label>
-            <textarea
-              {...register('roleAssessment.restrictedChemicalScenario')}
-              rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.roleAssessment?.restrictedChemicalScenario 
-                  ? 'border-red-500 focus:ring-red-500' 
-                  : 'border-gray-300'
-              }`}
-              placeholder="Consider compliance, documentation, and escalation procedures..."
-            />
-            {errors.roleAssessment?.restrictedChemicalScenario && (
-              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.restrictedChemicalScenario.message}</p>
-            )}
-          </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1350,24 +1329,6 @@ export default function EmployeeApplicationForm() {
       <div className="bg-white rounded-lg p-6 border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Personal & Professional Assessment</h3>
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Describe a time when you had to learn a <strong>complex software system</strong> quickly. How did you approach it? *
-            </label>
-            <textarea
-              {...register('roleAssessment.softwareLearningExperience')}
-              rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.roleAssessment?.softwareLearningExperience 
-                  ? 'border-red-500 focus:ring-red-500' 
-                  : 'border-gray-300'
-              }`}
-              placeholder="Include the system, timeline, and your learning strategy..."
-            />
-            {errors.roleAssessment?.softwareLearningExperience && (
-              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.softwareLearningExperience.message}</p>
-            )}
-          </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -2995,9 +2956,6 @@ export default function EmployeeApplicationForm() {
               }
               if (errors.roleAssessment.delayedShipmentScenario) {
                 roleErrors.push('Delayed shipment scenario (min 50 characters, 15 words)');
-              }
-              if (errors.roleAssessment.restrictedChemicalScenario) {
-                roleErrors.push('Restricted chemical scenario (min 50 characters, 15 words)');
               }
               if (errors.roleAssessment.hazmatFreightScenario) {
                 roleErrors.push('Hazmat freight scenario (min 50 characters, 15 words)');

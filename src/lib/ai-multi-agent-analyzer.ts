@@ -645,9 +645,6 @@ function prepareApplicationForAnalysis(applicationData: EmployeeApplicationForm)
     if (applicationData.roleAssessment.delayedShipmentScenario) {
       sections.push(`Delayed Shipment Response: ${applicationData.roleAssessment.delayedShipmentScenario}`);
     }
-    if (applicationData.roleAssessment.restrictedChemicalScenario) {
-      sections.push(`Chemical Compliance Response: ${applicationData.roleAssessment.restrictedChemicalScenario}`);
-    }
     if (applicationData.roleAssessment.hazmatFreightScenario) {
       sections.push(`Hazmat Freight Response: ${applicationData.roleAssessment.hazmatFreightScenario}`);
     }

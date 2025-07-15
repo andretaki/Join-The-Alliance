@@ -199,7 +199,6 @@ export function generateEmployeeApplicationPDF(
       addField('Handling Conflicting Information', applicationData.roleAssessment.conflictingInformation);
       addField('Work Motivation', applicationData.roleAssessment.workMotivation);
       addField('Delayed Shipment Scenario', applicationData.roleAssessment.delayedShipmentScenario);
-      addField('Restricted Chemical Scenario', applicationData.roleAssessment.restrictedChemicalScenario);
       addField('Hazmat Freight Scenario', applicationData.roleAssessment.hazmatFreightScenario);
       addField('Customer Quote Scenario', applicationData.roleAssessment.customerQuoteScenario);
       addField('Software Learning Experience', applicationData.roleAssessment.softwareLearningExperience);

@@ -5,7 +5,7 @@ test.describe('Form Validation', () => {
     await page.goto('/employee-application');
     
     // Fill with test data and navigate to personal info
-    await page.getByText('Fill Standard').click();
+    await page.getByText('📋 Load Complete Application').click();
     await page.getByText('Next').click();
     await expect(page.getByText('Personal')).toBeVisible();
   });

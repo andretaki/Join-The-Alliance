@@ -12,21 +12,21 @@ test.describe('Employee Application Flow', () => {
   });
 
   test('should show test mode in development', async ({ page }) => {
-    await expect(page.getByText('🧪 Test Mode')).toBeVisible();
-    await expect(page.getByText('Fill Standard')).toBeVisible();
-    await expect(page.getByText('Fill Entry Level')).toBeVisible();
-    await expect(page.getByText('Fill Experienced')).toBeVisible();
+    await expect(page.getByText('🧪 Development Mode')).toBeVisible();
+    await expect(page.getByText('📋 Load Complete Application')).toBeVisible();
+    await expect(page.getByText('🌱 Load Entry Level Profile')).toBeVisible();
+    await expect(page.getByText('🚀 Load Experienced Profile')).toBeVisible();
   });
 
   test('should fill form with test data', async ({ page }) => {
-    await page.getByText('Fill Standard').click();
-    await expect(page.getByText('Form populated with test data!')).toBeVisible();
+    await page.getByText('📋 Load Complete Application').click();
+    await expect(page.getByText('✅ Test data loaded!')).toBeVisible();
   });
 
   test('should navigate through all form steps', async ({ page }) => {
     // Fill with test data first
-    await page.getByText('Fill Standard').click();
-    await expect(page.getByText('Form populated with test data!')).toBeVisible();
+    await page.getByText('📋 Load Complete Application').click();
+    await expect(page.getByText('✅ Test data loaded!')).toBeVisible();
 
     // Step 1: Position (already filled)
     await expect(page.getByText('Position')).toBeVisible();
@@ -68,8 +68,8 @@ test.describe('Employee Application Flow', () => {
 
   test('should allow navigation back and forth', async ({ page }) => {
     // Fill with test data
-    await page.getByText('Fill Standard').click();
-    await expect(page.getByText('Form populated with test data!')).toBeVisible();
+    await page.getByText('📋 Load Complete Application').click();
+    await expect(page.getByText('✅ Test data loaded!')).toBeVisible();
 
     // Go forward
     await page.getByText('Next').click();
