@@ -65,6 +65,174 @@ export default function EmployeeApplicationForm() {
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
   const signatureContainerRef = useRef<HTMLDivElement>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 600, height: 200 });
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+
+  // localStorage keys
+  const FORM_DATA_KEY = 'employeeApplicationFormData';
+  const CURRENT_STEP_KEY = 'employeeApplicationCurrentStep';
+
+  // Helper functions for localStorage
+  const saveFormDataToLocalStorage = (data: Partial<EmployeeApplicationForm>) => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem(FORM_DATA_KEY, JSON.stringify(data));
+      }
+    } catch (error) {
+      console.error('Failed to save form data to localStorage:', error);
+    }
+  };
+
+  const loadFormDataFromLocalStorage = (): Partial<EmployeeApplicationForm> | null => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = localStorage.getItem(FORM_DATA_KEY);
+        return saved ? JSON.parse(saved) : null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to load form data from localStorage:', error);
+      return null;
+    }
+  };
+
+  const saveCurrentStepToLocalStorage = (step: number) => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem(CURRENT_STEP_KEY, step.toString());
+      }
+    } catch (error) {
+      console.error('Failed to save current step to localStorage:', error);
+    }
+  };
+
+  const loadCurrentStepFromLocalStorage = (): number => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = localStorage.getItem(CURRENT_STEP_KEY);
+        return saved ? parseInt(saved, 10) : 0;
+      }
+      return 0;
+    } catch (error) {
+      console.error('Failed to load current step from localStorage:', error);
+      return 0;
+    }
+  };
+
+  const clearFormDataFromLocalStorage = () => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.removeItem(FORM_DATA_KEY);
+        localStorage.removeItem(CURRENT_STEP_KEY);
+      }
+    } catch (error) {
+      console.error('Failed to clear form data from localStorage:', error);
+    }
+  };
+
+  // Get default values with localStorage fallback
+  const getDefaultValues = (): EmployeeApplicationForm => {
+    const savedData = loadFormDataFromLocalStorage();
+    
+    const defaultValues: EmployeeApplicationForm = {
+      jobPostingId: 1, // Customer Service Specialist is the only option
+      roleAssessment: {
+        tmsMyCarrierExperience: undefined,
+        shopifyExperience: '',
+        amazonSellerCentralExperience: undefined,
+        excelProficiency: undefined,
+        canvaExperience: '',
+        learningUnderPressure: '',
+        conflictingInformation: '',
+        workMotivation: '',
+        delayedShipmentScenario: '',
+        hazmatFreightScenario: '',
+        customerQuoteScenario: '',
+        softwareLearningExperience: '',
+        customerServiceMotivation: [],
+        stressManagement: '',
+        automationIdeas: '',
+        b2bLoyaltyFactor: undefined,
+        dataAnalysisApproach: '',
+        idealWorkEnvironment: '',
+      },
+      personalInfo: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        socialSecurityNumber: '',
+        dateOfBirth: '',
+        hasDriversLicense: true,
+        driversLicenseNumber: '',
+        driversLicenseState: '',
+        emergencyContactName: '',
+        emergencyContactRelationship: '',
+        emergencyContactPhone: '',
+        compensationType: 'salary' as const,
+        availableStartDate: '',
+        hoursAvailable: 'full-time' as const,
+        shiftPreference: 'day' as const,
+        hasTransportation: false,
+        hasBeenConvicted: false,
+        hasPreviouslyWorkedHere: false
+      },
+      workExperience: [],
+      education: [],
+      references: [{
+        name: '',
+        relationship: '',
+        company: '',
+        phone: '',
+        email: '',
+        yearsKnown: 0
+      }],
+      eligibility: {
+        eligibleToWork: false,
+        requiresSponsorship: false,
+        consentToBackgroundCheck: false,
+        consentToDrugTest: false,
+        consentToReferenceCheck: false,
+        consentToEmploymentVerification: false,
+        hasValidI9Documents: false,
+        hasHazmatExperience: false,
+        hasForkliftCertification: false,
+        hasChemicalHandlingExperience: false,
+        willingToObtainCertifications: false,
+      },
+      termsAgreed: false,
+      signatureDataUrl: '',
+      additionalInfo: ''
+    };
+
+    // Merge saved data with defaults, ensuring deep merge for nested objects
+    if (savedData) {
+      return {
+        ...defaultValues,
+        ...savedData,
+        roleAssessment: {
+          ...defaultValues.roleAssessment,
+          ...savedData.roleAssessment
+        },
+        personalInfo: {
+          ...defaultValues.personalInfo,
+          ...savedData.personalInfo
+        },
+        eligibility: {
+          ...defaultValues.eligibility,
+          ...savedData.eligibility
+        },
+        workExperience: savedData.workExperience || defaultValues.workExperience,
+        education: savedData.education || defaultValues.education,
+        references: savedData.references || defaultValues.references,
+      };
+    }
+
+    return defaultValues;
+  };
 
   // Test data population function - Development Mode Only
   const populateTestData = async (scenario: 'default' | 'entryLevel' | 'experienced' = 'default') => {
@@ -225,73 +393,7 @@ export default function EmployeeApplicationForm() {
   } = useForm<EmployeeApplicationForm>({
     resolver: zodResolver(employeeApplicationSchema) as any,
     mode: 'onChange',
-    defaultValues: {
-      jobPostingId: 1, // Customer Service Specialist is the only option
-      roleAssessment: {
-        tmsMyCarrierExperience: undefined,
-        shopifyExperience: '',
-        amazonSellerCentralExperience: undefined,
-        excelProficiency: undefined,
-        canvaExperience: '',
-        learningUnderPressure: '',
-        conflictingInformation: '',
-        workMotivation: '',
-        delayedShipmentScenario: '',
-        hazmatFreightScenario: '',
-        customerQuoteScenario: '',
-        softwareLearningExperience: '',
-        customerServiceMotivation: [],
-        stressManagement: '',
-        automationIdeas: '',
-        b2bLoyaltyFactor: undefined,
-        dataAnalysisApproach: '',
-        idealWorkEnvironment: '',
-      },
-      personalInfo: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        socialSecurityNumber: '',
-        dateOfBirth: '',
-        hasDriversLicense: true,
-        driversLicenseNumber: '',
-        driversLicenseState: '',
-        emergencyContactName: '',
-        emergencyContactRelationship: '',
-        emergencyContactPhone: '',
-        compensationType: 'salary' as const,
-        availableStartDate: '',
-        hoursAvailable: 'full-time' as const,
-        shiftPreference: 'day' as const,
-        hasTransportation: false,
-        hasBeenConvicted: false,
-        hasPreviouslyWorkedHere: false
-      },
-      workExperience: [],
-      education: [],
-      references: [],
-      eligibility: {
-        eligibleToWork: false,
-        requiresSponsorship: false,
-        consentToBackgroundCheck: false,
-        consentToDrugTest: false,
-        consentToReferenceCheck: false,
-        consentToEmploymentVerification: false,
-        hasValidI9Documents: false,
-        hasHazmatExperience: false,
-        hasForkliftCertification: false,
-        hasChemicalHandlingExperience: false,
-        willingToObtainCertifications: false,
-      },
-      termsAgreed: false,
-      signatureDataUrl: '',
-      additionalInfo: ''
-    }
+    defaultValues: getDefaultValues()
   });
 
   const { fields: workFields, append: appendWork, remove: removeWork } = useFieldArray({
@@ -310,6 +412,60 @@ export default function EmployeeApplicationForm() {
   });
 
   const watchedValues = watch();
+
+  // Load saved current step on component mount
+  useEffect(() => {
+    const savedStep = loadCurrentStepFromLocalStorage();
+    if (savedStep >= 0 && savedStep < STEPS.length) {
+      setCurrentStep(savedStep);
+      // Mark visited steps up to the saved step
+      setVisitedSteps(new Set(Array.from({ length: savedStep + 1 }, (_, i) => i)));
+    }
+  }, []);
+
+  // Save form data to localStorage whenever form values change (debounced)
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    
+    const subscription = watch((value) => {
+      // Clear previous timeout
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      
+      // Debounce the save operation
+      timeoutId = setTimeout(() => {
+        // Only save if there's meaningful data (not just empty form)
+        const hasData = Object.values(value).some(val => {
+          if (typeof val === 'object' && val !== null) {
+            return Object.values(val).some(nestedVal => 
+              nestedVal !== '' && nestedVal !== false && nestedVal !== null && nestedVal !== undefined
+            );
+          }
+          return val !== '' && val !== false && val !== null && val !== undefined;
+        });
+
+        if (hasData) {
+          setIsAutoSaving(true);
+          saveFormDataToLocalStorage(value);
+          // Show saving feedback briefly
+          setTimeout(() => setIsAutoSaving(false), 1000);
+        }
+      }, 500); // 500ms debounce
+    });
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      return subscription;
+    };
+  }, [watch]);
+
+  // Save current step to localStorage whenever it changes
+  useEffect(() => {
+    saveCurrentStepToLocalStorage(currentStep);
+  }, [currentStep]);
 
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -586,6 +742,8 @@ export default function EmployeeApplicationForm() {
       });
 
       if (response.ok) {
+        // Clear localStorage on successful submission
+        clearFormDataFromLocalStorage();
         alert('Application submitted successfully!');
         // Redirect to success page
         window.location.href = '/application-success';
@@ -2813,6 +2971,25 @@ export default function EmployeeApplicationForm() {
           <p className="text-xl text-gray-600">
             Join the Alliance Chemical Team
           </p>
+          {/* Auto-save indicator */}
+          <div className="mt-4">
+            {isAutoSaving ? (
+              <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Saving...
+              </div>
+            ) : (
+              <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-600">
+                <svg className="mr-2 h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Auto-saved
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Development Mode Test Data Buttons */}
@@ -2843,6 +3020,16 @@ export default function EmployeeApplicationForm() {
                 className="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-105"
               >
                 🚀 Load Experienced Profile
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  clearFormDataFromLocalStorage();
+                  window.location.reload();
+                }}
+                className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-105"
+              >
+                🗑️ Clear Form Data
               </button>
             </div>
             <p className="text-xs text-yellow-600 mt-2">
