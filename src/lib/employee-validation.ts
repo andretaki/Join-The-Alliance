@@ -93,7 +93,7 @@ export const workExperienceSchema = z.object({
 // Education Schema
 export const educationSchema = z.object({
   institutionName: z.string().min(1, 'Institution name is required').max(100, 'Institution name too long'),
-  degreeType: z.enum(['High School', 'Associate', 'Bachelor', 'Master', 'PhD', 'Certificate', 'Other']),
+  degreeType: z.enum(['High School', 'GED', 'Associate', 'Bachelor', 'Master', 'PhD', 'Certificate', 'Other']),
   fieldOfStudy: z.string().max(100, 'Field of study too long').optional(),
   graduationDate: z.string().regex(/^\d{4}-\d{2}$/, 'Graduation date must be in YYYY-MM format').optional(),
   gpa: z.string().max(10, 'GPA too long').optional(),
@@ -117,7 +117,7 @@ export const roleAssessmentSchema = z.object({
     required_error: 'Please select your TMS MyCarrier experience level'
   }),
   shopifyExperience: z.string()
-    .min(10, 'Please provide at least 10 characters describing your Shopify experience')
+    .min(1, 'Please describe your Shopify experience')
     .max(1000, 'Shopify experience too long'),
   amazonSellerCentralExperience: z.enum(['none', 'basic', 'intermediate', 'advanced'], {
     required_error: 'Please select your Amazon Seller Central experience level'
@@ -126,48 +126,43 @@ export const roleAssessmentSchema = z.object({
     required_error: 'Please select your Excel proficiency level'
   }),
   canvaExperience: z.string()
-    .min(10, 'Please provide at least 10 characters describing your Canva experience')
+    .min(1, 'Please describe your Canva experience')
     .max(500, 'Canva experience too long'),
   
   // Personal Work Style Assessment
   learningUnderPressure: z.string()
-    .min(20, 'Please provide at least 20 characters describing your learning approach')
+    .min(1, 'Please describe your learning approach')
     .max(1000, 'Learning under pressure response too long'),
   conflictingInformation: z.string()
-    .min(20, 'Please provide at least 20 characters describing your conflict resolution approach')
+    .min(1, 'Please describe your conflict resolution approach')
     .max(1000, 'Conflicting information response too long'),
   workMotivation: z.string()
-    .min(20, 'Please provide at least 20 characters describing your work motivation')
+    .min(1, 'Please describe your work motivation')
     .max(1000, 'Work motivation response too long'),
   
   // Customer Service Scenarios
   delayedShipmentScenario: z.string()
-    .min(50, 'Please provide at least 50 characters describing your approach to this scenario')
-    .max(1000, 'Delayed shipment scenario response too long')
-    .refine((val) => val.trim().split(/\s+/).length >= 15, 'Please provide at least 15 words for a thoughtful response'),
+    .min(1, 'Please describe your approach to this scenario')
+    .max(1000, 'Delayed shipment scenario response too long'),
   hazmatFreightScenario: z.string()
-    .min(50, 'Please provide at least 50 characters describing your approach to this scenario')
-    .max(1000, 'Hazmat freight scenario response too long')
-    .refine((val) => val.trim().split(/\s+/).length >= 15, 'Please provide at least 15 words for a thoughtful response'),
+    .min(1, 'Please describe your approach to this scenario')
+    .max(1000, 'Hazmat freight scenario response too long'),
   customerQuoteScenario: z.string()
-    .min(100, 'Please provide at least 100 characters for your professional email response')
-    .max(1500, 'Customer quote scenario response too long')
-    .refine((val) => val.trim().split(/\s+/).length >= 25, 'Please provide at least 25 words for a complete professional email')
-    .refine((val) => val.toLowerCase().includes('barry'), 'Please address the customer by name in your email')
-    .refine((val) => val.toLowerCase().includes('acetic acid'), 'Please mention the specific product in your email'),
+    .min(1, 'Please provide your professional email response')
+    .max(1500, 'Customer quote scenario response too long'),
   
   // Personal & Professional Assessment
   softwareLearningExperience: z.string()
-    .min(20, 'Please provide at least 20 characters describing your software learning experience')
+    .min(1, 'Please describe your software learning experience')
     .max(1000, 'Software learning experience too long'),
   customerServiceMotivation: z.array(z.string())
     .min(1, 'Please select at least one motivation factor')
     .max(10, 'Too many motivations selected'),
   stressManagement: z.string()
-    .min(20, 'Please provide at least 20 characters describing your stress management approach')
+    .min(1, 'Please describe your stress management approach')
     .max(1000, 'Stress management response too long'),
   automationIdeas: z.string()
-    .min(20, 'Please provide at least 20 characters describing your automation ideas')
+    .min(1, 'Please describe your automation ideas')
     .max(1000, 'Automation ideas response too long'),
   
   // Advanced Role Assessment
@@ -175,10 +170,10 @@ export const roleAssessmentSchema = z.object({
     required_error: 'Please select the most important factor for B2B customer loyalty'
   }),
   dataAnalysisApproach: z.string()
-    .min(20, 'Please provide at least 20 characters describing your data analysis approach')
+    .min(1, 'Please describe your data analysis approach')
     .max(1000, 'Data analysis approach too long'),
   idealWorkEnvironment: z.string()
-    .min(20, 'Please provide at least 20 characters describing your ideal work environment')
+    .min(1, 'Please describe your ideal work environment')
     .max(1000, 'Ideal work environment response too long'),
 });
 
@@ -218,7 +213,7 @@ export const employeeApplicationSchema = z.object({
   education: z.array(educationSchema).min(1, 'At least one education entry is required'),
   
   // References (array)
-  references: z.array(referenceSchema).min(2, 'At least two references are required').max(5, 'Maximum 5 references allowed'),
+  references: z.array(referenceSchema).min(1, 'At least one reference is required').max(5, 'Maximum 5 references allowed'),
   
   // Digital Signature
   signatureDataUrl: z.string().min(1, 'Digital signature is required'),
@@ -264,7 +259,7 @@ export const stepEducationSchema = z.object({
 });
 
 export const stepReferencesSchema = z.object({
-  references: z.array(referenceSchema).min(2, 'At least two references are required').max(5, 'Maximum 5 references allowed'),
+  references: z.array(referenceSchema).min(1, 'At least one reference is required').max(5, 'Maximum 5 references allowed'),
 });
 
 export const stepFilesSchema = z.object({
