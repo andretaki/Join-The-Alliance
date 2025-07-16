@@ -69,45 +69,15 @@ async function extractTextFromFile(file: File): Promise<string> {
 }
 
 async function parseResumeWithAI(resumeText: string, openai: any, safeJSONParse: any) {
-  const prompt = `
-    Parse the following resume and extract structured information. Return a JSON object with the following structure:
+  // Truncate resume text to prevent token limit issues
+  const maxResumeLength = 50000; // Limit to ~50k characters
+  const truncatedText = resumeText.length > maxResumeLength 
+    ? resumeText.substring(0, maxResumeLength) + "\n\n[Text truncated due to length]"
+    : resumeText;
 
-    {
-      "personalInfo": {
-        "firstName": "string",
-        "lastName": "string", 
-        "email": "string",
-        "phone": "string",
-        "address": "string",
-        "city": "string",
-        "state": "string",
-        "zipCode": "string"
-      },
-      "workExperience": [
-        {
-          "companyName": "string",
-          "jobTitle": "string",
-          "startDate": "YYYY-MM",
-          "endDate": "YYYY-MM or null if current",
-          "isCurrent": boolean,
-          "responsibilities": "string"
-        }
-      ],
-      "education": [
-        {
-          "institutionName": "string",
-          "degreeType": "High School|Associate|Bachelor|Master|PhD|Certificate|Other",
-          "fieldOfStudy": "string",
-          "graduationDate": "YYYY-MM",
-          "isCompleted": boolean
-        }
-      ],
-      "keywords": ["array of relevant keywords found in resume"]
-    }
+  const prompt = `Parse this resume and return JSON with: personalInfo{firstName,lastName,email,phone,address,city,state,zipCode}, workExperience[{companyName,jobTitle,startDate,endDate,isCurrent,responsibilities}], education[{institutionName,degreeType,fieldOfStudy,graduationDate,isCompleted}], keywords[].
 
-    Resume text:
-    ${resumeText}
-  `;
+Resume: ${truncatedText}`;
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',

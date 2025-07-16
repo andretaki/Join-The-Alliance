@@ -2934,7 +2934,7 @@ export default function EmployeeApplicationForm() {
                 roleErrors.push('TMS MyCarrier experience level');
               }
               if (errors.roleAssessment.shopifyExperience) {
-                roleErrors.push('Shopify experience description (min 10 characters)');
+                roleErrors.push('Shopify experience description required');
               }
               if (errors.roleAssessment.amazonSellerCentralExperience) {
                 roleErrors.push('Amazon Seller Central experience level');
@@ -2943,46 +2943,46 @@ export default function EmployeeApplicationForm() {
                 roleErrors.push('Excel proficiency level');
               }
               if (errors.roleAssessment.canvaExperience) {
-                roleErrors.push('Canva experience description (min 10 characters)');
+                roleErrors.push('Canva experience description required');
               }
               if (errors.roleAssessment.learningUnderPressure) {
-                roleErrors.push('Learning under pressure response (min 20 characters)');
+                roleErrors.push('Learning under pressure response required');
               }
               if (errors.roleAssessment.conflictingInformation) {
-                roleErrors.push('Conflicting information response (min 20 characters)');
+                roleErrors.push('Conflicting information response required');
               }
               if (errors.roleAssessment.workMotivation) {
-                roleErrors.push('Work motivation response (min 20 characters)');
+                roleErrors.push('Work motivation response required');
               }
               if (errors.roleAssessment.delayedShipmentScenario) {
-                roleErrors.push('Delayed shipment scenario (min 50 characters, 15 words)');
+                roleErrors.push('Delayed shipment scenario response required');
               }
               if (errors.roleAssessment.hazmatFreightScenario) {
-                roleErrors.push('Hazmat freight scenario (min 50 characters, 15 words)');
+                roleErrors.push('Hazmat freight scenario response required');
               }
               if (errors.roleAssessment.customerQuoteScenario) {
-                roleErrors.push('Customer quote email (min 100 characters, 25 words, mention "Barry" and "acetic acid")');
+                roleErrors.push('Customer quote email response required');
               }
               if (errors.roleAssessment.softwareLearningExperience) {
-                roleErrors.push('Software learning experience (min 20 characters)');
+                roleErrors.push('Software learning experience description required');
               }
               if (errors.roleAssessment.customerServiceMotivation) {
                 roleErrors.push('Customer service motivation (select at least one)');
               }
               if (errors.roleAssessment.stressManagement) {
-                roleErrors.push('Stress management approach (min 20 characters)');
+                roleErrors.push('Stress management approach required');
               }
               if (errors.roleAssessment.automationIdeas) {
-                roleErrors.push('Automation ideas (min 20 characters)');
+                roleErrors.push('Automation ideas required');
               }
               if (errors.roleAssessment.b2bLoyaltyFactor) {
                 roleErrors.push('B2B customer loyalty factor');
               }
               if (errors.roleAssessment.dataAnalysisApproach) {
-                roleErrors.push('Data analysis approach (min 20 characters)');
+                roleErrors.push('Data analysis approach required');
               }
               if (errors.roleAssessment.idealWorkEnvironment) {
-                roleErrors.push('Ideal work environment (min 20 characters)');
+                roleErrors.push('Ideal work environment required');
               }
               
               if (roleErrors.length > 0) {
@@ -3001,7 +3001,7 @@ export default function EmployeeApplicationForm() {
               errorMessages.push('Education section needs at least one entry');
             }
             if (errors.references) {
-              errorMessages.push('References section needs at least two entries');
+              errorMessages.push('References section needs at least one entry');
             }
             if (errors.signatureDataUrl) {
               errorMessages.push('Digital signature is required');
