@@ -5,7 +5,6 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   // Detect build-time calls and return early
-  // During build, the request doesn't have a proper user agent
   const userAgent = request.headers.get('user-agent') || '';
   if (!userAgent || userAgent.includes('Next.js')) {
     return NextResponse.json({ message: 'Build-time call detected' }, { status: 200 });
@@ -13,14 +12,8 @@ export async function POST(request: NextRequest) {
 
   try {
     // Dynamic imports to prevent build-time issues
-    const { OpenAI } = await import('openai');
-    const { safeJSONParse } = await import('@/lib/safe-json');
+    const { uploadFileToS3 } = await import('@/lib/s3-utils');
     
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    // Handle build-time errors gracefully
     let formData: FormData;
     try {
       formData = await request.formData();
@@ -38,72 +31,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Resume file is required' }, { status: 400 });
     }
 
-    // Extract text from resume file
-    const resumeText = await extractTextFromFile(resumeFile);
+    // Generate unique filename for S3 storage
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `resumes/${timestamp}_${resumeFile.name}`;
+    
+    // Upload resume to S3
+    const resumeUrl = await uploadFileToS3(resumeFile, filename, resumeFile.type);
 
-    // Use OpenAI to parse the resume
-    const parsedData = await parseResumeWithAI(resumeText, openai, safeJSONParse);
-
-    return NextResponse.json(parsedData);
+    // Return success with file URL (skip parsing for now)
+    return NextResponse.json({
+      success: true,
+      fileUrl: resumeUrl,
+      message: 'Resume uploaded successfully',
+      // Return empty parsed data structure for compatibility
+      personalInfo: {},
+      workExperience: [],
+      education: [],
+      keywords: []
+    });
 
   } catch (error) {
-    console.error('Error parsing resume:', error);
+    console.error('Error uploading resume:', error);
     return NextResponse.json({ 
-      error: 'Failed to parse resume' 
+      error: 'Failed to upload resume' 
     }, { status: 500 });
   }
 }
 
-async function extractTextFromFile(file: File): Promise<string> {
-  // In a real application, you would use a proper PDF/DOC parser
-  // For now, we'll simulate text extraction
-  const buffer = await file.arrayBuffer();
-  const text = new TextDecoder().decode(buffer);
-  
-  // This is a simplified version - in production you'd use:
-  // - PDF.js for PDF files
-  // - mammoth.js for DOCX files  
-  // - A proper text extraction service
-  
-  return text;
-}
-
-async function parseResumeWithAI(resumeText: string, openai: any, safeJSONParse: any) {
-  // Truncate resume text to prevent token limit issues
-  const maxResumeLength = 50000; // Limit to ~50k characters
-  const truncatedText = resumeText.length > maxResumeLength 
-    ? resumeText.substring(0, maxResumeLength) + "\n\n[Text truncated due to length]"
-    : resumeText;
-
-  const prompt = `Parse this resume and return JSON with: personalInfo{firstName,lastName,email,phone,address,city,state,zipCode}, workExperience[{companyName,jobTitle,startDate,endDate,isCurrent,responsibilities}], education[{institutionName,degreeType,fieldOfStudy,graduationDate,isCompleted}], keywords[].
-
-Resume: ${truncatedText}`;
-
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [
-      {
-        role: 'system',
-        content: 'You are a helpful assistant that extracts structured information from resumes. Always return valid JSON.'
-      },
-      {
-        role: 'user',
-        content: prompt
-      }
-    ],
-    temperature: 0.1,
-    max_tokens: 2000
-  });
-
-  const content = response.choices[0].message.content;
-  
-  if (!content) {
-    throw new Error('No response from AI');
-  }
-
-  return safeJSONParse(content, {
-    personalInfo: {},
-    workExperience: [],
-    education: []
-  });
-}
+// These functions are no longer needed since we're just saving to S3
+// async function extractTextFromFile(file: File): Promise<string> { ... }
+// async function parseResumeWithAI(resumeText: string, openai: any, safeJSONParse: any) { ... }
