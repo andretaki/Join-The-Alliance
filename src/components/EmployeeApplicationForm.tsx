@@ -1416,6 +1416,25 @@ export default function EmployeeApplicationForm() {
               <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.workMotivation.message}</p>
             )}
           </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Describe your approach to <strong>learning new software systems</strong> and <strong>adapting to new technology</strong> *
+            </label>
+            <textarea
+              {...register('roleAssessment.softwareLearningExperience')}
+              rows={3}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.roleAssessment?.softwareLearningExperience 
+                  ? 'border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300'
+              }`}
+              placeholder="Describe your learning process, resources you use, and how you adapt to new tools..."
+            />
+            {errors.roleAssessment?.softwareLearningExperience && (
+              <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.softwareLearningExperience.message}</p>
+            )}
+          </div>
         </div>
       </div>
       
