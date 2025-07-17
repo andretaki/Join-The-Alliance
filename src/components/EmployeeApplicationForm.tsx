@@ -136,10 +136,10 @@ export default function EmployeeApplicationForm() {
     const defaultValues: EmployeeApplicationForm = {
       jobPostingId: 1, // Customer Service Specialist is the only option
       roleAssessment: {
-        tmsMyCarrierExperience: undefined,
+        tmsMyCarrierExperience: 'none' as const,
         shopifyExperience: '',
-        amazonSellerCentralExperience: undefined,
-        excelProficiency: undefined,
+        amazonSellerCentralExperience: 'none' as const,
+        excelProficiency: 'basic' as const,
         canvaExperience: '',
         learningUnderPressure: '',
         conflictingInformation: '',
@@ -151,7 +151,7 @@ export default function EmployeeApplicationForm() {
         customerServiceMotivation: [],
         stressManagement: '',
         automationIdeas: '',
-        b2bLoyaltyFactor: undefined,
+        b2bLoyaltyFactor: 'reliability' as const,
         dataAnalysisApproach: '',
         idealWorkEnvironment: '',
       },
@@ -175,7 +175,7 @@ export default function EmployeeApplicationForm() {
         compensationType: 'salary' as const,
         availableStartDate: '',
         hoursAvailable: 'full-time' as const,
-        shiftPreference: 'day' as const,
+        shiftPreference: '9am-4pm' as const,
         hasTransportation: false,
         hasBeenConvicted: false,
         hasPreviouslyWorkedHere: false
@@ -447,7 +447,7 @@ export default function EmployeeApplicationForm() {
 
         if (hasData) {
           setIsAutoSaving(true);
-          saveFormDataToLocalStorage(value);
+          saveFormDataToLocalStorage(value as Partial<EmployeeApplicationForm>);
           // Show saving feedback briefly
           setTimeout(() => setIsAutoSaving(false), 1000);
         }
@@ -458,7 +458,7 @@ export default function EmployeeApplicationForm() {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      return subscription;
+      subscription.unsubscribe();
     };
   }, [watch]);
 
