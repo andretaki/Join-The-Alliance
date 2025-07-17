@@ -175,7 +175,6 @@ export default function EmployeeApplicationForm() {
         compensationType: 'salary' as const,
         availableStartDate: '',
         hoursAvailable: 'full-time' as const,
-        shiftPreference: '8am-4pm' as const,
         hasTransportation: false,
         hasBeenConvicted: false,
         hasPreviouslyWorkedHere: false
@@ -197,7 +196,6 @@ export default function EmployeeApplicationForm() {
         consentToDrugTest: false,
         consentToReferenceCheck: false,
         consentToEmploymentVerification: false,
-        hasValidI9Documents: false,
         hasHazmatExperience: false,
         hasForkliftCertification: false,
         hasChemicalHandlingExperience: false,
@@ -264,7 +262,6 @@ export default function EmployeeApplicationForm() {
           desiredSalary: '75000',
           availableStartDate: '2024-03-01',
           hoursAvailable: 'full-time' as const,
-          shiftPreference: '8am-4pm' as const,
           hasTransportation: true,
           hasBeenConvicted: false,
           hasPreviouslyWorkedHere: false
@@ -296,7 +293,6 @@ export default function EmployeeApplicationForm() {
           consentToDrugTest: true,
           consentToReferenceCheck: true,
           consentToEmploymentVerification: true,
-          hasValidI9Documents: true,
           hasHazmatExperience: false,
           hasForkliftCertification: false,
           hasChemicalHandlingExperience: true,
@@ -2007,19 +2003,6 @@ export default function EmployeeApplicationForm() {
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Shift Preference *</label>
-            <select
-              {...register('personalInfo.shiftPreference')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-            >
-              <option value="">Select shift preference</option>
-              <option value="8am-4pm">8 AM - 4 PM</option>
-            </select>
-            {errors.personalInfo?.shiftPreference && (
-              <p className="mt-1 text-sm text-red-600">{errors.personalInfo.shiftPreference.message}</p>
-            )}
-          </div>
         </div>
       </div>
 
@@ -2097,7 +2080,7 @@ export default function EmployeeApplicationForm() {
               className="w-4 h-4 text-blue-600 rounded mt-1"
             />
             <label className="text-sm text-gray-700">
-              <strong>I am eligible to work in the United States *</strong>
+              <strong>I am eligible to work in the United States</strong>
             </label>
           </div>
           {errors.eligibility?.eligibleToWork && (
@@ -2115,19 +2098,6 @@ export default function EmployeeApplicationForm() {
             </label>
           </div>
 
-          <div className="flex items-start space-x-3">
-            <input
-              type="checkbox"
-              {...register('eligibility.hasValidI9Documents')}
-              className="w-4 h-4 text-blue-600 rounded mt-1"
-            />
-            <label className="text-sm text-gray-700">
-              <strong>I have valid I-9 documentation to verify employment eligibility *</strong>
-            </label>
-          </div>
-          {errors.eligibility?.hasValidI9Documents && (
-            <p className="ml-7 text-sm text-red-600">{errors.eligibility.hasValidI9Documents.message}</p>
-          )}
         </div>
       </div>
 
@@ -2142,7 +2112,7 @@ export default function EmployeeApplicationForm() {
               className="w-4 h-4 text-blue-600 rounded mt-1"
             />
             <label className="text-sm text-gray-700">
-              <strong>I consent to a background check *</strong>
+              <strong>I consent to a background check</strong>
             </label>
           </div>
           {errors.eligibility?.consentToBackgroundCheck && (
@@ -2156,7 +2126,7 @@ export default function EmployeeApplicationForm() {
               className="w-4 h-4 text-blue-600 rounded mt-1"
             />
             <label className="text-sm text-gray-700">
-              <strong>I consent to pre-employment and random drug testing *</strong>
+              <strong>I consent to pre-employment and random drug testing</strong>
             </label>
           </div>
           {errors.eligibility?.consentToDrugTest && (
@@ -2170,7 +2140,7 @@ export default function EmployeeApplicationForm() {
               className="w-4 h-4 text-blue-600 rounded mt-1"
             />
             <label className="text-sm text-gray-700">
-              <strong>I consent to reference verification *</strong>
+              <strong>I consent to reference verification</strong>
             </label>
           </div>
           {errors.eligibility?.consentToReferenceCheck && (
@@ -2184,7 +2154,7 @@ export default function EmployeeApplicationForm() {
               className="w-4 h-4 text-blue-600 rounded mt-1"
             />
             <label className="text-sm text-gray-700">
-              <strong>I consent to employment history verification *</strong>
+              <strong>I consent to employment history verification</strong>
             </label>
           </div>
           {errors.eligibility?.consentToEmploymentVerification && (
@@ -3152,7 +3122,6 @@ export default function EmployeeApplicationForm() {
               if (errors.personalInfo.emergencyContactPhone) personalErrors.push('Emergency contact phone');
               if (errors.personalInfo.availableStartDate) personalErrors.push('Available start date');
               if (errors.personalInfo.hoursAvailable) personalErrors.push('Hours available');
-              if (errors.personalInfo.shiftPreference) personalErrors.push('Shift preference');
               
               if (personalErrors.length > 0) {
                 errorMessages.push('Personal Information - Fix these fields:\n    • ' + personalErrors.join('\n    • '));
@@ -3230,7 +3199,6 @@ export default function EmployeeApplicationForm() {
               if (errors.eligibility.consentToDrugTest) eligibilityErrors.push('Must consent to drug testing');
               if (errors.eligibility.consentToReferenceCheck) eligibilityErrors.push('Must consent to reference verification');
               if (errors.eligibility.consentToEmploymentVerification) eligibilityErrors.push('Must consent to employment verification');
-              if (errors.eligibility.hasValidI9Documents) eligibilityErrors.push('Must confirm valid I-9 documentation');
               
               if (eligibilityErrors.length > 0) {
                 errorMessages.push('Eligibility Requirements - Please check these boxes:\n    • ' + eligibilityErrors.join('\n    • '));

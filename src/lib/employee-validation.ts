@@ -34,9 +34,6 @@ export const personalInfoSchema = z.object({
   hoursAvailable: z.enum(['full-time', 'part-time', 'either'], { 
     errorMap: () => ({ message: 'Please select hours available' }) 
   }),
-  shiftPreference: z.enum(['8am-4pm'], { 
-    errorMap: () => ({ message: 'Please select shift preference' }) 
-  }),
   
   // Additional Information
   hasTransportation: z.boolean(),
@@ -58,17 +55,14 @@ export const personalInfoSchema = z.object({
 
 // Employment Eligibility Schema - EXPANDED
 export const eligibilitySchema = z.object({
-  eligibleToWork: z.boolean().refine(val => val === true, 'You must be eligible to work in the United States'),
+  eligibleToWork: z.boolean(),
   requiresSponsorship: z.boolean(),
   
   // ✅ ADDITIONAL EMPLOYMENT CONSENTS
-  consentToBackgroundCheck: z.boolean().refine(val => val === true, 'You must consent to background check'),
-  consentToDrugTest: z.boolean().refine(val => val === true, 'You must consent to drug testing'),
-  consentToReferenceCheck: z.boolean().refine(val => val === true, 'You must consent to reference verification'),
-  consentToEmploymentVerification: z.boolean().refine(val => val === true, 'You must consent to employment verification'),
-  
-  // I-9 Documentation
-  hasValidI9Documents: z.boolean().refine(val => val === true, 'You must have valid I-9 documentation'),
+  consentToBackgroundCheck: z.boolean(),
+  consentToDrugTest: z.boolean(),
+  consentToReferenceCheck: z.boolean(),
+  consentToEmploymentVerification: z.boolean(),
   
   // Chemical Industry Specific
   hasHazmatExperience: z.boolean(),
