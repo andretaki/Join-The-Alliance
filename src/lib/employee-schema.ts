@@ -55,7 +55,7 @@ export const employeeApplications = employeeSchema.table('employee_applications'
   desiredHourlyRate: text('desired_hourly_rate'),
   availableStartDate: text('available_start_date').notNull(), // YYYY-MM-DD format
   hoursAvailable: text('hours_available').notNull(), // 'full-time', 'part-time', 'either'
-  shiftPreference: text('shift_preference').notNull(), // 'day', 'evening', 'night', 'rotating', 'any'
+  shiftPreference: text('shift_preference'), // Optional - removed from form
   
   // Additional Information
   hasTransportation: boolean('has_transportation').notNull(),
@@ -74,8 +74,8 @@ export const employeeApplications = employeeSchema.table('employee_applications'
   consentToReferenceCheck: boolean('consent_to_reference_check').notNull(),
   consentToEmploymentVerification: boolean('consent_to_employment_verification').notNull(),
   
-  // I-9 Documentation
-  hasValidI9Documents: boolean('has_valid_i9_documents').notNull(),
+  // I-9 Documentation - Optional (removed from form)
+  hasValidI9Documents: boolean('has_valid_i9_documents'),
   
   // Chemical Industry Specific
   hasHazmatExperience: boolean('has_hazmat_experience').notNull(),

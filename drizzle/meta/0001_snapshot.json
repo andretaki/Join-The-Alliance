@@ -1,0 +1,1119 @@
+{
+  "id": "8a3c5dd5-ce35-4def-964e-bac3369a33a3",
+  "prevId": "e99214af-d98c-4ce3-bc15-d183bce1cbe4",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "employee_applications.admin_users": {
+      "name": "admin_users",
+      "schema": "employee_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'admin'"
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "employee_applications.application_files": {
+      "name": "application_files",
+      "schema": "employee_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "application_id": {
+          "name": "application_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_type": {
+          "name": "file_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_url": {
+          "name": "file_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "file_size": {
+          "name": "file_size",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mime_type": {
+          "name": "mime_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uploaded_at": {
+          "name": "uploaded_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "application_files_application_id_employee_applications_id_fk": {
+          "name": "application_files_application_id_employee_applications_id_fk",
+          "tableFrom": "application_files",
+          "tableTo": "employee_applications",
+          "schemaTo": "employee_applications",
+          "columnsFrom": [
+            "application_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "employee_applications.education": {
+      "name": "education",
+      "schema": "employee_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "application_id": {
+          "name": "application_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "institution_name": {
+          "name": "institution_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "degree_type": {
+          "name": "degree_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "field_of_study": {
+          "name": "field_of_study",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "graduation_date": {
+          "name": "graduation_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gpa": {
+          "name": "gpa",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_completed": {
+          "name": "is_completed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "education_application_id_employee_applications_id_fk": {
+          "name": "education_application_id_employee_applications_id_fk",
+          "tableFrom": "education",
+          "tableTo": "employee_applications",
+          "schemaTo": "employee_applications",
+          "columnsFrom": [
+            "application_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "employee_applications.email_notifications": {
+      "name": "email_notifications",
+      "schema": "employee_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "application_id": {
+          "name": "application_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recipient_email": {
+          "name": "recipient_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_type": {
+          "name": "email_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subject": {
+          "name": "subject",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sent_at": {
+          "name": "sent_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "microsoft_message_id": {
+          "name": "microsoft_message_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "email_notifications_application_id_employee_applications_id_fk": {
+          "name": "email_notifications_application_id_employee_applications_id_fk",
+          "tableFrom": "email_notifications",
+          "tableTo": "employee_applications",
+          "schemaTo": "employee_applications",
+          "columnsFrom": [
+            "application_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "employee_applications.employee_applications": {
+      "name": "employee_applications",
+      "schema": "employee_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "job_posting_id": {
+          "name": "job_posting_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "middle_name": {
+          "name": "middle_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alternate_phone": {
+          "name": "alternate_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "state": {
+          "name": "state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "zip_code": {
+          "name": "zip_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "social_security_number": {
+          "name": "social_security_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_of_birth": {
+          "name": "date_of_birth",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "has_drivers_license": {
+          "name": "has_drivers_license",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "drivers_license_number": {
+          "name": "drivers_license_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "drivers_license_state": {
+          "name": "drivers_license_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emergency_contact_name": {
+          "name": "emergency_contact_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emergency_contact_relationship": {
+          "name": "emergency_contact_relationship",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emergency_contact_phone": {
+          "name": "emergency_contact_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emergency_contact_address": {
+          "name": "emergency_contact_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "compensation_type": {
+          "name": "compensation_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'salary'"
+        },
+        "desired_salary": {
+          "name": "desired_salary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "desired_hourly_rate": {
+          "name": "desired_hourly_rate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "available_start_date": {
+          "name": "available_start_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hours_available": {
+          "name": "hours_available",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shift_preference": {
+          "name": "shift_preference",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "has_transportation": {
+          "name": "has_transportation",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "has_been_convicted": {
+          "name": "has_been_convicted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "conviction_details": {
+          "name": "conviction_details",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "has_previously_worked_here": {
+          "name": "has_previously_worked_here",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "previous_work_details": {
+          "name": "previous_work_details",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "eligible_to_work": {
+          "name": "eligible_to_work",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "requires_sponsorship": {
+          "name": "requires_sponsorship",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "consent_to_background_check": {
+          "name": "consent_to_background_check",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "consent_to_drug_test": {
+          "name": "consent_to_drug_test",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "consent_to_reference_check": {
+          "name": "consent_to_reference_check",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "consent_to_employment_verification": {
+          "name": "consent_to_employment_verification",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "has_valid_i9_documents": {
+          "name": "has_valid_i9_documents",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "has_hazmat_experience": {
+          "name": "has_hazmat_experience",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "has_forklift_certification": {
+          "name": "has_forklift_certification",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "has_chemical_handling_experience": {
+          "name": "has_chemical_handling_experience",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "willing_to_obtain_certifications": {
+          "name": "willing_to_obtain_certifications",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tms_mycarrier_experience": {
+          "name": "tms_mycarrier_experience",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shopify_experience": {
+          "name": "shopify_experience",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amazon_seller_central_experience": {
+          "name": "amazon_seller_central_experience",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "excel_proficiency": {
+          "name": "excel_proficiency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "canva_experience": {
+          "name": "canva_experience",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "learning_under_pressure": {
+          "name": "learning_under_pressure",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "conflicting_information": {
+          "name": "conflicting_information",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "work_motivation": {
+          "name": "work_motivation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "delayed_shipment_scenario": {
+          "name": "delayed_shipment_scenario",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hazmat_freight_scenario": {
+          "name": "hazmat_freight_scenario",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customer_quote_scenario": {
+          "name": "customer_quote_scenario",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "software_learning_experience": {
+          "name": "software_learning_experience",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customer_service_motivation": {
+          "name": "customer_service_motivation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stress_management": {
+          "name": "stress_management",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "automation_ideas": {
+          "name": "automation_ideas",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "b2b_loyalty_factor": {
+          "name": "b2b_loyalty_factor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "data_analysis_approach": {
+          "name": "data_analysis_approach",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ideal_work_environment": {
+          "name": "ideal_work_environment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "resume_url": {
+          "name": "resume_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_photo_url": {
+          "name": "id_photo_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ai_summary": {
+          "name": "ai_summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "keyword_highlights": {
+          "name": "keyword_highlights",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'pending'"
+        },
+        "ip_address": {
+          "name": "ip_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_agent": {
+          "name": "user_agent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "application_completed_at": {
+          "name": "application_completed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "employee_applications_job_posting_id_job_postings_id_fk": {
+          "name": "employee_applications_job_posting_id_job_postings_id_fk",
+          "tableFrom": "employee_applications",
+          "tableTo": "job_postings",
+          "schemaTo": "employee_applications",
+          "columnsFrom": [
+            "job_posting_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "employee_applications.employee_signatures": {
+      "name": "employee_signatures",
+      "schema": "employee_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "application_id": {
+          "name": "application_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "signature_data_url": {
+          "name": "signature_data_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "signature_hash": {
+          "name": "signature_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_address": {
+          "name": "ip_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_agent": {
+          "name": "user_agent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "signed_at": {
+          "name": "signed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "employee_signatures_application_id_employee_applications_id_fk": {
+          "name": "employee_signatures_application_id_employee_applications_id_fk",
+          "tableFrom": "employee_signatures",
+          "tableTo": "employee_applications",
+          "schemaTo": "employee_applications",
+          "columnsFrom": [
+            "application_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "employee_applications.job_postings": {
+      "name": "job_postings",
+      "schema": "employee_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "department": {
+          "name": "department",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "requirements": {
+          "name": "requirements",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewer_email": {
+          "name": "reviewer_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "employee_applications.references": {
+      "name": "references",
+      "schema": "employee_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "application_id": {
+          "name": "application_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "relationship": {
+          "name": "relationship",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "company": {
+          "name": "company",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "years_known": {
+          "name": "years_known",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "references_application_id_employee_applications_id_fk": {
+          "name": "references_application_id_employee_applications_id_fk",
+          "tableFrom": "references",
+          "tableTo": "employee_applications",
+          "schemaTo": "employee_applications",
+          "columnsFrom": [
+            "application_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "employee_applications.work_experience": {
+      "name": "work_experience",
+      "schema": "employee_applications",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "application_id": {
+          "name": "application_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "company_name": {
+          "name": "company_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "job_title": {
+          "name": "job_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_current": {
+          "name": "is_current",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "responsibilities": {
+          "name": "responsibilities",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reason_for_leaving": {
+          "name": "reason_for_leaving",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "supervisor_name": {
+          "name": "supervisor_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "supervisor_contact": {
+          "name": "supervisor_contact",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "work_experience_application_id_employee_applications_id_fk": {
+          "name": "work_experience_application_id_employee_applications_id_fk",
+          "tableFrom": "work_experience",
+          "tableTo": "employee_applications",
+          "schemaTo": "employee_applications",
+          "columnsFrom": [
+            "application_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {
+    "employee_applications": "employee_applications"
+  },
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
