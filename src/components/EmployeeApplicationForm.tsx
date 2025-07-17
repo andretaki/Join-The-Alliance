@@ -783,7 +783,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <select 
                     {...register('roleAssessment.tmsMyCarrierExperience')}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.roleAssessment?.tmsMyCarrierExperience 
                         ? 'border-red-500 focus:ring-red-500' 
                         : 'border-gray-300'
@@ -811,7 +811,7 @@ export default function EmployeeApplicationForm() {
                   <textarea
                     {...register('roleAssessment.shopifyExperience')}
                     rows={3}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.roleAssessment?.shopifyExperience 
                         ? 'border-red-500 focus:ring-red-500' 
                         : 'border-gray-300'
@@ -832,7 +832,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <select 
                     {...register('roleAssessment.amazonSellerCentralExperience')}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.roleAssessment?.amazonSellerCentralExperience 
                         ? 'border-red-500 focus:ring-red-500' 
                         : 'border-gray-300'
@@ -871,7 +871,7 @@ export default function EmployeeApplicationForm() {
                   <textarea
                     {...register('roleAssessment.canvaExperience')}
                     rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Examples: flyers, social media posts, presentations, infographics..."
                   />
                 </div>
@@ -890,7 +890,7 @@ export default function EmployeeApplicationForm() {
                   <textarea
                     {...register('roleAssessment.conflictingInformation')}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Describe your fact-checking and verification process..."
                   />
                 </div>
@@ -902,7 +902,7 @@ export default function EmployeeApplicationForm() {
                   <textarea
                     {...register('roleAssessment.workMotivation')}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Help us understand what drives your work satisfaction..."
                   />
                 </div>
@@ -920,7 +920,7 @@ export default function EmployeeApplicationForm() {
                   <textarea
                     {...register('roleAssessment.delayedShipmentScenario')}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Describe your step-by-step approach..."
                   />
                 </div>
@@ -931,7 +931,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Consider compliance, documentation, and escalation procedures..."
                   />
                 </div>
@@ -942,7 +942,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.roleAssessment?.hazmatFreightScenario 
                         ? 'border-red-500 focus:ring-red-500' 
                         : 'border-gray-300'
@@ -991,7 +991,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Describe your prioritization and stress management techniques..."
                   />
                 </div>
@@ -1002,7 +1002,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Think about efficiency and customer experience improvements..."
                   />
                 </div>
@@ -1034,7 +1034,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Consider metrics, patterns, and actionable insights..."
                   />
                 </div>
@@ -1045,7 +1045,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Include communication style, collaboration preferences, and work pace..."
                   />
                 </div>
@@ -1102,7 +1102,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Include SDS sheets, PPE, spill procedures, etc..."
                   />
                 </div>
@@ -1113,7 +1113,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Describe step-by-step safety procedure..."
                   />
                 </div>
@@ -1130,7 +1130,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Describe your intrinsic motivation and work ethic..."
                   />
                 </div>
@@ -1141,7 +1141,7 @@ export default function EmployeeApplicationForm() {
                   </label>
                   <textarea
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     placeholder="Share your strategies for staying engaged..."
                   />
                 </div>
@@ -1247,7 +1247,7 @@ export default function EmployeeApplicationForm() {
             </label>
             <select 
               {...register('roleAssessment.tmsMyCarrierExperience')}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.tmsMyCarrierExperience 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1275,7 +1275,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.shopifyExperience')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.shopifyExperience 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1296,7 +1296,7 @@ export default function EmployeeApplicationForm() {
             </label>
             <select 
               {...register('roleAssessment.amazonSellerCentralExperience')}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.amazonSellerCentralExperience 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1319,7 +1319,7 @@ export default function EmployeeApplicationForm() {
             </label>
             <select 
               {...register('roleAssessment.excelProficiency')}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.excelProficiency 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1342,7 +1342,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.canvaExperience')}
               rows={2}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.canvaExperience 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1367,7 +1367,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.learningUnderPressure')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.learningUnderPressure 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1386,7 +1386,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.conflictingInformation')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.conflictingInformation 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1405,7 +1405,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.workMotivation')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.workMotivation 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1424,7 +1424,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.softwareLearningExperience')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.softwareLearningExperience 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1449,7 +1449,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.delayedShipmentScenario')}
               rows={4}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.delayedShipmentScenario 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1469,7 +1469,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.hazmatFreightScenario')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.hazmatFreightScenario 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1488,7 +1488,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.customerQuoteScenario')}
               rows={6}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.customerQuoteScenario 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1543,7 +1543,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.stressManagement')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.stressManagement 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1562,7 +1562,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.automationIdeas')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.automationIdeas 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1586,7 +1586,7 @@ export default function EmployeeApplicationForm() {
             </label>
             <select 
               {...register('roleAssessment.b2bLoyaltyFactor')}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.b2bLoyaltyFactor 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1612,7 +1612,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.dataAnalysisApproach')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.dataAnalysisApproach 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1631,7 +1631,7 @@ export default function EmployeeApplicationForm() {
             <textarea
               {...register('roleAssessment.idealWorkEnvironment')}
               rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                 errors.roleAssessment?.idealWorkEnvironment 
                   ? 'border-red-500 focus:ring-red-500' 
                   : 'border-gray-300'
@@ -1688,7 +1688,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="text"
               {...register('personalInfo.middleName')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
           </div>
 
@@ -1697,7 +1697,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="text"
               {...register('personalInfo.lastName')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.lastName && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.lastName.message}</p>
@@ -1735,7 +1735,7 @@ export default function EmployeeApplicationForm() {
               type="tel"
               {...register('personalInfo.phone')}
               placeholder="(555) 123-4567"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.phone && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.phone.message}</p>
@@ -1748,7 +1748,7 @@ export default function EmployeeApplicationForm() {
               type="tel"
               {...register('personalInfo.alternatePhone')}
               placeholder="(555) 123-4567"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
           </div>
         </div>
@@ -1766,7 +1766,7 @@ export default function EmployeeApplicationForm() {
               onChange={handleSSNChange}
               placeholder="XXX-XX-XXXX"
               maxLength={11}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.socialSecurityNumber && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.socialSecurityNumber.message}</p>
@@ -1778,7 +1778,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="date"
               {...register('personalInfo.dateOfBirth')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.dateOfBirth && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.dateOfBirth.message}</p>
@@ -1804,7 +1804,7 @@ export default function EmployeeApplicationForm() {
                   <input
                     type="text"
                     {...register('personalInfo.driversLicenseNumber')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                   />
                   {errors.personalInfo?.driversLicenseNumber && (
                     <p className="mt-1 text-sm text-red-600">{errors.personalInfo.driversLicenseNumber.message}</p>
@@ -1818,7 +1818,7 @@ export default function EmployeeApplicationForm() {
                     {...register('personalInfo.driversLicenseState')}
                     placeholder="TX"
                     maxLength={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                   />
                   {errors.personalInfo?.driversLicenseState && (
                     <p className="mt-1 text-sm text-red-600">{errors.personalInfo.driversLicenseState.message}</p>
@@ -1839,7 +1839,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="text"
               {...register('personalInfo.address')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.address && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.address.message}</p>
@@ -1851,7 +1851,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="text"
               {...register('personalInfo.city')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.city && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.city.message}</p>
@@ -1863,7 +1863,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="text"
               {...register('personalInfo.state')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.state && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.state.message}</p>
@@ -1875,7 +1875,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="text"
               {...register('personalInfo.zipCode')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.zipCode && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.zipCode.message}</p>
@@ -1893,7 +1893,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="text"
               {...register('personalInfo.emergencyContactName')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.emergencyContactName && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.emergencyContactName.message}</p>
@@ -1906,7 +1906,7 @@ export default function EmployeeApplicationForm() {
               type="text"
               {...register('personalInfo.emergencyContactRelationship')}
               placeholder="Spouse, Parent, Sibling, etc."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.emergencyContactRelationship && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.emergencyContactRelationship.message}</p>
@@ -1919,7 +1919,7 @@ export default function EmployeeApplicationForm() {
               type="tel"
               {...register('personalInfo.emergencyContactPhone')}
               placeholder="(555) 123-4567"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.emergencyContactPhone && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.emergencyContactPhone.message}</p>
@@ -1931,7 +1931,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="text"
               {...register('personalInfo.emergencyContactAddress')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
           </div>
         </div>
@@ -1945,7 +1945,7 @@ export default function EmployeeApplicationForm() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Compensation Type</label>
             <select
               {...register('personalInfo.compensationType')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             >
               <option value="salary">Annual Salary</option>
               <option value="hourly">Hourly Rate</option>
@@ -1961,14 +1961,14 @@ export default function EmployeeApplicationForm() {
                 type="text"
                 {...register('personalInfo.desiredHourlyRate')}
                 placeholder="$XX.XX/hour or Negotiable"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             ) : (
               <input
                 type="text"
                 {...register('personalInfo.desiredSalary')}
                 placeholder="$XX,XXX or Negotiable"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             )}
           </div>
@@ -1978,7 +1978,7 @@ export default function EmployeeApplicationForm() {
             <input
               type="date"
               {...register('personalInfo.availableStartDate')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.availableStartDate && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.availableStartDate.message}</p>
@@ -1989,7 +1989,7 @@ export default function EmployeeApplicationForm() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Hours Available *</label>
             <select
               {...register('personalInfo.hoursAvailable')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             >
               <option value="">Select hours available</option>
               <option value="full-time">Full-time</option>
@@ -2005,7 +2005,7 @@ export default function EmployeeApplicationForm() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Shift Preference *</label>
             <select
               {...register('personalInfo.shiftPreference')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             >
               <option value="">Select shift preference</option>
               <option value="day">Day (6 AM - 6 PM)</option>
@@ -2053,7 +2053,7 @@ export default function EmployeeApplicationForm() {
                   {...register('personalInfo.convictionDetails')}
                   placeholder="Please provide details..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 />
               </div>
             )}
@@ -2076,7 +2076,7 @@ export default function EmployeeApplicationForm() {
                   {...register('personalInfo.previousWorkDetails')}
                   placeholder="Please provide details (dates, position, reason for leaving)..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 />
               </div>
             )}
@@ -2522,7 +2522,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="text"
                 {...register(`workExperience.${index}.companyName`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2531,7 +2531,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="text"
                 {...register(`workExperience.${index}.jobTitle`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2540,7 +2540,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="month"
                 {...register(`workExperience.${index}.startDate`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2550,7 +2550,7 @@ export default function EmployeeApplicationForm() {
                 type="month"
                 {...register(`workExperience.${index}.endDate`)}
                 disabled={watchedValues.workExperience?.[index]?.isCurrent}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white disabled:bg-gray-100"
               />
               <div className="mt-2 flex items-center space-x-2">
                 <input
@@ -2567,7 +2567,7 @@ export default function EmployeeApplicationForm() {
               <textarea
                 {...register(`workExperience.${index}.responsibilities`)}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
           </div>
@@ -2622,7 +2622,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="text"
                 {...register(`education.${index}.institutionName`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2630,7 +2630,7 @@ export default function EmployeeApplicationForm() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Degree Type</label>
               <select
                 {...register(`education.${index}.degreeType`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               >
                 <option value="">Select degree type</option>
                 <option value="High School">High School</option>
@@ -2648,7 +2648,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="text"
                 {...register(`education.${index}.fieldOfStudy`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2657,7 +2657,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="month"
                 {...register(`education.${index}.graduationDate`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2666,7 +2666,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="text"
                 {...register(`education.${index}.gpa`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 placeholder="e.g., 3.5"
               />
             </div>
@@ -2730,7 +2730,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="text"
                 {...register(`references.${index}.name`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2739,7 +2739,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="text"
                 {...register(`references.${index}.company`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2750,7 +2750,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="text"
                 {...register(`references.${index}.relationship`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 placeholder="e.g., Former Supervisor, Colleague"
               />
             </div>
@@ -2760,7 +2760,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="tel"
                 {...register(`references.${index}.phone`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2769,7 +2769,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="email"
                 {...register(`references.${index}.email`)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
 
@@ -2778,7 +2778,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="number"
                 {...register(`references.${index}.yearsKnown`, { valueAsNumber: true })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 min="0"
                 max="50"
               />
@@ -2908,7 +2908,7 @@ export default function EmployeeApplicationForm() {
                 value={typedSignature}
                 onChange={(e) => handleTypedSignatureChange(e.target.value)}
                 placeholder="Enter your full name"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
             
@@ -2946,7 +2946,7 @@ export default function EmployeeApplicationForm() {
           <textarea
             {...register('additionalInfo')}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             placeholder="Optional: Any additional information, accommodations needed, or questions..."
           />
         </div>
