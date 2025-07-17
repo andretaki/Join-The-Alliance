@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
         desiredHourlyRate: validatedData.personalInfo.desiredHourlyRate || null,
         availableStartDate: validatedData.personalInfo.availableStartDate,
         hoursAvailable: validatedData.personalInfo.hoursAvailable,
-        shiftPreference: validatedData.personalInfo.shiftPreference || null,
+        shiftPreference: validatedData.personalInfo.shiftPreference || 'not-specified',
         
         // Additional Information
         hasTransportation: validatedData.personalInfo.hasTransportation,
@@ -178,7 +178,7 @@ export async function POST(request: NextRequest) {
         consentToDrugTest: validatedData.eligibility.consentToDrugTest,
         consentToReferenceCheck: validatedData.eligibility.consentToReferenceCheck,
         consentToEmploymentVerification: validatedData.eligibility.consentToEmploymentVerification,
-        hasValidI9Documents: validatedData.eligibility.hasValidI9Documents || null,
+        hasValidI9Documents: validatedData.eligibility.hasValidI9Documents || false,
         
         // Chemical Industry Specific
         hasHazmatExperience: validatedData.eligibility.hasHazmatExperience,
