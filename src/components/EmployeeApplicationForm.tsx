@@ -3134,7 +3134,31 @@ export default function EmployeeApplicationForm() {
             const errorMessages = [];
             
             if (errors.personalInfo) {
-              errorMessages.push('Personal Information section has errors');
+              const personalErrors = [];
+              if (errors.personalInfo.firstName) personalErrors.push('First name');
+              if (errors.personalInfo.lastName) personalErrors.push('Last name');
+              if (errors.personalInfo.email) personalErrors.push('Email address');
+              if (errors.personalInfo.phone) personalErrors.push('Phone number');
+              if (errors.personalInfo.address) personalErrors.push('Address');
+              if (errors.personalInfo.city) personalErrors.push('City');
+              if (errors.personalInfo.state) personalErrors.push('State');
+              if (errors.personalInfo.zipCode) personalErrors.push('ZIP code');
+              if (errors.personalInfo.socialSecurityNumber) personalErrors.push('Social Security Number');
+              if (errors.personalInfo.dateOfBirth) personalErrors.push('Date of birth');
+              if (errors.personalInfo.driversLicenseNumber) personalErrors.push('Driver\'s license number');
+              if (errors.personalInfo.driversLicenseState) personalErrors.push('Driver\'s license state');
+              if (errors.personalInfo.emergencyContactName) personalErrors.push('Emergency contact name');
+              if (errors.personalInfo.emergencyContactRelationship) personalErrors.push('Emergency contact relationship');
+              if (errors.personalInfo.emergencyContactPhone) personalErrors.push('Emergency contact phone');
+              if (errors.personalInfo.availableStartDate) personalErrors.push('Available start date');
+              if (errors.personalInfo.hoursAvailable) personalErrors.push('Hours available');
+              if (errors.personalInfo.shiftPreference) personalErrors.push('Shift preference');
+              
+              if (personalErrors.length > 0) {
+                errorMessages.push('Personal Information - Fix these fields:\n    • ' + personalErrors.join('\n    • '));
+              } else {
+                errorMessages.push('Personal Information section has errors');
+              }
             }
             if (errors.roleAssessment) {
               const roleErrors = [];
@@ -3200,7 +3224,19 @@ export default function EmployeeApplicationForm() {
               }
             }
             if (errors.eligibility) {
-              errorMessages.push('Eligibility section has errors');
+              const eligibilityErrors = [];
+              if (errors.eligibility.eligibleToWork) eligibilityErrors.push('Must confirm eligibility to work in the United States');
+              if (errors.eligibility.consentToBackgroundCheck) eligibilityErrors.push('Must consent to background check');
+              if (errors.eligibility.consentToDrugTest) eligibilityErrors.push('Must consent to drug testing');
+              if (errors.eligibility.consentToReferenceCheck) eligibilityErrors.push('Must consent to reference verification');
+              if (errors.eligibility.consentToEmploymentVerification) eligibilityErrors.push('Must consent to employment verification');
+              if (errors.eligibility.hasValidI9Documents) eligibilityErrors.push('Must confirm valid I-9 documentation');
+              
+              if (eligibilityErrors.length > 0) {
+                errorMessages.push('Eligibility Requirements - Please check these boxes:\n    • ' + eligibilityErrors.join('\n    • '));
+              } else {
+                errorMessages.push('Eligibility section has errors');
+              }
             }
             if (errors.workExperience) {
               errorMessages.push('Work Experience section needs at least one entry');
