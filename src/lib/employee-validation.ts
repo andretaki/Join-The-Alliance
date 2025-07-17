@@ -34,7 +34,7 @@ export const personalInfoSchema = z.object({
   hoursAvailable: z.enum(['full-time', 'part-time', 'either'], { 
     errorMap: () => ({ message: 'Please select hours available' }) 
   }),
-  shiftPreference: z.enum(['9am-4pm'], { 
+  shiftPreference: z.enum(['8am-4pm'], { 
     errorMap: () => ({ message: 'Please select shift preference' }) 
   }),
   

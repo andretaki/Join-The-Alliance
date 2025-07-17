@@ -175,7 +175,7 @@ export default function EmployeeApplicationForm() {
         compensationType: 'salary' as const,
         availableStartDate: '',
         hoursAvailable: 'full-time' as const,
-        shiftPreference: '9am-4pm' as const,
+        shiftPreference: '8am-4pm' as const,
         hasTransportation: false,
         hasBeenConvicted: false,
         hasPreviouslyWorkedHere: false
@@ -264,7 +264,7 @@ export default function EmployeeApplicationForm() {
           desiredSalary: '75000',
           availableStartDate: '2024-03-01',
           hoursAvailable: 'full-time' as const,
-          shiftPreference: 'day' as const,
+          shiftPreference: '8am-4pm' as const,
           hasTransportation: true,
           hasBeenConvicted: false,
           hasPreviouslyWorkedHere: false
@@ -626,12 +626,16 @@ export default function EmployeeApplicationForm() {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
       setVisitedSteps(prev => new Set([...prev, newStep]));
+      // Scroll to top of the page when navigating to next step
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      // Scroll to top of the page when navigating to previous step
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -639,6 +643,8 @@ export default function EmployeeApplicationForm() {
     if (stepIndex >= 0 && stepIndex < STEPS.length) {
       setCurrentStep(stepIndex);
       setVisitedSteps(prev => new Set([...prev, stepIndex]));
+      // Scroll to top of the page when navigating to a new step
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -1666,7 +1672,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="text"
                 {...register('personalInfo.firstName')}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder-gray-400"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder-gray-400 text-gray-900 bg-white"
                 placeholder="Enter your first name"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -1712,7 +1718,7 @@ export default function EmployeeApplicationForm() {
               <input
                 type="email"
                 {...register('personalInfo.email')}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder-gray-400"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 placeholder-gray-400 text-gray-900 bg-white"
                 placeholder="Enter your email address"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -2008,11 +2014,7 @@ export default function EmployeeApplicationForm() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             >
               <option value="">Select shift preference</option>
-              <option value="day">Day (6 AM - 6 PM)</option>
-              <option value="evening">Evening (2 PM - 10 PM)</option>
-              <option value="night">Night (10 PM - 6 AM)</option>
-              <option value="rotating">Rotating Shifts</option>
-              <option value="any">Any Shift</option>
+              <option value="8am-4pm">8 AM - 4 PM</option>
             </select>
             {errors.personalInfo?.shiftPreference && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.shiftPreference.message}</p>
