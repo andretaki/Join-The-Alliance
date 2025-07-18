@@ -348,32 +348,22 @@ async function processApplicationPostSubmission(
       console.log('Multi-agent analysis generated successfully');
     }
 
-    // Step 3: Upload PDF to S3 (with timeout)
+    // Step 3: Upload PDF to S3 (non-blocking)
     console.log('📤 Starting PDF upload to S3...');
-    let s3Result;
-    try {
-      const s3Promise = uploadPDFToS3(
-        pdfResult.buffer,
-        applicationId,
-        `Application_${applicationId}.pdf`,
-        {
-          applicantName: `${applicationData.personalInfo.firstName} ${applicationData.personalInfo.lastName}`,
-          applicantEmail: applicationData.personalInfo.email,
-          submissionDate: new Date().toISOString()
-        }
-      );
-      
-      // Add overall timeout for S3 operation
-      const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('S3 upload timeout')), 20000)
-      );
-      
-      s3Result = await Promise.race([s3Promise, timeoutPromise]);
-      console.log('📤 PDF upload completed:', s3Result.success);
-    } catch (error) {
-      console.error('📤 PDF upload failed:', error);
-      s3Result = { success: false, error: error instanceof Error ? error.message : 'S3 upload failed' };
-    }
+    const s3Result = await uploadPDFToS3(
+      pdfResult.buffer,
+      applicationId,
+      `Application_${applicationId}.pdf`,
+      {
+        applicantName: `${applicationData.personalInfo.firstName} ${applicationData.personalInfo.lastName}`,
+        applicantEmail: applicationData.personalInfo.email,
+        submissionDate: new Date().toISOString()
+      }
+    ).catch(err => {
+      console.error('📤 PDF upload failed:', err);
+      return { success: false, error: err instanceof Error ? err.message : 'S3 upload failed' } as UploadResult;
+    });
+    console.log('📤 PDF upload completed:', s3Result.success);
     
     if (!s3Result.success) {
       console.error('Failed to upload PDF to S3:', s3Result.error);
@@ -382,7 +372,7 @@ async function processApplicationPostSubmission(
       console.log('PDF uploaded to S3 successfully:', s3Result.s3Key);
     }
 
-    // Step 4: Send email notifications with all attachments
+    // Step 4: Send email notifications with all attachments (non-blocking)
     console.log('📧 Starting email notifications...');
     const emailResult = await sendApplicationNotificationEmails(
       applicationData,
@@ -390,8 +380,12 @@ async function processApplicationPostSubmission(
       pdfResult.buffer,
       multiAgentResult.success ? multiAgentResult : undefined,
       resumeFile,
-      idPhotoFile
-    );
+      idPhotoFile,
+      s3Result.success ? s3Result.url : undefined
+    ).catch(err => {
+      console.error('📧 Email notifications failed:', err);
+      return { success: false, error: err instanceof Error ? err.message : 'Email failed' };
+    });
     console.log('📧 Email notifications completed:', emailResult.success);
 
     if (!emailResult.success) {

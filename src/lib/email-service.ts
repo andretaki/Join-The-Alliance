@@ -147,7 +147,8 @@ export async function sendApplicationNotificationEmails(
   pdfBuffer: Buffer,
   multiAgentAnalysis?: MultiAgentAnalysisResult,
   resumeFile?: File,
-  idPhotoFile?: File
+  idPhotoFile?: File,
+  pdfUrl?: string
 ): Promise<EmailNotificationResult> {
   try {
     console.log('📧 Starting email notifications with robust queue fallback...');

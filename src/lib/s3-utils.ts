@@ -1,12 +1,17 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_S3_BUCKET_NAME } from './config';
 
+// 💣 Fail fast if any secret is missing
+if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !AWS_REGION || !AWS_S3_BUCKET_NAME) {
+  throw new Error('S3 is not configured – missing one or more AWS_* env vars');
+}
+
 // Initialize S3 client
 const s3Client = new S3Client({
   region: AWS_REGION,
   credentials: {
-    accessKeyId: AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: AWS_SECRET_ACCESS_KEY || '',
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
   },
 });
 
@@ -31,14 +36,15 @@ export async function uploadToS3(
       throw new Error('AWS S3 bucket name is not configured');
     }
     
-    // Log S3 configuration status
+    // Log S3 configuration status (redacted for security)
     console.log('S3 Configuration:', {
       hasAccessKey: !!AWS_ACCESS_KEY_ID,
       hasSecretKey: !!AWS_SECRET_ACCESS_KEY,
       hasRegion: !!AWS_REGION,
       hasBucketName: !!AWS_S3_BUCKET_NAME,
       region: AWS_REGION,
-      bucket: AWS_S3_BUCKET_NAME
+      bucket: AWS_S3_BUCKET_NAME,
+      accessKeyPrefix: AWS_ACCESS_KEY_ID?.slice(0, 4) + '***'
     });
 
     // Ensure we have a proper Buffer
@@ -47,6 +53,9 @@ export async function uploadToS3(
       bodyBuffer = file;
     } else if (file instanceof File) {
       bodyBuffer = Buffer.from(await file.arrayBuffer());
+    } else if (file instanceof Uint8Array) {
+      // Zero-copy path for Uint8Array
+      bodyBuffer = Buffer.from(file.buffer, file.byteOffset, file.byteLength);
     } else {
       bodyBuffer = Buffer.from(file);
     }
@@ -61,13 +70,20 @@ export async function uploadToS3(
       ContentLength: bodyBuffer.length, // Explicitly set content length
     });
 
-    // Add timeout to prevent hanging
-    const uploadPromise = s3Client.send(command);
-    const timeoutPromise = new Promise<never>((_, reject) => 
-      setTimeout(() => reject(new Error('S3 upload timeout after 30 seconds')), 30000)
-    );
-    
-    await Promise.race([uploadPromise, timeoutPromise]);
+    // Add timeout with AbortController
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 30_000); // 30 seconds
+
+    try {
+      await s3Client.send(command, { abortSignal: controller.signal });
+    } catch (err) {
+      if ((err as any).name === 'AbortError') {
+        return { success: false, error: 'S3 upload timeout after 30 seconds' };
+      }
+      throw err; // genuine S3 error, outer catch will log
+    } finally {
+      clearTimeout(timer);
+    }
 
     return {
       success: true,
@@ -104,7 +120,7 @@ export async function uploadPDFToS3(
 ): Promise<UploadResult> {
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).substring(2, 15);
-  const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const sanitizedFileName = fileName.replace(/[^\p{L}\d.\-]/gu, '_');
   const s3Key = `employee-applications/${applicationId}/pdfs/${timestamp}-${randomId}-${sanitizedFileName}`;
 
   return uploadToS3(pdfBuffer, s3Key, 'application/pdf', {
@@ -129,7 +145,7 @@ export async function uploadFileToS3(
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).substring(2, 15);
   const fileExtension = fileName.split('.').pop()?.toLowerCase() || 'bin';
-  const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const sanitizedFileName = fileName.replace(/[^\p{L}\d.\-]/gu, '_');
   
   const folder = fileType === 'resume' ? 'resumes' : fileType === 'id_photo' ? 'id-photos' : 'other';
   const s3Key = `employee-applications/${applicationId}/${folder}/${timestamp}-${randomId}-${sanitizedFileName}`;
