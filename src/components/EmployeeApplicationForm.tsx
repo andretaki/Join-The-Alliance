@@ -943,8 +943,6 @@ export default function EmployeeApplicationForm() {
   };
 
   const onSubmit = async (data: EmployeeApplicationForm) => {
-    console.log('🚀 Submit button clicked - starting submission process');
-    console.log('Form data:', data);
     setIsSubmitting(true);
     
     try {
@@ -985,7 +983,6 @@ export default function EmployeeApplicationForm() {
 
   const renderRoleSpecificQuestions = () => {
     const selectedJob = watchedValues.jobPostingId;
-    console.log('Selected job:', selectedJob); // Debug log
     
     // Since Customer Service Specialist is the only option and pre-selected, always show the questions
     // Just always show them since it's the only position
@@ -2920,9 +2917,6 @@ export default function EmployeeApplicationForm() {
   );
 
   const renderReferences = () => {
-    console.log('References rendering - referenceFields:', referenceFields);
-    console.log('References rendering - form values:', watchedValues.references);
-    
     return (
     <div className="space-y-6" ref={el => { stepRefs.current[6] = el; }} tabIndex={-1}>
       <div>
@@ -3358,11 +3352,10 @@ export default function EmployeeApplicationForm() {
         {/* Main Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <form onSubmit={handleSubmit(onSubmit, (errors) => {
-            console.log('❌ Form validation failed:', errors);
-            console.log('All form errors:', Object.keys(errors));
-            console.log('Current form data:', watchedValues);
-            console.log('References data:', watchedValues.references);
-            console.log('References errors:', errors.references);
+            // Only show full submission errors on the final step
+            if (currentStep !== STEPS.length - 1) {
+              return; // Don't show submission errors during step navigation
+            }
             
             // Create a user-friendly error message
             const errorMessages = [];
@@ -3522,7 +3515,6 @@ export default function EmployeeApplicationForm() {
                     type="submit"
                     disabled={isSubmitting}
                     onClick={() => {
-                      console.log('🚀 Submit button clicked!');
                       setErrorMessage(''); // Clear any previous errors
                     }}
                     className={`flex items-center px-8 py-3 rounded-xl font-medium transition-all duration-200 ${

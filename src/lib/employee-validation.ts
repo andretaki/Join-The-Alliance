@@ -134,7 +134,13 @@ export const referenceSchema = z.object({
     },
     { message: 'Phone number must have at least 10 digits' }
   ),
-  email: z.string().email('Invalid email address').optional().or(z.literal('')),
+  email: z.string().optional().refine(
+    (email) => {
+      if (!email || email.trim() === '') return true;
+      return z.string().email().safeParse(email).success;
+    },
+    { message: 'Invalid email address' }
+  ),
   yearsKnown: z.number().min(0, 'Years known must be positive').max(50, 'Years known too high').optional(),
 });
 
