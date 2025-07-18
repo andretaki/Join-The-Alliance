@@ -72,13 +72,14 @@ export async function uploadToS3(
 
     // Add timeout with AbortController
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 30_000); // 30 seconds
+    const timeoutMs = parseInt(process.env.UPLOAD_TIMEOUT_MS || '30000', 10);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       await s3Client.send(command, { abortSignal: controller.signal });
     } catch (err) {
       if ((err as any).name === 'AbortError') {
-        return { success: false, error: 'S3 upload timeout after 30 seconds' };
+        return { success: false, error: `S3 upload timeout after ${timeoutMs / 1000} seconds` };
       }
       throw err; // genuine S3 error, outer catch will log
     } finally {

@@ -17,9 +17,6 @@ export async function generateApplicationSummary(
     // Prepare the application data for AI analysis
     const applicationText = prepareApplicationText(applicationData);
     
-    // Temporarily disabled - AI chat endpoint not available
-    console.log('🤖 AI Application Summary disabled - would analyze application data');
-    return 'Application summary temporarily unavailable - all required data has been collected and stored successfully.';
 
     const prompt = `
 You are an HR professional reviewing an employee application. Please provide a comprehensive summary of the candidate's qualifications, experience, and suitability for the Customer Service Specialist position at Alliance Chemical.
