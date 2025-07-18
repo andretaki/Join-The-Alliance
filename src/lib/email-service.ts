@@ -150,39 +150,149 @@ export async function sendApplicationNotificationEmails(
   idPhotoFile?: File
 ): Promise<EmailNotificationResult> {
   try {
-    // Send both emails in parallel
-    const [employeeResult, bossResult] = await Promise.allSettled([
-      sendEmployeeConfirmationEmail(applicationData, applicationId, pdfBuffer, multiAgentAnalysis?.executiveSummary),
-      sendBossNotificationEmail(applicationData, applicationId, pdfBuffer, multiAgentAnalysis, resumeFile, idPhotoFile)
+    console.log('📧 Starting email notifications with robust queue fallback...');
+    
+    // Try immediate sending with short timeout first
+    const quickSendPromise = Promise.allSettled([
+      sendEmployeeConfirmationEmailWithTimeout(applicationData, applicationId, pdfBuffer, multiAgentAnalysis?.executiveSummary, 10000),
+      sendBossNotificationEmailWithTimeout(applicationData, applicationId, pdfBuffer, multiAgentAnalysis, resumeFile, idPhotoFile, 10000)
     ]);
 
-    const employeeSuccess = employeeResult.status === 'fulfilled' && employeeResult.value.success;
-    const bossSuccess = bossResult.status === 'fulfilled' && bossResult.value.success;
+    // Queue fallback for both emails
+    const queueFallbackPromise = queueEmailsAsBackup(applicationData, applicationId, pdfBuffer, multiAgentAnalysis, resumeFile, idPhotoFile);
 
-    let error: string | undefined;
-    if (!employeeSuccess && !bossSuccess) {
-      error = 'Failed to send both emails';
-    } else if (!employeeSuccess) {
-      error = 'Failed to send employee confirmation email';
-    } else if (!bossSuccess) {
-      error = 'Failed to send boss notification email';
+    try {
+      // Try quick send first
+      const [employeeResult, bossResult] = await Promise.race([
+        quickSendPromise,
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Quick send timeout')), 12000))
+      ]);
+
+      const employeeSuccess = employeeResult.status === 'fulfilled' && employeeResult.value.success;
+      const bossSuccess = bossResult.status === 'fulfilled' && bossResult.value.success;
+
+      if (employeeSuccess && bossSuccess) {
+        console.log('✅ Both emails sent immediately');
+        return {
+          success: true,
+          employeeEmailSent: true,
+          bossEmailSent: true
+        };
+      } else {
+        // Some failed, queue them
+        console.log('⚠️ Some emails failed, queuing fallback...');
+        await queueFallbackPromise;
+        return {
+          success: true,
+          employeeEmailSent: employeeSuccess,
+          bossEmailSent: bossSuccess,
+          error: 'Some emails queued for retry'
+        };
+      }
+    } catch (quickError) {
+      console.log('⚠️ Quick send failed, using queue fallback...');
+      await queueFallbackPromise;
+      return {
+        success: true,
+        employeeEmailSent: false,
+        bossEmailSent: false,
+        error: 'Emails queued for processing due to timeout'
+      };
     }
 
-    return {
-      success: employeeSuccess && bossSuccess,
-      employeeEmailSent: employeeSuccess,
-      bossEmailSent: bossSuccess,
-      error
-    };
-
   } catch (error) {
-    console.error('Error sending application notification emails:', error);
+    console.error('❌ Email notification system failed:', error);
     return {
       success: false,
       employeeEmailSent: false,
       bossEmailSent: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : 'Email system failure'
     };
+  }
+}
+
+/**
+ * Send employee confirmation with timeout
+ */
+async function sendEmployeeConfirmationEmailWithTimeout(
+  applicationData: EmployeeApplicationForm,
+  applicationId: number,
+  pdfBuffer: Buffer,
+  aiSummary?: string,
+  timeoutMs: number = 10000
+): Promise<{ success: boolean; error?: string }> {
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error('Employee email timeout')), timeoutMs)
+  );
+
+  return Promise.race([
+    sendEmployeeConfirmationEmail(applicationData, applicationId, pdfBuffer, aiSummary),
+    timeoutPromise
+  ]);
+}
+
+/**
+ * Send boss notification with timeout
+ */
+async function sendBossNotificationEmailWithTimeout(
+  applicationData: EmployeeApplicationForm,
+  applicationId: number,
+  pdfBuffer: Buffer,
+  multiAgentAnalysis?: MultiAgentAnalysisResult,
+  resumeFile?: File,
+  idPhotoFile?: File,
+  timeoutMs: number = 10000
+): Promise<{ success: boolean; error?: string }> {
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error('Boss email timeout')), timeoutMs)
+  );
+
+  return Promise.race([
+    sendBossNotificationEmail(applicationData, applicationId, pdfBuffer, multiAgentAnalysis, resumeFile, idPhotoFile),
+    timeoutPromise
+  ]);
+}
+
+/**
+ * Queue emails as backup using Redis/KV
+ */
+async function queueEmailsAsBackup(
+  applicationData: EmployeeApplicationForm,
+  applicationId: number,
+  pdfBuffer: Buffer,
+  multiAgentAnalysis?: MultiAgentAnalysisResult,
+  resumeFile?: File,
+  idPhotoFile?: File
+): Promise<void> {
+  try {
+    const { queueEmail } = await import('./email-queue');
+    const employeeName = `${applicationData.personalInfo.firstName} ${applicationData.personalInfo.lastName}`;
+    
+    // Queue employee confirmation
+    await queueEmail({
+      to: applicationData.personalInfo.email,
+      subject: `Application Confirmation - ${COMPANY_NAME} (Application #${applicationId})`,
+      html: generateEmployeeEmailHTML(employeeName, applicationId, multiAgentAnalysis?.executiveSummary),
+      text: `Thank you for submitting your application to ${COMPANY_NAME}. Application ID: ${applicationId}`,
+      type: 'approval_notification',
+      applicationId: applicationId
+    });
+
+    // Queue boss notification
+    await queueEmail({
+      to: BOSS_EMAIL,
+      cc: CC_EMAIL,
+      subject: `🚨 New Employee Application - ${employeeName} (App #${applicationId})`,
+      html: generateBossEmailHTML(applicationData, applicationId, multiAgentAnalysis, resumeFile, idPhotoFile),
+      text: `New application from ${employeeName} (ID: ${applicationId})`,
+      type: 'ai_analysis',
+      applicationId: applicationId
+    });
+
+    console.log('✅ Emails queued successfully for background processing');
+  } catch (queueError) {
+    console.error('❌ Failed to queue emails:', queueError);
+    throw queueError;
   }
 }
 
