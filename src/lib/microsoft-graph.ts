@@ -239,7 +239,8 @@ async function sendEmailInternal(client: Client, data: GraphEmailData): Promise<
       }),
       from: {
         emailAddress: {
-          address: MICROSOFT_GRAPH_USER_EMAIL // Should be andre@alliancechemical.com
+          address: MICROSOFT_GRAPH_USER_EMAIL, // andre@alliancechemical.com (authenticated user)
+          name: 'Alliance Chemical HR Team'
         }
       },
       ...(data.attachments && data.attachments.length > 0 && {
