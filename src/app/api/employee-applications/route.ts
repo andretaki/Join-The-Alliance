@@ -340,13 +340,16 @@ async function processApplicationPostSubmission(
     if (!multiAgentResult.success) {
       console.error('Failed to generate multi-agent analysis:', multiAgentResult.error);
       // Fallback to simple summary
+      console.log('📝 Generating fallback summary...');
       const fallbackSummary = await generateApplicationSummary(applicationData, applicationId);
+      console.log('📝 Fallback summary generated successfully');
       console.log('Using fallback simple summary');
     } else {
       console.log('Multi-agent analysis generated successfully');
     }
 
     // Step 3: Upload PDF to S3
+    console.log('📤 Starting PDF upload to S3...');
     const s3Result = await uploadPDFToS3(
       pdfResult.buffer,
       applicationId,
@@ -357,6 +360,7 @@ async function processApplicationPostSubmission(
         submissionDate: new Date().toISOString()
       }
     );
+    console.log('📤 PDF upload completed:', s3Result.success);
     
     if (!s3Result.success) {
       console.error('Failed to upload PDF to S3:', s3Result.error);
@@ -366,6 +370,7 @@ async function processApplicationPostSubmission(
     }
 
     // Step 4: Send email notifications with all attachments
+    console.log('📧 Starting email notifications...');
     const emailResult = await sendApplicationNotificationEmails(
       applicationData,
       applicationId,
@@ -374,6 +379,7 @@ async function processApplicationPostSubmission(
       resumeFile,
       idPhotoFile
     );
+    console.log('📧 Email notifications completed:', emailResult.success);
 
     if (!emailResult.success) {
       console.error('Email notification failed:', emailResult.error);
@@ -385,15 +391,17 @@ async function processApplicationPostSubmission(
     }
 
     // Step 5: Update application record with processing status
+    console.log('💾 Updating application processing status...');
     await updateApplicationProcessingStatus(applicationId, {
       pdfGenerated: pdfResult.success,
       s3Uploaded: s3Result.success,
       aiSummaryGenerated: multiAgentResult.success,
       emailsSent: emailResult.success,
       s3Key: s3Result.s3Key,
-              aiSummary: multiAgentResult.success ? multiAgentResult.executiveSummary : undefined,
+      aiSummary: multiAgentResult.success ? multiAgentResult.executiveSummary : undefined,
       processedAt: new Date().toISOString()
     });
+    console.log('💾 Application processing status updated successfully');
 
     console.log(`Background processing completed for application ${applicationId}`);
 
