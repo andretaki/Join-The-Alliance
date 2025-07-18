@@ -30,6 +30,16 @@ export async function uploadToS3(
     if (!AWS_S3_BUCKET_NAME) {
       throw new Error('AWS S3 bucket name is not configured');
     }
+    
+    // Log S3 configuration status
+    console.log('S3 Configuration:', {
+      hasAccessKey: !!AWS_ACCESS_KEY_ID,
+      hasSecretKey: !!AWS_SECRET_ACCESS_KEY,
+      hasRegion: !!AWS_REGION,
+      hasBucketName: !!AWS_S3_BUCKET_NAME,
+      region: AWS_REGION,
+      bucket: AWS_S3_BUCKET_NAME
+    });
 
     // Ensure we have a proper Buffer
     let bodyBuffer: Buffer;
@@ -51,7 +61,13 @@ export async function uploadToS3(
       ContentLength: bodyBuffer.length, // Explicitly set content length
     });
 
-    await s3Client.send(command);
+    // Add timeout to prevent hanging
+    const uploadPromise = s3Client.send(command);
+    const timeoutPromise = new Promise<never>((_, reject) => 
+      setTimeout(() => reject(new Error('S3 upload timeout after 30 seconds')), 30000)
+    );
+    
+    await Promise.race([uploadPromise, timeoutPromise]);
 
     return {
       success: true,
@@ -60,6 +76,16 @@ export async function uploadToS3(
     };
   } catch (error) {
     console.error('Error uploading to S3:', error);
+    
+    // Log specific error details
+    if (error instanceof Error) {
+      console.error('S3 Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
+    
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error occurred',

@@ -348,19 +348,32 @@ async function processApplicationPostSubmission(
       console.log('Multi-agent analysis generated successfully');
     }
 
-    // Step 3: Upload PDF to S3
+    // Step 3: Upload PDF to S3 (with timeout)
     console.log('📤 Starting PDF upload to S3...');
-    const s3Result = await uploadPDFToS3(
-      pdfResult.buffer,
-      applicationId,
-      `Application_${applicationId}.pdf`,
-      {
-        applicantName: `${applicationData.personalInfo.firstName} ${applicationData.personalInfo.lastName}`,
-        applicantEmail: applicationData.personalInfo.email,
-        submissionDate: new Date().toISOString()
-      }
-    );
-    console.log('📤 PDF upload completed:', s3Result.success);
+    let s3Result;
+    try {
+      const s3Promise = uploadPDFToS3(
+        pdfResult.buffer,
+        applicationId,
+        `Application_${applicationId}.pdf`,
+        {
+          applicantName: `${applicationData.personalInfo.firstName} ${applicationData.personalInfo.lastName}`,
+          applicantEmail: applicationData.personalInfo.email,
+          submissionDate: new Date().toISOString()
+        }
+      );
+      
+      // Add overall timeout for S3 operation
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('S3 upload timeout')), 20000)
+      );
+      
+      s3Result = await Promise.race([s3Promise, timeoutPromise]);
+      console.log('📤 PDF upload completed:', s3Result.success);
+    } catch (error) {
+      console.error('📤 PDF upload failed:', error);
+      s3Result = { success: false, error: error instanceof Error ? error.message : 'S3 upload failed' };
+    }
     
     if (!s3Result.success) {
       console.error('Failed to upload PDF to S3:', s3Result.error);
