@@ -117,8 +117,8 @@ const STEPS = [
   { id: 'experience', title: 'Experience', shortTitle: 'Work', icon: '🏢', description: 'Work history' },
   { id: 'education', title: 'Education', shortTitle: 'School', icon: '🎓', description: 'Academic background' },
   { id: 'references', title: 'References', shortTitle: 'Refs', icon: '👥', description: 'Professional contacts' },
-  { id: 'review', title: 'Review', shortTitle: 'Check', icon: '🔍', description: 'Confirm your details' },
-  { id: 'signature', title: 'Signature', shortTitle: 'Sign', icon: '✍️', description: 'Final confirmation' }
+  { id: 'signature', title: 'Signature', shortTitle: 'Sign', icon: '✍️', description: 'Final confirmation' },
+  { id: 'review', title: 'Review', shortTitle: 'Check', icon: '🔍', description: 'Confirm your details' }
 ];
 
 export default function EmployeeApplicationForm() {
@@ -783,10 +783,7 @@ export default function EmployeeApplicationForm() {
           }
           break;
           
-        case 7: // Review - No validation needed
-          break;
-          
-        case 8: // Signature
+        case 7: // Signature
           if (!formData.signatureDataUrl || formData.signatureDataUrl.trim() === '') {
             setErrorMessage('Please provide your digital signature.');
             return false;
@@ -795,6 +792,9 @@ export default function EmployeeApplicationForm() {
             setErrorMessage('You must agree to the terms and conditions.');
             return false;
           }
+          break;
+          
+        case 8: // Review - No validation needed
           break;
       }
       
@@ -3192,9 +3192,9 @@ export default function EmployeeApplicationForm() {
       case 6:
         return renderReferences();
       case 7:
-        return renderReview();
-      case 8:
         return renderSignature();
+      case 8:
+        return renderReview();
       default:
         return <div>Invalid step</div>;
     }
