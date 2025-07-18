@@ -114,12 +114,21 @@ export const workExperienceSchema = z.object({
 
 // Education Schema
 export const educationSchema = z.object({
-  institutionName: z.string().min(1, 'Institution name is required').max(100, 'Institution name too long'),
-  degreeType: z.enum(['High School', 'GED', 'Associate', 'Bachelor', 'Master', 'PhD', 'Certificate', 'Other']),
+  institutionName: z.string().max(100, 'Institution name too long').optional(),
+  degreeType: z.enum(['None', 'High School', 'GED', 'Associate', 'Bachelor', 'Master', 'PhD', 'Certificate', 'Other']),
   fieldOfStudy: z.string().max(100, 'Field of study too long').optional(),
   graduationDate: z.string().regex(/^\d{4}-\d{2}$/, 'Graduation date must be in YYYY-MM format').optional(),
   gpa: z.string().max(10, 'GPA too long').optional(),
   isCompleted: z.boolean(),
+}).refine((data) => {
+  // If degree type is not "None", institution name is required
+  if (data.degreeType !== 'None') {
+    return data.institutionName && data.institutionName.length > 0;
+  }
+  return true;
+}, {
+  message: 'Institution name is required for this degree type',
+  path: ['institutionName'],
 });
 
 // References Schema

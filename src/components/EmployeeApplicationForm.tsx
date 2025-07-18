@@ -2846,7 +2846,9 @@ export default function EmployeeApplicationForm() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               >
                 <option value="">Select degree type</option>
+                <option value="None">None</option>
                 <option value="High School">High School</option>
+                <option value="GED">GED</option>
                 <option value="Associate">Associate</option>
                 <option value="Bachelor">Bachelor</option>
                 <option value="Master">Master</option>
