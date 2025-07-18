@@ -60,7 +60,19 @@ export async function generateMultiAgentAnalysis(
     ].filter(analysis => analysis !== null) as AgentAnalysis[];
 
     if (agentAnalyses.length === 0) {
-      throw new Error('All agent analyses failed');
+      console.log('🤖 All AI agents disabled/failed - returning fallback analysis');
+      return {
+        success: false,
+        overallScore: 5,
+        finalRecommendation: 'CONSIDER',
+        confidenceLevel: 'LOW',
+        agentAnalyses: [],
+        executiveSummary: 'AI analysis is currently disabled. Manual review required.',
+        keyDecisionFactors: ['Manual review required'],
+        riskAssessment: 'No automated risk assessment available',
+        nextSteps: ['Conduct manual review of application', 'Interview candidate if qualifications meet requirements'],
+        error: 'AI analysis disabled'
+      };
     }
 
     // Calculate overall metrics
