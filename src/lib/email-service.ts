@@ -190,8 +190,10 @@ export async function sendApplicationNotificationEmails(
         };
       }
     } catch (quickError) {
-      console.log('⚠️ Quick send failed, using queue fallback...');
+      console.error('⚠️ Quick send failed, using queue fallback...', quickError);
+      console.log('📬 Queuing emails as fallback...');
       await queueFallbackPromise;
+      console.log('✅ Emails queued successfully');
       return {
         success: true,
         employeeEmailSent: false,
@@ -226,7 +228,10 @@ async function sendEmployeeConfirmationEmailWithTimeout(
   );
 
   return Promise.race([
-    sendEmployeeConfirmationEmail(applicationData, applicationId, pdfBuffer, aiSummary),
+    sendEmployeeConfirmationEmail(applicationData, applicationId, pdfBuffer, aiSummary).catch(error => {
+      console.error('❌ Employee confirmation email failed:', error);
+      return { success: false, error: error.message };
+    }),
     timeoutPromise
   ]);
 }
@@ -248,7 +253,10 @@ async function sendBossNotificationEmailWithTimeout(
   );
 
   return Promise.race([
-    sendBossNotificationEmail(applicationData, applicationId, pdfBuffer, multiAgentAnalysis, resumeFile, idPhotoFile),
+    sendBossNotificationEmail(applicationData, applicationId, pdfBuffer, multiAgentAnalysis, resumeFile, idPhotoFile).catch(error => {
+      console.error('❌ Boss notification email failed:', error);
+      return { success: false, error: error.message };
+    }),
     timeoutPromise
   ]);
 }
@@ -269,6 +277,7 @@ async function queueEmailsAsBackup(
     const employeeName = `${applicationData.personalInfo.firstName} ${applicationData.personalInfo.lastName}`;
     
     // Queue employee confirmation
+    console.log('📬 Queuing employee confirmation email...');
     await queueEmail({
       to: applicationData.personalInfo.email,
       subject: `Application Confirmation - ${COMPANY_NAME} (Application #${applicationId})`,
@@ -277,8 +286,10 @@ async function queueEmailsAsBackup(
       type: 'approval_notification',
       applicationId: applicationId
     });
+    console.log('✅ Employee email queued successfully');
 
     // Queue boss notification
+    console.log('📬 Queuing boss notification email...');
     await queueEmail({
       to: BOSS_EMAIL,
       cc: CC_EMAIL,
@@ -288,6 +299,7 @@ async function queueEmailsAsBackup(
       type: 'ai_analysis',
       applicationId: applicationId
     });
+    console.log('✅ Boss email queued successfully');
 
     console.log('✅ Emails queued successfully for background processing');
   } catch (queueError) {
