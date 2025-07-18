@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const filename = `resumes/${timestamp}_${resumeFile.name}`;
     
     // Upload resume to S3
-    const resumeUrl = await uploadFileToS3(resumeFile, filename, resumeFile.type);
+    const resumeUrl = await uploadFileToS3(resumeFile, 1, filename, resumeFile.type, 'resume');
 
     // Return success with file URL (skip parsing for now)
     return NextResponse.json({

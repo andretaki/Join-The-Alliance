@@ -21,7 +21,7 @@ export interface UploadResult {
  * Upload a file to S3
  */
 export async function uploadToS3(
-  file: Buffer | Uint8Array,
+  file: Buffer | Uint8Array | File,
   key: string,
   contentType: string,
   metadata?: Record<string, string>
@@ -32,7 +32,14 @@ export async function uploadToS3(
     }
 
     // Ensure we have a proper Buffer
-    const bodyBuffer = Buffer.isBuffer(file) ? file : Buffer.from(file);
+    let bodyBuffer: Buffer;
+    if (Buffer.isBuffer(file)) {
+      bodyBuffer = file;
+    } else if (file instanceof File) {
+      bodyBuffer = Buffer.from(await file.arrayBuffer());
+    } else {
+      bodyBuffer = Buffer.from(file);
+    }
     
     const command = new PutObjectCommand({
       Bucket: AWS_S3_BUCKET_NAME,
@@ -86,7 +93,7 @@ export async function uploadPDFToS3(
  * Upload a general file to S3
  */
 export async function uploadFileToS3(
-  fileBuffer: Buffer,
+  fileBuffer: Buffer | File,
   applicationId: number,
   fileName: string,
   contentType: string,
