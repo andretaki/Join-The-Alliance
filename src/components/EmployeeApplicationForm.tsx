@@ -1818,9 +1818,8 @@ export default function EmployeeApplicationForm() {
               <option value="pricing">Competitive pricing</option>
               <option value="reliability">Consistent delivery and quality</option>
               <option value="communication">Proactive communication</option>
-              <option value="problemSolving">Quick problem resolution</option>
-              <option value="relationship">Personal relationships</option>
-              <option value="expertise">Technical expertise and advice</option>
+              <option value="expertise">Quick problem resolution</option>
+              <option value="relationships">Personal relationships</option>
             </select>
             {errors.roleAssessment?.b2bLoyaltyFactor && (
               <p className="mt-1 text-sm text-red-600">{errors.roleAssessment.b2bLoyaltyFactor.message}</p>
