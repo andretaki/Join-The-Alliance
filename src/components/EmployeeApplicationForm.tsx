@@ -6,6 +6,76 @@ import Image from 'next/image';
 import SignatureCanvas from 'react-signature-canvas';
 import { employeeApplicationSchema, type EmployeeApplicationForm } from '@/lib/employee-validation';
 
+// US States list for dropdown
+const US_STATES = [
+  { value: 'AL', label: 'Alabama' },
+  { value: 'AK', label: 'Alaska' },
+  { value: 'AZ', label: 'Arizona' },
+  { value: 'AR', label: 'Arkansas' },
+  { value: 'CA', label: 'California' },
+  { value: 'CO', label: 'Colorado' },
+  { value: 'CT', label: 'Connecticut' },
+  { value: 'DE', label: 'Delaware' },
+  { value: 'FL', label: 'Florida' },
+  { value: 'GA', label: 'Georgia' },
+  { value: 'HI', label: 'Hawaii' },
+  { value: 'ID', label: 'Idaho' },
+  { value: 'IL', label: 'Illinois' },
+  { value: 'IN', label: 'Indiana' },
+  { value: 'IA', label: 'Iowa' },
+  { value: 'KS', label: 'Kansas' },
+  { value: 'KY', label: 'Kentucky' },
+  { value: 'LA', label: 'Louisiana' },
+  { value: 'ME', label: 'Maine' },
+  { value: 'MD', label: 'Maryland' },
+  { value: 'MA', label: 'Massachusetts' },
+  { value: 'MI', label: 'Michigan' },
+  { value: 'MN', label: 'Minnesota' },
+  { value: 'MS', label: 'Mississippi' },
+  { value: 'MO', label: 'Missouri' },
+  { value: 'MT', label: 'Montana' },
+  { value: 'NE', label: 'Nebraska' },
+  { value: 'NV', label: 'Nevada' },
+  { value: 'NH', label: 'New Hampshire' },
+  { value: 'NJ', label: 'New Jersey' },
+  { value: 'NM', label: 'New Mexico' },
+  { value: 'NY', label: 'New York' },
+  { value: 'NC', label: 'North Carolina' },
+  { value: 'ND', label: 'North Dakota' },
+  { value: 'OH', label: 'Ohio' },
+  { value: 'OK', label: 'Oklahoma' },
+  { value: 'OR', label: 'Oregon' },
+  { value: 'PA', label: 'Pennsylvania' },
+  { value: 'RI', label: 'Rhode Island' },
+  { value: 'SC', label: 'South Carolina' },
+  { value: 'SD', label: 'South Dakota' },
+  { value: 'TN', label: 'Tennessee' },
+  { value: 'TX', label: 'Texas' },
+  { value: 'UT', label: 'Utah' },
+  { value: 'VT', label: 'Vermont' },
+  { value: 'VA', label: 'Virginia' },
+  { value: 'WA', label: 'Washington' },
+  { value: 'WV', label: 'West Virginia' },
+  { value: 'WI', label: 'Wisconsin' },
+  { value: 'WY', label: 'Wyoming' },
+  { value: 'DC', label: 'District of Columbia' }
+];
+
+// Phone number formatting utility
+const formatPhoneNumber = (value: string) => {
+  // Remove all non-numeric characters
+  const phoneNumber = value.replace(/\D/g, '');
+  
+  // Format as XXX-XXX-XXXX
+  if (phoneNumber.length <= 3) {
+    return phoneNumber;
+  } else if (phoneNumber.length <= 6) {
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+  } else {
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+  }
+};
+
 // Tooltip component for better user experience
 const Tooltip = ({ text, children }: { text: string; children: React.ReactNode }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -666,6 +736,20 @@ export default function EmployeeApplicationForm() {
       }, focusDelay);
     }
   }, [currentStep]);
+
+  // Ensure at least one reference field exists
+  useEffect(() => {
+    if (referenceFields.length === 0) {
+      appendReference({
+        name: '',
+        relationship: '',
+        company: '',
+        phone: '',
+        email: '',
+        yearsKnown: 0
+      });
+    }
+  }, [referenceFields.length, appendReference]);
 
   // Signature canvas resize handler
   useEffect(() => {
@@ -1736,7 +1820,11 @@ export default function EmployeeApplicationForm() {
             <input
               type="tel"
               {...register('personalInfo.phone')}
-              placeholder="(555) 123-4567"
+              placeholder="555-123-4567"
+              onChange={(e) => {
+                const formatted = formatPhoneNumber(e.target.value);
+                setValue('personalInfo.phone', formatted);
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.phone && (
@@ -1749,7 +1837,11 @@ export default function EmployeeApplicationForm() {
             <input
               type="tel"
               {...register('personalInfo.alternatePhone')}
-              placeholder="(555) 123-4567"
+              placeholder="555-123-4567"
+              onChange={(e) => {
+                const formatted = formatPhoneNumber(e.target.value);
+                setValue('personalInfo.alternatePhone', formatted);
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
           </div>
@@ -1815,13 +1907,17 @@ export default function EmployeeApplicationForm() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">License State *</label>
-                  <input
-                    type="text"
+                  <select
                     {...register('personalInfo.driversLicenseState')}
-                    placeholder="TX"
-                    maxLength={2}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                  />
+                  >
+                    <option value="">Select a state...</option>
+                    {US_STATES.map((state) => (
+                      <option key={state.value} value={state.value}>
+                        {state.label}
+                      </option>
+                    ))}
+                  </select>
                   {errors.personalInfo?.driversLicenseState && (
                     <p className="mt-1 text-sm text-red-600">{errors.personalInfo.driversLicenseState.message}</p>
                   )}
@@ -1862,11 +1958,17 @@ export default function EmployeeApplicationForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">State *</label>
-            <input
-              type="text"
+            <select
               {...register('personalInfo.state')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-            />
+            >
+              <option value="">Select a state...</option>
+              {US_STATES.map((state) => (
+                <option key={state.value} value={state.value}>
+                  {state.label}
+                </option>
+              ))}
+            </select>
             {errors.personalInfo?.state && (
               <p className="mt-1 text-sm text-red-600">{errors.personalInfo.state.message}</p>
             )}
@@ -1920,7 +2022,11 @@ export default function EmployeeApplicationForm() {
             <input
               type="tel"
               {...register('personalInfo.emergencyContactPhone')}
-              placeholder="(555) 123-4567"
+              placeholder="555-123-4567"
+              onChange={(e) => {
+                const formatted = formatPhoneNumber(e.target.value);
+                setValue('personalInfo.emergencyContactPhone', formatted);
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
             />
             {errors.personalInfo?.emergencyContactPhone && (
@@ -2674,7 +2780,11 @@ export default function EmployeeApplicationForm() {
     </div>
   );
 
-  const renderReferences = () => (
+  const renderReferences = () => {
+    console.log('References rendering - referenceFields:', referenceFields);
+    console.log('References rendering - form values:', watchedValues.references);
+    
+    return (
     <div className="space-y-6" ref={el => { stepRefs.current[6] = el; }} tabIndex={-1}>
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Professional References</h2>
@@ -2732,6 +2842,11 @@ export default function EmployeeApplicationForm() {
               <input
                 type="tel"
                 {...register(`references.${index}.phone`)}
+                placeholder="555-123-4567"
+                onChange={(e) => {
+                  const formatted = formatPhoneNumber(e.target.value);
+                  setValue(`references.${index}.phone`, formatted);
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
               />
             </div>
@@ -2774,7 +2889,8 @@ export default function EmployeeApplicationForm() {
         + Add Another Reference
       </button>
     </div>
-  );
+    );
+  };
 
   const renderReview = () => (
     <div className="space-y-6" ref={el => { stepRefs.current[7] = el; }} tabIndex={-1}>
@@ -3099,6 +3215,9 @@ export default function EmployeeApplicationForm() {
           <form onSubmit={handleSubmit(onSubmit, (errors) => {
             console.log('❌ Form validation failed:', errors);
             console.log('All form errors:', Object.keys(errors));
+            console.log('Current form data:', watchedValues);
+            console.log('References data:', watchedValues.references);
+            console.log('References errors:', errors.references);
             
             // Create a user-friendly error message
             const errorMessages = [];

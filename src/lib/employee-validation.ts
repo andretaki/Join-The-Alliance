@@ -6,8 +6,21 @@ export const personalInfoSchema = z.object({
   lastName: z.string().min(1, 'Last name is required').max(50, 'Last name too long'),
   middleName: z.string().max(50, 'Middle name too long').optional(),
   email: z.string().email('Invalid email address'),
-  phone: z.string().min(10, 'Phone number must be at least 10 digits').max(15, 'Phone number too long'),
-  alternatePhone: z.string().max(15, 'Alternate phone too long').optional(),
+  phone: z.string().min(1, 'Phone number is required').refine(
+    (phone) => {
+      const digits = phone.replace(/\D/g, '');
+      return digits.length >= 10;
+    },
+    { message: 'Phone number must have at least 10 digits' }
+  ),
+  alternatePhone: z.string().optional().refine(
+    (phone) => {
+      if (!phone || phone.trim() === '') return true;
+      const digits = phone.replace(/\D/g, '');
+      return digits.length >= 10;
+    },
+    { message: 'Phone number must have at least 10 digits' }
+  ),
   address: z.string().min(5, 'Address is required').max(200, 'Address too long'),
   city: z.string().min(1, 'City is required').max(50, 'City too long'),
   state: z.string().min(2, 'State is required').max(50, 'State too long'),
@@ -23,7 +36,13 @@ export const personalInfoSchema = z.object({
   // Emergency Contact
   emergencyContactName: z.string().min(1, 'Emergency contact name is required').max(100, 'Name too long'),
   emergencyContactRelationship: z.string().min(1, 'Relationship is required').max(50, 'Relationship too long'),
-  emergencyContactPhone: z.string().min(10, 'Emergency contact phone is required').max(15, 'Phone too long'),
+  emergencyContactPhone: z.string().min(1, 'Emergency contact phone is required').refine(
+    (phone) => {
+      const digits = phone.replace(/\D/g, '');
+      return digits.length >= 10;
+    },
+    { message: 'Emergency contact phone must have at least 10 digits' }
+  ),
   emergencyContactAddress: z.string().max(200, 'Address too long').optional(),
   
   // Employment Information
@@ -99,7 +118,13 @@ export const referenceSchema = z.object({
   name: z.string().min(1, 'Reference name is required').max(100, 'Reference name too long'),
   relationship: z.string().min(1, 'Relationship is required').max(50, 'Relationship too long'),
   company: z.string().max(100, 'Company name too long').optional(),
-  phone: z.string().min(10, 'Phone number must be at least 10 digits').max(15, 'Phone number too long'),
+  phone: z.string().min(1, 'Phone number is required').refine(
+    (phone) => {
+      const digits = phone.replace(/\D/g, '');
+      return digits.length >= 10;
+    },
+    { message: 'Phone number must have at least 10 digits' }
+  ),
   email: z.string().email('Invalid email address').optional(),
   yearsKnown: z.number().min(0, 'Years known must be positive').max(50, 'Years known too high').optional(),
 });
