@@ -4,7 +4,16 @@ import { useForm, useFieldArray, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import SignatureCanvas from 'react-signature-canvas';
-import { employeeApplicationSchema, type EmployeeApplicationForm } from '@/lib/employee-validation';
+import { 
+  employeeApplicationSchema, 
+  personalInfoSchema,
+  roleAssessmentSchema,
+  eligibilitySchema,
+  workExperienceSchema,
+  educationSchema,
+  referenceSchema,
+  type EmployeeApplicationForm 
+} from '@/lib/employee-validation';
 
 // US States list for dropdown
 const US_STATES = [
@@ -687,13 +696,132 @@ export default function EmployeeApplicationForm() {
     }
   };
 
-  const nextStep = () => {
+  // Step validation functions
+  const validateCurrentStep = async () => {
+    const formData = watchedValues;
+    
+    try {
+      switch (currentStep) {
+        case 0: // Position Selection
+          if (!formData.jobPostingId || formData.jobPostingId === 0) {
+            setErrorMessage('Please select a position before continuing.');
+            return false;
+          }
+          break;
+          
+        case 1: // Role Assessment
+          const roleAssessmentResult = roleAssessmentSchema.safeParse(formData.roleAssessment);
+          if (!roleAssessmentResult.success) {
+            const errors = roleAssessmentResult.error.errors;
+            setErrorMessage(`Role Assessment errors:\n• ${errors.map(e => e.message).join('\n• ')}`);
+            return false;
+          }
+          break;
+          
+        case 2: // Personal Information
+          const personalInfoResult = personalInfoSchema.safeParse(formData.personalInfo);
+          const eligibilityResult = eligibilitySchema.safeParse(formData.eligibility);
+          
+          if (!personalInfoResult.success || !eligibilityResult.success) {
+            const allErrors = [
+              ...(personalInfoResult.success ? [] : personalInfoResult.error.errors),
+              ...(eligibilityResult.success ? [] : eligibilityResult.error.errors)
+            ];
+            setErrorMessage(`Personal Information errors:\n• ${allErrors.map(e => e.message).join('\n• ')}`);
+            return false;
+          }
+          break;
+          
+        case 3: // Documents - Optional step
+          break;
+          
+        case 4: // Work Experience
+          if (!formData.workExperience || formData.workExperience.length === 0) {
+            setErrorMessage('Please add at least one work experience entry.');
+            return false;
+          }
+          
+          for (let i = 0; i < formData.workExperience.length; i++) {
+            const workResult = workExperienceSchema.safeParse(formData.workExperience[i]);
+            if (!workResult.success) {
+              const errors = workResult.error.errors;
+              setErrorMessage(`Work Experience ${i + 1} errors:\n• ${errors.map(e => e.message).join('\n• ')}`);
+              return false;
+            }
+          }
+          break;
+          
+        case 5: // Education
+          if (!formData.education || formData.education.length === 0) {
+            setErrorMessage('Please add at least one education entry.');
+            return false;
+          }
+          
+          for (let i = 0; i < formData.education.length; i++) {
+            const eduResult = educationSchema.safeParse(formData.education[i]);
+            if (!eduResult.success) {
+              const errors = eduResult.error.errors;
+              setErrorMessage(`Education ${i + 1} errors:\n• ${errors.map(e => e.message).join('\n• ')}`);
+              return false;
+            }
+          }
+          break;
+          
+        case 6: // References
+          if (!formData.references || formData.references.length === 0) {
+            setErrorMessage('Please add at least one reference.');
+            return false;
+          }
+          
+          for (let i = 0; i < formData.references.length; i++) {
+            const refResult = referenceSchema.safeParse(formData.references[i]);
+            if (!refResult.success) {
+              const errors = refResult.error.errors;
+              setErrorMessage(`Reference ${i + 1} errors:\n• ${errors.map(e => e.message).join('\n• ')}`);
+              return false;
+            }
+          }
+          break;
+          
+        case 7: // Review - No validation needed
+          break;
+          
+        case 8: // Signature
+          if (!formData.signatureDataUrl || formData.signatureDataUrl.trim() === '') {
+            setErrorMessage('Please provide your digital signature.');
+            return false;
+          }
+          if (!formData.termsAgreed) {
+            setErrorMessage('You must agree to the terms and conditions.');
+            return false;
+          }
+          break;
+      }
+      
+      setErrorMessage(''); // Clear any previous errors
+      return true;
+    } catch (error) {
+      console.error('Step validation error:', error);
+      setErrorMessage('Validation error occurred. Please check your entries.');
+      return false;
+    }
+  };
+
+  const nextStep = async () => {
     if (currentStep < STEPS.length - 1) {
-      const newStep = currentStep + 1;
-      setCurrentStep(newStep);
-      setVisitedSteps(prev => new Set([...prev, newStep]));
-      // Scroll to top of the page when navigating to next step
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Validate current step before proceeding
+      const isValid = await validateCurrentStep();
+      
+      if (isValid) {
+        const newStep = currentStep + 1;
+        setCurrentStep(newStep);
+        setVisitedSteps(prev => new Set([...prev, newStep]));
+        // Scroll to top of the page when navigating to next step
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        // Scroll to top to show error message
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
@@ -750,6 +878,17 @@ export default function EmployeeApplicationForm() {
       });
     }
   }, [referenceFields.length, appendReference]);
+
+  // Clear error messages when user starts editing
+  useEffect(() => {
+    if (errorMessage) {
+      const timeoutId = setTimeout(() => {
+        setErrorMessage('');
+      }, 10000); // Clear error after 10 seconds
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [errorMessage]);
 
   // Signature canvas resize handler
   useEffect(() => {
@@ -3190,12 +3329,18 @@ export default function EmployeeApplicationForm() {
         {/* Messages */}
         {errorMessage && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-600 flex items-center">
-              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <div className="flex items-start">
+              <svg className="w-5 h-5 mr-3 mt-0.5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
-              {errorMessage}
-            </p>
+              <div className="text-sm text-red-600">
+                {errorMessage.split('\n').map((line, index) => (
+                  <div key={index} className={index > 0 ? 'mt-1' : ''}>
+                    {line}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 

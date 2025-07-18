@@ -23,7 +23,7 @@ export const personalInfoSchema = z.object({
   ),
   address: z.string().min(5, 'Address is required').max(200, 'Address too long'),
   city: z.string().min(1, 'City is required').max(50, 'City too long'),
-  state: z.string().min(2, 'State is required').max(50, 'State too long'),
+  state: z.string().min(2, 'State is required').max(2, 'State must be 2-letter code'),
   zipCode: z.string().min(5, 'ZIP code must be at least 5 digits').max(10, 'ZIP code too long'),
   
   // ✅ CRITICAL EMPLOYEE INFO
@@ -74,14 +74,14 @@ export const personalInfoSchema = z.object({
 
 // Employment Eligibility Schema - EXPANDED
 export const eligibilitySchema = z.object({
-  eligibleToWork: z.boolean(),
+  eligibleToWork: z.boolean().refine(val => val === true, 'You must be eligible to work in the United States'),
   requiresSponsorship: z.boolean(),
   
   // ✅ ADDITIONAL EMPLOYMENT CONSENTS
-  consentToBackgroundCheck: z.boolean(),
-  consentToDrugTest: z.boolean(),
-  consentToReferenceCheck: z.boolean(),
-  consentToEmploymentVerification: z.boolean(),
+  consentToBackgroundCheck: z.boolean().refine(val => val === true, 'You must consent to background check'),
+  consentToDrugTest: z.boolean().refine(val => val === true, 'You must consent to drug testing'),
+  consentToReferenceCheck: z.boolean().refine(val => val === true, 'You must consent to reference verification'),
+  consentToEmploymentVerification: z.boolean().refine(val => val === true, 'You must consent to employment verification'),
   
   // Chemical Industry Specific
   hasHazmatExperience: z.boolean(),
@@ -101,6 +101,15 @@ export const workExperienceSchema = z.object({
   reasonForLeaving: z.string().max(500, 'Reason for leaving too long').optional(),
   supervisorName: z.string().max(100, 'Supervisor name too long').optional(),
   supervisorContact: z.string().max(100, 'Supervisor contact too long').optional(),
+}).refine((data) => {
+  // If not current job, endDate is required
+  if (!data.isCurrent && (!data.endDate || data.endDate.trim() === '')) {
+    return false;
+  }
+  return true;
+}, {
+  message: 'End date is required for previous positions',
+  path: ['endDate'],
 });
 
 // Education Schema
@@ -125,7 +134,7 @@ export const referenceSchema = z.object({
     },
     { message: 'Phone number must have at least 10 digits' }
   ),
-  email: z.string().email('Invalid email address').optional(),
+  email: z.string().email('Invalid email address').optional().or(z.literal('')),
   yearsKnown: z.number().min(0, 'Years known must be positive').max(50, 'Years known too high').optional(),
 });
 
