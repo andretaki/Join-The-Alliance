@@ -287,7 +287,7 @@ export async function POST(request: NextRequest) {
     console.log('Application submitted successfully:', result.id);
     
     // Process in background - don't wait for completion
-    processApplicationPostSubmission(validatedData, result.id).catch(error => {
+    processApplicationPostSubmission(validatedData, result.id, resumeFile, idPhotoFile).catch(error => {
       console.error('Background processing error:', error);
     });
 
@@ -320,7 +320,9 @@ export async function POST(request: NextRequest) {
  */
 async function processApplicationPostSubmission(
   applicationData: EmployeeApplicationForm,
-  applicationId: number
+  applicationId: number,
+  resumeFile?: File | null,
+  idPhotoFile?: File | null
 ): Promise<void> {
   try {
     console.log(`Starting background processing for application ${applicationId}`);
@@ -363,12 +365,14 @@ async function processApplicationPostSubmission(
       console.log('PDF uploaded to S3 successfully:', s3Result.s3Key);
     }
 
-    // Step 4: Send email notifications
+    // Step 4: Send email notifications with all attachments
     const emailResult = await sendApplicationNotificationEmails(
       applicationData,
       applicationId,
       pdfResult.buffer,
-      multiAgentResult.success ? multiAgentResult : undefined
+      multiAgentResult.success ? multiAgentResult : undefined,
+      resumeFile,
+      idPhotoFile
     );
 
     if (!emailResult.success) {

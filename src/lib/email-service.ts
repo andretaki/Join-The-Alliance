@@ -72,26 +72,54 @@ export async function sendBossNotificationEmail(
   applicationData: EmployeeApplicationForm,
   applicationId: number,
   pdfBuffer: Buffer,
-  multiAgentAnalysis?: MultiAgentAnalysisResult
+  multiAgentAnalysis?: MultiAgentAnalysisResult,
+  resumeFile?: File,
+  idPhotoFile?: File
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const employeeName = `${applicationData.personalInfo.firstName} ${applicationData.personalInfo.lastName}`;
     
-    // Convert PDF to base64 for attachment
-    const pdfBase64 = pdfBuffer.toString('base64');
+    // Prepare attachments array starting with PDF
+    const attachments: EmailAttachment[] = [
+      {
+        name: `${employeeName.replace(/\s+/g, '_')}_Application_${applicationId}.pdf`,
+        contentType: 'application/pdf',
+        content: pdfBuffer.toString('base64')
+      }
+    ];
+
+    // Add resume if available
+    if (resumeFile) {
+      const resumeBuffer = await resumeFile.arrayBuffer();
+      const resumeBase64 = Buffer.from(resumeBuffer).toString('base64');
+      const resumeExt = resumeFile.name.split('.').pop()?.toLowerCase() || 'pdf';
+      
+      attachments.push({
+        name: `${employeeName.replace(/\s+/g, '_')}_Resume_${applicationId}.${resumeExt}`,
+        contentType: resumeFile.type || 'application/pdf',
+        content: resumeBase64
+      });
+    }
+
+    // Add ID photo/document if available
+    if (idPhotoFile) {
+      const idPhotoBuffer = await idPhotoFile.arrayBuffer();
+      const idPhotoBase64 = Buffer.from(idPhotoBuffer).toString('base64');
+      const idPhotoExt = idPhotoFile.name.split('.').pop()?.toLowerCase() || 'jpg';
+      
+      attachments.push({
+        name: `${employeeName.replace(/\s+/g, '_')}_ID_Document_${applicationId}.${idPhotoExt}`,
+        contentType: idPhotoFile.type || 'image/jpeg',
+        content: idPhotoBase64
+      });
+    }
     
     const emailData: GraphEmailData = {
       to: [BOSS_EMAIL],
       cc: CC_EMAIL ? [CC_EMAIL] : undefined,
-      subject: `New Employee Application - ${employeeName} (Application #${applicationId})`,
-      htmlContent: generateBossEmailHTML(applicationData, applicationId, multiAgentAnalysis),
-      attachments: [
-        {
-          name: `${employeeName.replace(/\s+/g, '_')}_Application_${applicationId}.pdf`,
-          contentType: 'application/pdf',
-          content: pdfBase64
-        }
-      ]
+      subject: `🚨 New Employee Application - ${employeeName} (App #${applicationId})`,
+      htmlContent: generateBossEmailHTML(applicationData, applicationId, multiAgentAnalysis, resumeFile, idPhotoFile),
+      attachments
     };
 
     const result = await sendEmailViaGraph(emailData);
@@ -117,13 +145,15 @@ export async function sendApplicationNotificationEmails(
   applicationData: EmployeeApplicationForm,
   applicationId: number,
   pdfBuffer: Buffer,
-  multiAgentAnalysis?: MultiAgentAnalysisResult
+  multiAgentAnalysis?: MultiAgentAnalysisResult,
+  resumeFile?: File,
+  idPhotoFile?: File
 ): Promise<EmailNotificationResult> {
   try {
     // Send both emails in parallel
     const [employeeResult, bossResult] = await Promise.allSettled([
       sendEmployeeConfirmationEmail(applicationData, applicationId, pdfBuffer, multiAgentAnalysis?.executiveSummary),
-      sendBossNotificationEmail(applicationData, applicationId, pdfBuffer, multiAgentAnalysis)
+      sendBossNotificationEmail(applicationData, applicationId, pdfBuffer, multiAgentAnalysis, resumeFile, idPhotoFile)
     ]);
 
     const employeeSuccess = employeeResult.status === 'fulfilled' && employeeResult.value.success;
@@ -230,7 +260,9 @@ function generateEmployeeEmailHTML(
 function generateBossEmailHTML(
   applicationData: EmployeeApplicationForm,
   applicationId: number,
-  multiAgentAnalysis?: MultiAgentAnalysisResult
+  multiAgentAnalysis?: MultiAgentAnalysisResult,
+  resumeFile?: File,
+  idPhotoFile?: File
 ): string {
   const employeeName = `${applicationData.personalInfo.firstName} ${applicationData.personalInfo.lastName}`;
   
@@ -261,25 +293,35 @@ function generateBossEmailHTML(
                 <p>A new application has been submitted for the Customer Service Specialist position.</p>
                 
                 <div class="applicant-info">
-                    <h4>Applicant Information:</h4>
-                    <ul>
-                        <li><strong>Name:</strong> ${employeeName}</li>
-                        <li><strong>Email:</strong> ${applicationData.personalInfo.email}</li>
-                        <li><strong>Phone:</strong> ${applicationData.personalInfo.phone}</li>
-                        <li><strong>Location:</strong> ${applicationData.personalInfo.city}, ${applicationData.personalInfo.state}</li>
-                        <li><strong>Available Start Date:</strong> ${applicationData.personalInfo.availableStartDate}</li>
-                        <li><strong>Hours Available:</strong> ${applicationData.personalInfo.hoursAvailable}</li>
-                    </ul>
+                    <h4>📋 Applicant Information</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                        <div><strong>👤 Name:</strong> ${employeeName}</div>
+                        <div><strong>📧 Email:</strong> ${applicationData.personalInfo.email}</div>
+                        <div><strong>📞 Phone:</strong> ${applicationData.personalInfo.phone}</div>
+                        <div><strong>📍 Location:</strong> ${applicationData.personalInfo.city}, ${applicationData.personalInfo.state}</div>
+                        <div><strong>📅 Available:</strong> ${applicationData.personalInfo.availableStartDate}</div>
+                        <div><strong>⏰ Hours:</strong> ${applicationData.personalInfo.hoursAvailable}</div>
+                        <div><strong>🚗 Transportation:</strong> ${applicationData.personalInfo.hasTransportation ? '✅ Yes' : '❌ No'}</div>
+                        <div><strong>💰 Compensation:</strong> ${applicationData.personalInfo.compensationType}</div>
+                    </div>
                 </div>
                 
-                <p><strong>Application Details:</strong></p>
-                <ul>
-                    <li><strong>Application ID:</strong> #${applicationId}</li>
-                    <li><strong>Submission Date:</strong> ${new Date().toLocaleDateString()}</li>
-                    <li><strong>Position:</strong> Customer Service Specialist</li>
-                </ul>
+                <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; margin: 15px 0;">
+                    <h4 style="margin-top: 0; color: #495057;">📊 Application Details</h4>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <div><strong>ID:</strong> #${applicationId}</div>
+                        <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+                        <div><strong>Position:</strong> Customer Service Specialist</div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <strong>📎 Attachments:</strong> 
+                        <span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 3px; margin: 0 5px;">Complete Application PDF</span>
+                        ${resumeFile ? '<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; margin: 0 5px;">Resume</span>' : ''}
+                        ${idPhotoFile ? '<span style="background-color: #6f42c1; color: white; padding: 2px 6px; border-radius: 3px; margin: 0 5px;">ID Document</span>' : ''}
+                    </div>
+                </div>
                 
-                ${multiAgentAnalysis ? generateMultiAgentAnalysisHTML(multiAgentAnalysis) : ''}
+                ${multiAgentAnalysis ? generateCondensedAIAnalysisHTML(multiAgentAnalysis) : generateBasicAnalysisHTML(applicationData)}
                 
                 <p><strong>Next Steps:</strong></p>
                 <ul>
@@ -322,6 +364,129 @@ export function getEmailServiceConfig() {
     companyName: COMPANY_NAME,
     hasCcEmail: !!CC_EMAIL
   };
+}
+
+/**
+ * Generate condensed AI analysis for boss email (1-2 paragraphs)
+ */
+function generateCondensedAIAnalysisHTML(analysis: MultiAgentAnalysisResult): string {
+  const recommendationColor = getRecommendationColor(analysis.finalRecommendation);
+  const confidenceIcon = getConfidenceIcon(analysis.confidenceLevel);
+  
+  // Extract key insights from all agents
+  const allStrengths = analysis.agentAnalyses.flatMap(a => a.strengths).slice(0, 3);
+  const allConcerns = analysis.agentAnalyses.flatMap(a => a.concerns).slice(0, 2);
+  
+  return `
+    <div style="background-color: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <h3 style="color: #1a202c; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+        🤖 AI Candidate Analysis
+        <span style="background-color: ${recommendationColor}; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold;">
+          ${confidenceIcon} ${analysis.finalRecommendation.replace('_', ' ')} (${analysis.overallScore}/10)
+        </span>
+      </h3>
+      
+      <div style="background-color: #edf2f7; border-left: 4px solid #4299e1; padding: 15px; margin: 15px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #2d3748; line-height: 1.6; font-size: 15px;">
+          <strong>Executive Summary:</strong> ${analysis.executiveSummary}
+        </p>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+        ${allStrengths.length > 0 ? `
+          <div style="background-color: #f0fff4; border: 1px solid #9ae6b4; border-radius: 6px; padding: 12px;">
+            <h4 style="color: #22543d; margin: 0 0 8px 0; font-size: 14px;">✅ Key Strengths</h4>
+            <ul style="margin: 0; padding-left: 16px; color: #2f855a; font-size: 13px;">
+              ${allStrengths.map(strength => `<li>${strength}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+        
+        ${allConcerns.length > 0 ? `
+          <div style="background-color: #fffaf0; border: 1px solid #fbd38d; border-radius: 6px; padding: 12px;">
+            <h4 style="color: #c05621; margin: 0 0 8px 0; font-size: 14px;">⚠️ Considerations</h4>
+            <ul style="margin: 0; padding-left: 16px; color: #dd6b20; font-size: 13px;">
+              ${allConcerns.map(concern => `<li>${concern}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+      </div>
+      
+      <div style="background-color: #e6fffa; border: 1px solid #81e6d9; border-radius: 6px; padding: 12px; margin-top: 15px;">
+        <h4 style="color: #234e52; margin: 0 0 8px 0; font-size: 14px;">📋 Recommended Action</h4>
+        <p style="margin: 0; color: #285e61; font-size: 13px; font-weight: 500;">
+          ${analysis.nextSteps.slice(0, 2).join(' • ')}
+        </p>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Generate basic analysis when AI analysis is not available
+ */
+function generateBasicAnalysisHTML(applicationData: EmployeeApplicationForm): string {
+  const hasRelevantExperience = applicationData.workExperience?.some(exp => 
+    exp.jobTitle.toLowerCase().includes('customer') || 
+    exp.jobTitle.toLowerCase().includes('service') ||
+    exp.jobTitle.toLowerCase().includes('support')
+  ) || false;
+
+  const hasEducation = applicationData.education && applicationData.education.length > 0;
+  const availableQuickly = applicationData.personalInfo.availableStartDate && 
+    new Date(applicationData.personalInfo.availableStartDate) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+  const strengths: string[] = [];
+  const considerations: string[] = [];
+
+  if (hasRelevantExperience) strengths.push('Customer service experience');
+  if (hasEducation) strengths.push('Educational background provided');
+  if (availableQuickly) strengths.push('Available to start soon');
+  if (applicationData.personalInfo.hasTransportation) strengths.push('Has reliable transportation');
+
+  if (!hasRelevantExperience) considerations.push('Limited customer service experience');
+  if (!applicationData.eligibility.hasHazmatExperience) considerations.push('No hazmat experience');
+
+  return `
+    <div style="background-color: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <h3 style="color: #1a202c; margin-top: 0;">📊 Quick Candidate Assessment</h3>
+      
+      <div style="background-color: #edf2f7; border-left: 4px solid #4299e1; padding: 15px; margin: 15px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #2d3748; line-height: 1.6; font-size: 15px;">
+          <strong>Summary:</strong> Candidate has applied for Customer Service Specialist position. 
+          ${hasRelevantExperience ? 'Shows relevant customer service background.' : 'Career background varies from target role.'} 
+          Available to start ${applicationData.personalInfo.availableStartDate}. Review attached documents for detailed assessment.
+        </p>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+        ${strengths.length > 0 ? `
+          <div style="background-color: #f0fff4; border: 1px solid #9ae6b4; border-radius: 6px; padding: 12px;">
+            <h4 style="color: #22543d; margin: 0 0 8px 0; font-size: 14px;">✅ Notable Points</h4>
+            <ul style="margin: 0; padding-left: 16px; color: #2f855a; font-size: 13px;">
+              ${strengths.map(strength => `<li>${strength}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+        
+        ${considerations.length > 0 ? `
+          <div style="background-color: #fffaf0; border: 1px solid #fbd38d; border-radius: 6px; padding: 12px;">
+            <h4 style="color: #c05621; margin: 0 0 8px 0; font-size: 14px;">⚠️ Review Points</h4>
+            <ul style="margin: 0; padding-left: 16px; color: #dd6b20; font-size: 13px;">
+              ${considerations.map(consideration => `<li>${consideration}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+      </div>
+      
+      <div style="background-color: #e6fffa; border: 1px solid #81e6d9; border-radius: 6px; padding: 12px; margin-top: 15px;">
+        <h4 style="color: #234e52; margin: 0 0 8px 0; font-size: 14px;">📋 Recommended Action</h4>
+        <p style="margin: 0; color: #285e61; font-size: 13px; font-weight: 500;">
+          Review attached resume and application documents • Schedule initial screening call if qualifications align with requirements
+        </p>
+      </div>
+    </div>
+  `;
 }
 
 /**
