@@ -31,13 +31,17 @@ export async function uploadToS3(
       throw new Error('AWS S3 bucket name is not configured');
     }
 
+    // Ensure we have a proper Buffer
+    const bodyBuffer = Buffer.isBuffer(file) ? file : Buffer.from(file);
+    
     const command = new PutObjectCommand({
       Bucket: AWS_S3_BUCKET_NAME,
       Key: key,
-      Body: file,
+      Body: bodyBuffer,
       ContentType: contentType,
       Metadata: metadata,
       ServerSideEncryption: 'AES256', // Enable server-side encryption
+      ContentLength: bodyBuffer.length, // Explicitly set content length
     });
 
     await s3Client.send(command);
